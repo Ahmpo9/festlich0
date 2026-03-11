@@ -1,0 +1,463 @@
+<!--
+=======================================================
+  FESTLICH — UPDATES PATCH FILE
+  Fügen Sie jeden Block an der richtigen Stelle ein.
+=======================================================
+-->
+
+
+<!-- ════════════════════════════════════════════════
+  UPDATE 1: In <head> einfügen (vor </head>)
+════════════════════════════════════════════════ -->
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+
+<!-- ════════════════════════════════════════════════
+  UPDATE 2: CSS — In <style> einfügen (vor </style>)
+════════════════════════════════════════════════ -->
+<style>
+/* WhatsApp Button */
+#waBtn{position:fixed;bottom:2rem;right:2rem;z-index:999;width:58px;height:58px;background:#25D366;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,.45);text-decoration:none;transition:transform .2s,box-shadow .2s;}
+#waBtn:hover{transform:scale(1.09);box-shadow:0 6px 28px rgba(37,211,102,.55);}
+
+/* Toast Notification */
+#toast{position:fixed;bottom:6.5rem;right:2rem;z-index:1000;background:#111;color:#fff;padding:.75rem 1.4rem;font-size:.78rem;opacity:0;transform:translateY(8px);transition:all .3s;pointer-events:none;max-width:260px;}
+#toast.show{opacity:1;transform:translateY(0);}
+
+/* Payment Modal Plan Cards */
+.plan-opt{border:2px solid #ddd;padding:1.2rem;cursor:pointer;text-align:center;transition:border-color .2s;}
+.plan-opt.selected{border-color:#111;}
+</style>
+
+
+<!-- ════════════════════════════════════════════════
+  UPDATE 3: HTML — Vor </body> einfügen
+════════════════════════════════════════════════ -->
+
+<!-- WhatsApp Floating Button -->
+<a href="https://wa.me/4917662329624?text=Hallo%2C%20ich%20interessiere%20mich%20f%C3%BCr%20Festlich.net%20%E2%80%94%20k%C3%B6nnen%20Sie%20mir%20helfen%3F"
+   target="_blank" id="waBtn" title="WhatsApp Support">
+  <svg width="28" height="28" viewBox="0 0 24 24" fill="#fff">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+  </svg>
+</a>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<!-- PayPal Zahlungsmodal -->
+<div class="modal-ov" id="payModal">
+  <div class="mbox" style="max-width:460px">
+    <button class="mcl" onclick="document.getElementById('payModal').classList.remove('open')">×</button>
+    <div class="mhdr">
+      <div class="mtit">Plan auswählen & bezahlen</div>
+      <div style="font-size:.76rem;color:#555;font-weight:300;margin-top:.3rem">Einmalige Zahlung — kein Abo</div>
+    </div>
+    <div class="mbody">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.5rem">
+        <div class="plan-opt selected" id="plan-standard" onclick="selectPlan('standard')">
+          <div style="font-family:'Playfair Display',serif;font-size:1.1rem">Standard</div>
+          <div style="font-size:1.9rem;font-family:'Playfair Display',serif;margin:.3rem 0">€39</div>
+          <div style="font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:#555">einmalig</div>
+          <div style="font-size:.7rem;color:#555;margin-top:.5rem;line-height:1.6">Bis 50 Gäste<br>Alle 24 Vorlagen<br>Kein Wasserzeichen</div>
+        </div>
+        <div class="plan-opt" id="plan-premium" onclick="selectPlan('premium')">
+          <div style="font-family:'Playfair Display',serif;font-size:1.1rem">Premium</div>
+          <div style="font-size:1.9rem;font-family:'Playfair Display',serif;margin:.3rem 0">€59</div>
+          <div style="font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:#555">einmalig</div>
+          <div style="font-size:.7rem;color:#555;margin-top:.5rem;line-height:1.6">Unbegrenzt Gäste<br>White-Label<br>Prioritäts-Support</div>
+        </div>
+      </div>
+
+      <div id="pay-step1">
+        <div style="background:#f8f8f6;padding:.9rem 1rem;font-size:.75rem;color:#555;line-height:1.6;margin-bottom:1.2rem;border-left:3px solid #0070ba">
+          Sie werden zu PayPal weitergeleitet. Danach klicken Sie auf <strong>"Zahlung bestätigen"</strong>.
+        </div>
+        <button onclick="payWithPayPal()"
+          style="width:100%;background:#0070ba;color:#fff;border:none;padding:1rem;font-size:.88rem;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;justify-content:center;gap:.7rem;margin-bottom:.7rem">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944.901C5.026.382 5.474 0 5.998 0h7.46c2.57 0 4.578.543 5.69 1.81 1.01 1.15 1.304 2.42 1.012 4.287-.023.143-.047.288-.077.437-.983 5.05-4.349 6.797-8.647 6.797h-2.19c-.524 0-.968.382-1.05.9l-1.12 7.106zm14.146-14.42a3.35 3.35 0 0 0-.607-.541c-.013.076-.026.175-.041.254-.59 3.025-2.566 6.082-8.558 6.082H9.825l-1.43 9.067h3.44l.803-5.09h2.189c4.298 0 7.664-1.746 8.647-6.797.199-1.02.144-1.956-.252-2.975z"/></svg>
+          <span id="pay-btn-text">€39,00 bezahlen via PayPal</span>
+        </button>
+        <p style="text-align:center;font-size:.67rem;color:#aaa">🔒 Sichere Zahlung · SSL · PayPal Käuferschutz</p>
+      </div>
+
+      <div id="pay-step2" style="display:none;text-align:center;padding:1rem 0">
+        <div style="font-size:2.2rem;margin-bottom:.8rem">⏳</div>
+        <p style="font-size:.84rem;color:#555;margin-bottom:1.2rem;line-height:1.65">
+          PayPal wurde geöffnet.<br>Sobald Sie bezahlt haben — hier bestätigen:
+        </p>
+        <button onclick="confirmPayment()"
+          style="background:#27ae60;color:#fff;border:none;padding:.95rem 2rem;font-family:'DM Sans',sans-serif;font-size:.78rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;width:100%;margin-bottom:.8rem">
+          ✓ Zahlung bestätigen & weiter
+        </button>
+        <button onclick="document.getElementById('pay-step2').style.display='none';document.getElementById('pay-step1').style.display='block'"
+          style="background:none;border:none;color:#aaa;font-size:.7rem;cursor:pointer;text-decoration:underline">
+          Zurück
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+  UPDATE 4: JAVASCRIPT
+  Suchen Sie in Ihrer index.html die Zeile:
+    function go(n){if(n>cur&&
+  und ersetzen Sie die gesamte go() Funktion
+  sowie ALLES danach bis </script> mit diesem Block:
+════════════════════════════════════════════════ -->
+<script>
+// ── Hilfsfunktionen ──
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3500);
+}
+
+// ── Zahlung ──
+let paidStatus=false;
+let selectedPlan='standard';
+
+function selectPlan(plan){
+  selectedPlan=plan;
+  document.getElementById('plan-standard').classList.toggle('selected',plan==='standard');
+  document.getElementById('plan-premium').classList.toggle('selected',plan==='premium');
+  document.getElementById('pay-btn-text').textContent='€'+(plan==='standard'?'39,00':'59,00')+' bezahlen via PayPal';
+}
+
+function payWithPayPal(){
+  const price=selectedPlan==='standard'?'39.00':'59.00';
+  const item=selectedPlan==='standard'?'Festlich Standard':'Festlich Premium';
+  const email='aljomaaahmad4@gmail.com';
+  const ret=encodeURIComponent(window.location.href+'?paid=1');
+  const cancel=encodeURIComponent(window.location.href);
+  const url=`https://www.paypal.com/cgi-bin/webscr?cmd=_xclick&business=${email}&item_name=${encodeURIComponent(item)}&amount=${price}&currency_code=EUR&return=${ret}&cancel_return=${cancel}`;
+  window.open(url,'_blank');
+  document.getElementById('pay-step1').style.display='none';
+  document.getElementById('pay-step2').style.display='block';
+}
+
+function confirmPayment(){
+  paidStatus=true;
+  document.getElementById('payModal').classList.remove('open');
+  showStep(5);
+  const em=document.getElementById('re').value||'Ihre E-Mail';
+  document.getElementById('cem').textContent=em;
+  sendConfirmationEmail(em,document.getElementById('rn').value||'');
+  showToast('✓ Zahlung bestätigt! Premium freigeschaltet.');
+}
+
+// ── E-Mail (EmailJS) ──
+// Nach emailjs.com Registrierung die 3 Werte unten ersetzen:
+const EJ_SERVICE='IHRE_SERVICE_ID';
+const EJ_TEMPLATE='IHRE_TEMPLATE_ID';
+const EJ_KEY='IHR_PUBLIC_KEY';
+
+function sendConfirmationEmail(toEmail,toName){
+  if(EJ_SERVICE==='IHRE_SERVICE_ID')return;
+  const names={'1':'Mono Klassik','2':'Floral','3':'Dark Elegant','4':'Zartes Rosé','5':'Waldgrün Boho','6':'Art Déco Gold','7':'Neon Cyber','8':'Holografisch','9':'Brutalist Gelb'};
+  const tplEl=document.querySelector('input[name="tpl"]:checked');
+  if(typeof emailjs!=='undefined'){
+    emailjs.init(EJ_KEY);
+    emailjs.send(EJ_SERVICE,EJ_TEMPLATE,{
+      to_email:toEmail,
+      to_name:toName,
+      template_name:tplEl?(names[tplEl.value]||'Vorlage'):'Vorlage',
+      event_date:selDate?selDate.toLocaleDateString('de-DE'):'—',
+      host_name:document.getElementById('dhost')?.value||'',
+      venue_name:document.getElementById('dvenue')?.value||'',
+      plan:paidStatus?(selectedPlan==='premium'?'Premium (€59)':'Standard (€39)'):'Gratis'
+    });
+  }
+}
+
+// ── Editor öffnen ──
+function openEditor(){
+  closeModal();
+  // Daten aus Formular holen
+  const host=document.getElementById('dhost')?.value||'Ihre Namen';
+  const venue=document.getElementById('dvenue')?.value||'Ihre Location';
+  const city=document.getElementById('dcity')?.value||'';
+  const dateStr=selDate?selDate.toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'}):'—';
+  const time=document.getElementById('dtime')?.value||'';
+  // In Editor übertragen
+  const edHost=document.getElementById('ed-host');
+  const edDate=document.getElementById('ed-date');
+  const edVenue=document.getElementById('ed-venue');
+  const edLink=document.getElementById('ed-link');
+  if(edHost) edHost.textContent=host;
+  if(edDate) edDate.textContent=dateStr+(time?' um '+time:'');
+  if(edVenue) edVenue.textContent=venue+(city?', '+city:'');
+  if(edLink) edLink.value=window.location.origin+'/?einladung='+btoa(host).replace(/=/g,'').substring(0,8);
+  // Editor anzeigen, Hauptseite verstecken
+  const editor=document.getElementById('editorPage');
+  const main=document.getElementById('mainContent');
+  if(editor) editor.style.display='block';
+  if(main) main.style.display='none';
+  window.scrollTo(0,0);
+}
+
+function closeEditor(){
+  const editor=document.getElementById('editorPage');
+  const main=document.getElementById('mainContent');
+  if(editor) editor.style.display='none';
+  if(main) main.style.display='block';
+}
+
+function copyLink(){
+  const inp=document.getElementById('ed-link');
+  if(inp){inp.select();document.execCommand('copy');showToast('✓ Link kopiert!');}
+}
+
+function shareWhatsApp(){
+  const link=document.getElementById('ed-link')?.value||window.location.href;
+  const host=document.getElementById('ed-host')?.textContent||'';
+  const date=document.getElementById('ed-date')?.textContent||'';
+  const msg=encodeURIComponent('🎉 Einladung von '+host+'\n📅 '+date+'\n\n'+link);
+  window.open('https://wa.me/?text='+msg,'_blank');
+}
+
+// ── Navigation durch Schritte ──
+function go(n){
+  if(n>cur&&!validate(cur))return;
+  if(cur===4&&n===5){
+    const v=document.querySelector('input[name="tpl"]:checked')?.value;
+    if(['6','7','8','9'].includes(v)&&!paidStatus){
+      document.getElementById('payModal').classList.add('open');
+      return;
+    }
+  }
+  showStep(n);
+  if(n===5){
+    const em=document.getElementById('re').value||'Ihre E-Mail';
+    document.getElementById('cem').textContent=em;
+    sendConfirmationEmail(em,document.getElementById('rn').value||'');
+  }
+}
+
+function validate(s){
+  if(s===1){
+    let ok=true;
+    const nm=document.getElementById('rn').value.trim(),em=document.getElementById('re').value.trim(),agb=document.getElementById('agb').checked;
+    document.getElementById('en').style.display=nm?'none':'block';if(!nm)ok=false;
+    document.getElementById('ee').style.display=(em&&em.includes('@'))?'none':'block';if(!em||!em.includes('@'))ok=false;
+    document.getElementById('eagb').style.display=agb?'none':'block';if(!agb)ok=false;
+    return ok;
+  }
+  if(s===2){const p=document.querySelector('input[name="tpl"]:checked');document.getElementById('etpl').style.display=p?'none':'block';return!!p;}
+  if(s===3){const ok=!!selDate;document.getElementById('edate').style.display=ok?'none':'block';return ok;}
+  if(s===4){const h=document.getElementById('dhost').value.trim(),v=document.getElementById('dvenue').value.trim(),ok=!!(h&&v);document.getElementById('edet').style.display=ok?'none':'block';return ok;}
+  return true;
+}
+
+function chkPw(v){
+  const f=document.getElementById('pwf'),h=document.getElementById('pwh');let s=0;
+  if(v.length>=8)s++;if(/[A-Z]/.test(v))s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;
+  f.style.width=[0,25,50,75,100][s]+'%';
+  f.style.background=['#ccc','#e67e22','#f1c40f','#27ae60','#111'][s];
+  h.textContent=['Mindestens 8 Zeichen','Schwach','Mittel','Gut','Stark'][s];
+}
+
+function pickT(id){document.querySelectorAll('.tpick').forEach(t=>t.classList.remove('chosen'));document.getElementById(id).classList.add('chosen');}
+
+// ── Kalender ──
+let calD=new Date(),selDate=null;
+const months=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const dnames=['Mo','Di','Mi','Do','Fr','Sa','So'];
+
+function renderCal(){
+  const d=new Date(calD.getFullYear(),calD.getMonth(),1);
+  document.getElementById('calMn').textContent=months[d.getMonth()]+' '+d.getFullYear();
+  const g=document.getElementById('calG');g.innerHTML='';
+  dnames.forEach(dn=>{const el=document.createElement('div');el.className='cal-dn';el.textContent=dn;g.appendChild(el);});
+  let st=(d.getDay()+6)%7;
+  for(let i=0;i<st;i++){const e=document.createElement('div');e.className='cal-d em';g.appendChild(e);}
+  const dim=new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
+  const today=new Date();
+  for(let i=1;i<=dim;i++){
+    const cell=document.createElement('div'),td=new Date(d.getFullYear(),d.getMonth(),i);
+    const past=td<new Date(today.getFullYear(),today.getMonth(),today.getDate());
+    const isT=td.toDateString()===today.toDateString();
+    const isSel=selDate&&td.toDateString()===selDate.toDateString();
+    cell.className='cal-d'+(past?' pa':'')+(isT?' tod':'')+(isSel?' sel':'');
+    cell.textContent=i;
+    if(!past)cell.onclick=()=>selD2(new Date(d.getFullYear(),d.getMonth(),i));
+    g.appendChild(cell);
+  }
+}
+
+function selD2(d){
+  selDate=d;renderCal();
+  const el=document.getElementById('selD');
+  el.style.display='flex';
+  document.getElementById('selDt').textContent=d.getDate()+'. '+months[d.getMonth()]+' '+d.getFullYear();
+}
+
+function cPrev(){calD=new Date(calD.getFullYear(),calD.getMonth()-1,1);renderCal();}
+function cNext(){calD=new Date(calD.getFullYear(),calD.getMonth()+1,1);renderCal();}
+
+// ── Modal ──
+let cur=1;
+const titles=['','Konto erstellen','Vorlage wählen','Datum auswählen','Ort & Details','Fertig! 🎉'];
+const subs=['','Schritt 1 von 4','Schritt 2 von 4','Schritt 3 von 4','Schritt 4 von 4','Einladung bereit'];
+
+function openModal(t){
+  cur=1;
+  document.getElementById('mainModal').classList.add('open');
+  document.body.style.overflow='hidden';
+  document.getElementById('mtit').textContent=t==='login'?'Anmelden':'Konto erstellen';
+  document.getElementById('msub2').textContent=t==='login'?'Willkommen zurück':'Kostenlos starten — kein Risiko';
+  renderCal();showStep(1);
+}
+
+function closeModal(){document.getElementById('mainModal').classList.remove('open');document.body.style.overflow='';}
+document.getElementById('mainModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+function showStep(n){
+  [1,2,3,4,5].forEach(i=>{
+    document.getElementById('step'+i).classList.toggle('active',i===n);
+    const p=document.getElementById('ps'+i);if(p)p.classList.toggle('done',i<=n);
+  });
+  document.getElementById('mtit').textContent=titles[n];
+  document.getElementById('msub2').textContent=subs[n];
+  document.getElementById('prog').style.display=n===5?'none':'flex';
+  document.getElementById('mbox').scrollTop=0;
+  cur=n;
+}
+
+// ── Nav Schatten ──
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').style.boxShadow=window.scrollY>30?'0 2px 20px rgba(0,0,0,.07)':'';
+});
+
+// ── PayPal Rückkehr erkennen ──
+window.addEventListener('DOMContentLoaded',()=>{
+  if(new URLSearchParams(window.location.search).get('paid')==='1'){
+    paidStatus=true;
+    showToast('✓ Zahlung erhalten! Premium ist aktiv.');
+  }
+});
+</script>
+
+
+<!-- ════════════════════════════════════════════════
+  UPDATE 5: "Zum Editor" Button fixen
+  Suchen Sie in Ihrer index.html:
+    onclick="closeModal()">Zum Editor →
+  Ersetzen mit:
+    onclick="openEditor()">Zum Editor →
+════════════════════════════════════════════════ -->
+
+
+<!-- ════════════════════════════════════════════════
+  UPDATE 6: Editor-Seite HTML
+  Vor </body> einfügen. Außerdem braucht Ihre
+  <body> ein id="mainContent" am ersten Wrapper:
+    <div id="mainContent"> ... gesamte Seite ... </div>
+════════════════════════════════════════════════ -->
+
+<div id="editorPage" style="display:none;min-height:100vh;background:#F9F7F4">
+  <!-- Editor Topbar -->
+  <div style="background:#fff;border-bottom:1px solid #EFEFED;padding:1rem 3rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100">
+    <div style="display:flex;align-items:center;gap:1.5rem">
+      <button onclick="closeEditor()" style="background:none;border:none;font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:#555;cursor:pointer">← Zurück</button>
+      <div style="font-family:'Playfair Display',serif;font-size:1.35rem">Fest<em style="font-style:italic">lich</em> Editor</div>
+    </div>
+    <div style="display:flex;gap:.8rem">
+      <button onclick="shareWhatsApp()" style="background:#25D366;color:#fff;border:none;padding:.6rem 1.4rem;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;gap:.5rem">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Teilen
+      </button>
+      <button onclick="copyLink()" style="background:#0E0E0D;color:#fff;border:none;padding:.6rem 1.4rem;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer">Link kopieren</button>
+    </div>
+  </div>
+
+  <!-- Editor Body -->
+  <div style="display:grid;grid-template-columns:300px 1fr;min-height:calc(100vh - 65px)">
+
+    <!-- Linke Spalte: Einstellungen -->
+    <div style="background:#fff;border-right:1px solid #EFEFED;padding:2rem 1.5rem;overflow-y:auto">
+      <div style="font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:#555;margin-bottom:1.2rem">Einladungs-Details</div>
+
+      <div style="margin-bottom:1rem">
+        <label style="display:block;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:#555;margin-bottom:.4rem">Gastgeber</label>
+        <input type="text" style="width:100%;padding:.7rem .8rem;border:1.5px solid #EFEFED;font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none"
+          placeholder="z.B. Marie & Jonas"
+          oninput="const el=document.getElementById('ed-host');if(el)el.textContent=this.value||'Ihre Namen'">
+      </div>
+      <div style="margin-bottom:1rem">
+        <label style="display:block;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:#555;margin-bottom:.4rem">Location</label>
+        <input type="text" style="width:100%;padding:.7rem .8rem;border:1.5px solid #EFEFED;font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none"
+          placeholder="z.B. Schloss Elmau"
+          oninput="const el=document.getElementById('ed-venue');if(el)el.textContent=this.value">
+      </div>
+      <div style="margin-bottom:1rem">
+        <label style="display:block;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:#555;margin-bottom:.4rem">Persönliche Nachricht</label>
+        <textarea rows="3" style="width:100%;padding:.7rem .8rem;border:1.5px solid #EFEFED;font-family:'DM Sans',sans-serif;font-size:.85rem;outline:none;resize:none"
+          placeholder="Ihr Text an die Gäste…"
+          oninput="const el=document.getElementById('ed-msg');if(el)el.textContent=this.value"></textarea>
+      </div>
+
+      <!-- Link teilen -->
+      <div style="border-top:1px solid #EFEFED;padding-top:1.2rem;margin-top:1.2rem">
+        <div style="font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:#555;margin-bottom:1rem">Einladung teilen</div>
+        <div style="display:flex;gap:.5rem;margin-bottom:.8rem">
+          <input id="ed-link" type="text" readonly
+            style="flex:1;padding:.65rem .8rem;border:1.5px solid #EFEFED;font-size:.72rem;color:#555;background:#F9F7F4;outline:none">
+          <button onclick="copyLink()" style="background:#0E0E0D;color:#fff;border:none;padding:.65rem .9rem;font-size:.68rem;cursor:pointer;white-space:nowrap">Kopieren</button>
+        </div>
+        <button onclick="shareWhatsApp()"
+          style="width:100%;background:#25D366;color:#fff;border:none;padding:.75rem;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.6rem">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          Via WhatsApp teilen
+        </button>
+      </div>
+
+      <!-- RSVP Zähler -->
+      <div style="border-top:1px solid #EFEFED;padding-top:1.2rem;margin-top:1.2rem">
+        <div style="font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:#555;margin-bottom:.8rem">Gäste-Antworten</div>
+        <div style="background:#F9F7F4;padding:1rem;text-align:center">
+          <div style="font-family:'Playfair Display',serif;font-size:2rem">0</div>
+          <div style="font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:#555">Zusagen</div>
+        </div>
+        <div style="font-size:.7rem;color:#AEAEAB;text-align:center;margin-top:.6rem">RSVP-Antworten erscheinen hier.</div>
+      </div>
+    </div>
+
+    <!-- Rechte Spalte: Live-Vorschau -->
+    <div style="display:flex;align-items:center;justify-content:center;padding:3rem;background:linear-gradient(135deg,#f0ede8,#e8e4dc)">
+      <div>
+        <div style="text-align:center;margin-bottom:1.5rem;font-size:.65rem;letter-spacing:.3em;text-transform:uppercase;color:#555">Live-Vorschau</div>
+        <div style="background:#1c1c1e;border-radius:44px;padding:12px;box-shadow:0 40px 100px rgba(0,0,0,.35);width:300px;margin:0 auto">
+          <div style="width:100px;height:28px;background:#1c1c1e;border-radius:0 0 18px 18px;position:relative;left:50%;transform:translateX(-50%);z-index:1;margin-bottom:-14px"></div>
+          <div style="border-radius:34px;overflow:hidden;background:#faf9f6;min-height:560px">
+            <div style="background:#111;padding:2.5rem 1.5rem 2rem;text-align:center">
+              <div style="font-size:.55rem;letter-spacing:.3em;color:rgba(255,255,255,.3);margin-bottom:.8rem">✦ ✦ ✦</div>
+              <div id="ed-host" style="font-family:'Playfair Display',serif;font-size:1.6rem;font-style:italic;color:#fff;line-height:1.2">Ihre Namen</div>
+              <div id="ed-date" style="font-size:.6rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:.6rem">Datum</div>
+            </div>
+            <div style="height:130px;background:linear-gradient(135deg,#2a2520,#1a1510);display:flex;align-items:center;justify-content:center">
+              <div style="color:rgba(255,255,255,.12);font-size:.65rem;letter-spacing:.2em">FOTO HOCHLADEN</div>
+            </div>
+            <div style="padding:1.5rem">
+              <div style="font-family:'Playfair Display',serif;font-size:1rem;font-style:italic;color:#888;margin-bottom:.8rem">Agenda</div>
+              <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#555;padding:.4rem 0;border-bottom:1px solid #eee"><span>17:30</span><span>Ankunft der Gäste</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#555;padding:.4rem 0;border-bottom:1px solid #eee"><span>18:00</span><span>Zeremonie</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:.72rem;color:#555;padding:.4rem 0"><span>21:00</span><span>Feier & Tanz</span></div>
+              <div style="margin:1rem 0;padding:.8rem;background:#f5f5f5;font-size:.72rem;font-style:italic;color:#888;min-height:36px" id="ed-msg">Ihre persönliche Nachricht…</div>
+              <div style="font-family:'Playfair Display',serif;font-size:.95rem;font-style:italic;color:#888;margin:.6rem 0 .3rem">Venue</div>
+              <div id="ed-venue" style="font-size:.72rem;color:#555">Ihre Location</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-top:1.2rem">
+                <div style="background:#111;color:#fff;font-size:.65rem;text-align:center;padding:.6rem;letter-spacing:.1em">JA, ICH KOMME</div>
+                <div style="background:#f5f5f5;color:#555;font-size:.65rem;text-align:center;padding:.6rem;letter-spacing:.1em">MAPS</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:1.2rem;font-size:.68rem;color:#555">So sehen Ihre Gäste die Einladung</div>
+      </div>
+    </div>
+  </div>
+</div>
