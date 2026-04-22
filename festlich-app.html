@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Festlich — App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<!-- Supabase JS -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<!-- QRCode -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --ivory:#F9F6F0;--cream:#F2ECE0;--sand:#E8DCC8;--champagne:#D4BC96;
+  --taupe:#B89E7E;--blush:#E2C4B8;--rose:#C8907E;--charcoal:#2A2520;
+  --char-soft:#46403A;--gold:#B5924C;--gold-lt:#D4AF70;--w:#FDFCF9;
+  --red:#EF4444;--green:#22C55E;--yellow:#EAB308;--blue:#3B82F6;
+  --sidebar:240px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Jost',sans-serif;background:var(--w);color:var(--charcoal)}
+.serif{font-family:'Playfair Display',serif}
+.hidden{display:none!important}
+
+/* ── TOASTS ── */
+#toasts{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:10px}
+.toast{background:white;border-radius:10px;padding:14px 18px;box-shadow:0 8px 28px rgba(0,0,0,.12);
+  font-size:14px;display:flex;align-items:center;gap:10px;min-width:240px;
+  animation:slideIn .3s ease;border-left:3px solid var(--green)}
+.toast.error{border-left-color:var(--red)}
+.toast.info{border-left-color:var(--blue)}
+@keyframes slideIn{from{opacity:0;transform:translateX(20px)}to{opacity:1;transform:translateX(0)}}
+
+/* ── AUTH PAGES ── */
+.auth-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:var(--ivory);padding:24px;
+  background-image:radial-gradient(ellipse 70% 60% at 75% 35%,rgba(212,188,150,.18),transparent),
+    radial-gradient(ellipse 50% 70% at 15% 85%,rgba(226,196,184,.14),transparent)}
+.auth-card{background:white;border-radius:24px;padding:48px 42px;width:100%;max-width:420px;
+  box-shadow:0 28px 72px rgba(42,37,32,.1)}
+.auth-logo{font-family:'Playfair Display',serif;font-size:26px;font-weight:500;color:var(--charcoal);
+  text-align:center;margin-bottom:6px}
+.auth-logo span{color:var(--gold)}
+.auth-sub{text-align:center;font-size:13.5px;color:var(--char-soft);font-weight:300;margin-bottom:32px}
+.auth-title{font-family:'Playfair Display',serif;font-size:24px;font-weight:400;color:var(--charcoal);margin-bottom:6px}
+.auth-hint{font-size:13.5px;color:var(--char-soft);font-weight:300;margin-bottom:26px}
+.f-label{display:block;font-size:12px;font-weight:500;letter-spacing:.04em;color:var(--charcoal);margin-bottom:6px}
+.f-input{width:100%;padding:12px 14px;border:1.5px solid rgba(42,37,32,.12);border-radius:10px;
+  font-family:'Jost',sans-serif;font-size:14px;color:var(--charcoal);background:white;outline:none;
+  transition:border-color .2s;margin-bottom:14px}
+.f-input:focus{border-color:var(--gold)}
+.f-error{color:var(--red);font-size:12px;margin-top:-10px;margin-bottom:10px}
+.auth-forgot{display:block;text-align:right;font-size:12.5px;color:var(--taupe);margin-top:-8px;margin-bottom:14px;cursor:pointer}
+.auth-forgot:hover{color:var(--gold)}
+.btn-primary{width:100%;background:var(--charcoal);color:var(--ivory);border:none;border-radius:50px;
+  padding:13px;font-family:'Jost',sans-serif;font-size:14px;cursor:pointer;transition:all .2s;
+  letter-spacing:.04em;margin-bottom:14px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary:hover{background:var(--char-soft);transform:translateY(-1px);box-shadow:0 6px 20px rgba(42,37,32,.2)}
+.btn-primary:disabled{opacity:.55;cursor:not-allowed;transform:none}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-lt));border:none;color:white;
+  border-radius:50px;padding:13px 24px;font-family:'Jost',sans-serif;font-size:14px;cursor:pointer;
+  transition:all .2s;box-shadow:0 4px 18px rgba(181,146,76,.3)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 26px rgba(181,146,76,.45)}
+.btn-outline{background:transparent;border:1.5px solid rgba(42,37,32,.18);color:var(--charcoal);
+  border-radius:50px;padding:11px 22px;font-family:'Jost',sans-serif;font-size:13.5px;cursor:pointer;
+  transition:all .2s}
+.btn-outline:hover{border-color:var(--charcoal);background:rgba(42,37,32,.04)}
+.btn-sm{padding:7px 16px;font-size:12.5px;border-radius:8px}
+.btn-danger{background:#FEF2F2;border:1.5px solid #FCA5A5;color:var(--red);border-radius:8px;
+  padding:7px 16px;font-size:12.5px;cursor:pointer;transition:all .2s;font-family:'Jost',sans-serif}
+.btn-danger:hover{background:#FEE2E2}
+.auth-switch{text-align:center;font-size:13.5px;color:var(--char-soft);font-weight:300}
+.auth-switch a{color:var(--gold);text-decoration:none;cursor:pointer}
+.auth-divider{display:flex;align-items:center;gap:12px;margin:14px 0;color:var(--taupe);font-size:12px}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:rgba(42,37,32,.1)}
+.alert{padding:12px 14px;border-radius:10px;font-size:13.5px;margin-bottom:14px}
+.alert-error{background:#FEF2F2;color:#B91C1C;border:1px solid #FCA5A5}
+.alert-success{background:#F0FDF4;color:#166534;border:1px solid #86EFAC}
+.alert-info{background:#EFF6FF;color:#1D4ED8;border:1px solid #93C5FD}
+
+/* ── DASHBOARD LAYOUT ── */
+.app-shell{display:flex;height:100vh;overflow:hidden}
+.sidebar{width:var(--sidebar);background:var(--charcoal);display:flex;flex-direction:column;
+  flex-shrink:0;overflow-y:auto}
+.sidebar-logo{padding:24px 20px 20px;border-bottom:1px solid rgba(249,246,240,.08)}
+.sidebar-logo-text{font-family:'Playfair Display',serif;font-size:22px;color:var(--ivory);font-weight:500}
+.sidebar-logo-text span{color:var(--gold)}
+.sidebar-inv-select{padding:14px 16px;border-bottom:1px solid rgba(249,246,240,.08)}
+.inv-select{width:100%;background:rgba(249,246,240,.08);border:1px solid rgba(249,246,240,.12);
+  border-radius:8px;padding:8px 10px;color:var(--ivory);font-family:'Jost',sans-serif;font-size:13px;
+  outline:none;cursor:pointer}
+.inv-select option{background:var(--charcoal);color:var(--ivory)}
+.sidebar-nav{padding:16px 12px;flex:1}
+.nav-section{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(249,246,240,.25);
+  padding:0 8px;margin-bottom:8px;margin-top:16px}
+.nav-item{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:9px;
+  font-size:13.5px;color:rgba(249,246,240,.6);cursor:pointer;transition:all .2s;margin-bottom:2px;
+  text-decoration:none}
+.nav-item:hover,.nav-item.active{background:rgba(249,246,240,.09);color:var(--ivory)}
+.nav-item.active{color:var(--champagne)}
+.nav-icon{font-size:15px;width:20px;text-align:center}
+.sidebar-bottom{padding:16px;border-top:1px solid rgba(249,246,240,.08)}
+.sidebar-user{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.user-av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--blush),var(--sand));
+  display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;
+  font-size:15px;color:var(--char-soft);flex-shrink:0}
+.user-name{font-size:13px;color:var(--ivory);font-weight:400}
+.user-plan{font-size:11px;color:rgba(249,246,240,.4);text-transform:uppercase;letter-spacing:.08em}
+.btn-logout{width:100%;background:rgba(249,246,240,.06);border:1px solid rgba(249,246,240,.1);
+  color:rgba(249,246,240,.55);border-radius:8px;padding:8px;font-family:'Jost',sans-serif;font-size:12.5px;
+  cursor:pointer;transition:all .2s}
+.btn-logout:hover{background:rgba(249,246,240,.12);color:var(--ivory)}
+
+/* ── MAIN CONTENT ── */
+.main-content{flex:1;overflow-y:auto;background:var(--ivory)}
+.main-header{background:white;border-bottom:1px solid rgba(42,37,32,.07);padding:18px 28px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.main-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;color:var(--charcoal)}
+.main-sub{font-size:13px;color:var(--char-soft);font-weight:300;margin-top:2px}
+.content-body{padding:28px}
+
+/* ── STAT CARDS ── */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{background:white;border-radius:16px;padding:20px;border:1px solid rgba(42,37,32,.06);
+  transition:all .25s}
+.stat-card:hover{box-shadow:0 8px 24px rgba(42,37,32,.07)}
+.stat-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:18px;margin-bottom:12px}
+.stat-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:400;color:var(--charcoal);line-height:1}
+.stat-label{font-size:12px;color:var(--taupe);text-transform:uppercase;letter-spacing:.1em;margin-top:4px}
+.stat-trend{font-size:12px;color:var(--green);margin-top:6px}
+
+/* ── TABLES ── */
+.table-card{background:white;border-radius:16px;overflow:hidden;border:1px solid rgba(42,37,32,.06)}
+.table-header{padding:18px 22px;border-bottom:1px solid rgba(42,37,32,.06);
+  display:flex;align-items:center;justify-content:space-between}
+.table-title{font-size:15px;font-weight:500;color:var(--charcoal)}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{padding:11px 18px;text-align:left;font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--taupe);background:rgba(42,37,32,.02);font-weight:500;border-bottom:1px solid rgba(42,37,32,.06)}
+td{padding:13px 18px;font-size:13.5px;color:var(--char-soft);border-bottom:1px solid rgba(42,37,32,.04)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(42,37,32,.015)}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;
+  font-size:11.5px;font-weight:500}
+.pill-green{background:#F0FDF4;color:#16A34A}
+.pill-red{background:#FEF2F2;color:#DC2626}
+.pill-yellow{background:#FEFCE8;color:#CA8A04}
+.pill-gray{background:#F9FAFB;color:#6B7280}
+.empty-state{padding:48px;text-align:center}
+.empty-icon{font-size:40px;margin-bottom:14px}
+.empty-title{font-size:16px;font-weight:500;color:var(--charcoal);margin-bottom:6px}
+.empty-desc{font-size:14px;color:var(--taupe);font-weight:300;margin-bottom:20px}
+
+/* ── FORMS / CARDS ── */
+.section-card{background:white;border-radius:16px;padding:24px;border:1px solid rgba(42,37,32,.06);margin-bottom:20px}
+.card-title{font-size:15px;font-weight:500;color:var(--charcoal);margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{margin-bottom:16px}
+.f-label{display:block;font-size:12px;font-weight:500;letter-spacing:.04em;color:var(--charcoal);margin-bottom:6px}
+.f-input,.f-textarea,.f-select{width:100%;padding:11px 14px;border:1.5px solid rgba(42,37,32,.11);
+  border-radius:10px;font-family:'Jost',sans-serif;font-size:14px;color:var(--charcoal);
+  background:white;outline:none;transition:border-color .2s}
+.f-input:focus,.f-textarea:focus,.f-select:focus{border-color:var(--gold)}
+.f-textarea{resize:vertical;min-height:90px}
+.f-select{cursor:pointer}
+.save-bar{background:white;border-top:1px solid rgba(42,37,32,.07);padding:16px 28px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;bottom:0}
+.save-hint{font-size:13px;color:var(--char-soft);font-weight:300}
+.save-actions{display:flex;gap:10px}
+
+/* ── MODAL ── */
+.modal-backdrop{position:fixed;inset:0;background:rgba(42,37,32,.45);z-index:500;
+  display:flex;align-items:center;justify-content:center;padding:24px}
+.modal{background:white;border-radius:20px;padding:32px;width:100%;max-width:480px;
+  box-shadow:0 32px 80px rgba(42,37,32,.2);max-height:90vh;overflow-y:auto}
+.modal-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;
+  color:var(--charcoal);margin-bottom:6px}
+.modal-sub{font-size:13.5px;color:var(--char-soft);font-weight:300;margin-bottom:22px}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:22px}
+
+/* ── FONT SELECTOR ── */
+.font-panel{background:white;border-radius:16px;border:1px solid rgba(42,37,32,.06);overflow:hidden}
+.font-tabs{display:flex;border-bottom:1px solid rgba(42,37,32,.07)}
+.font-tab{flex:1;padding:12px;font-size:13px;font-weight:400;color:var(--taupe);cursor:pointer;
+  text-align:center;border-bottom:2px solid transparent;transition:all .2s}
+.font-tab.active{color:var(--gold);border-bottom-color:var(--gold);background:rgba(181,146,76,.04)}
+.font-body-panel{padding:20px}
+.font-presets{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+.preset-card{border:1.5px solid rgba(42,37,32,.1);border-radius:12px;padding:14px;cursor:pointer;
+  transition:all .2s}
+.preset-card:hover{border-color:var(--gold);background:rgba(181,146,76,.04)}
+.preset-card.selected{border-color:var(--gold);background:rgba(181,146,76,.08)}
+.preset-name{font-size:13px;font-weight:500;color:var(--charcoal);margin-bottom:4px}
+.preset-preview{font-size:18px;color:var(--char-soft);margin-bottom:4px}
+.preset-desc{font-size:11px;color:var(--taupe)}
+.font-category{margin-bottom:20px}
+.font-cat-title{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--taupe);
+  margin-bottom:10px;font-weight:500}
+.font-list{display:flex;flex-direction:column;gap:6px}
+.font-item{border:1.5px solid rgba(42,37,32,.08);border-radius:10px;padding:12px 14px;
+  cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:space-between}
+.font-item:hover{border-color:var(--gold);background:rgba(181,146,76,.04)}
+.font-item.selected{border-color:var(--gold);background:rgba(181,146,76,.08)}
+.font-preview-text{font-size:20px;color:var(--charcoal)}
+.font-meta{text-align:right}
+.font-name{font-size:12px;font-weight:500;color:var(--char-soft)}
+.font-mood{font-size:11px;color:var(--taupe)}
+.live-preview-box{background:linear-gradient(145deg,var(--cream),var(--blush));border-radius:14px;
+  padding:28px;text-align:center;margin-bottom:20px}
+.preview-names{font-size:36px;color:var(--charcoal);line-height:1.2;margin-bottom:8px}
+.preview-date{font-size:14px;color:var(--char-soft);letter-spacing:.1em;text-transform:uppercase}
+
+/* ── GALLERY ── */
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.gallery-item{border-radius:10px;overflow:hidden;aspect-ratio:1;position:relative;background:var(--cream)}
+.gallery-img{width:100%;height:100%;object-fit:cover}
+.gallery-del{position:absolute;top:6px;right:6px;background:rgba(239,68,68,.85);color:white;
+  border:none;border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;opacity:0;transition:opacity .2s}
+.gallery-item:hover .gallery-del{opacity:1}
+.upload-zone{border:2px dashed rgba(42,37,32,.18);border-radius:12px;padding:36px;
+  text-align:center;cursor:pointer;transition:all .2s;background:rgba(42,37,32,.01)}
+.upload-zone:hover{border-color:var(--gold);background:rgba(181,146,76,.04)}
+.upload-icon{font-size:28px;margin-bottom:10px}
+.upload-text{font-size:14px;color:var(--char-soft);margin-bottom:6px}
+.upload-hint{font-size:12px;color:var(--taupe)}
+.upload-input{display:none}
+
+/* ── QR PANEL ── */
+.qr-wrap{display:flex;flex-direction:column;align-items:center;padding:32px}
+#qrcode canvas,#qrcode img{border-radius:12px!important}
+.qr-url{font-size:13px;color:var(--char-soft);margin:14px 0 20px;word-break:break-all;text-align:center}
+
+/* ── TOGGLE ── */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+.toggle-label{font-size:14px;color:var(--charcoal)}
+.toggle-desc{font-size:12px;color:var(--taupe);font-weight:300}
+.toggle{position:relative;width:44px;height:24px;cursor:pointer}
+.toggle input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;background:#D1D5DB;border-radius:12px;transition:background .2s}
+.toggle input:checked+.toggle-track{background:var(--gold)}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:18px;height:18px;background:white;
+  border-radius:50%;transition:transform .2s;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.toggle input:checked~.toggle-thumb{transform:translateX(20px)}
+
+/* ── LOADING ── */
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);
+  border-top-color:white;border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.page-loading{display:flex;align-items:center;justify-content:center;height:100%;
+  flex-direction:column;gap:14px}
+.loading-logo{font-family:'Playfair Display',serif;font-size:28px;color:var(--charcoal)}
+.loading-logo span{color:var(--gold)}
+
+/* ── INVITATION LINK SECTION ── */
+.inv-link-box{background:var(--ivory);border-radius:12px;padding:16px 18px;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.inv-link-url{font-size:13.5px;color:var(--char-soft);word-break:break-all;flex:1}
+
+/* ── MOBILE ── */
+@media(max-width:768px){
+  .sidebar{width:60px}
+  .sidebar-logo-text,.nav-item span,.sidebar-inv-select,.sidebar-user,.btn-logout,.sidebar-bottom .user-name{display:none}
+  .nav-icon{width:auto}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .form-row{grid-template-columns:1fr}
+  .gallery-grid{grid-template-columns:1fr 1fr}
+  .font-presets{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="toasts"></div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- PAGE: LOADING -->
+<!-- ═══════════════════════════════════ -->
+<div id="pg-loading">
+  <div class="page-loading">
+    <div class="loading-logo">Festlich<span>.</span></div>
+    <div class="spinner" style="border-color:rgba(42,37,32,.2);border-top-color:var(--charcoal)"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- PAGE: LOGIN -->
+<!-- ═══════════════════════════════════ -->
+<div id="pg-login" class="hidden">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">Festlich<span>.</span></div>
+      <div class="auth-sub">Digitale Einladungen, die berühren</div>
+      <div id="login-alert"></div>
+      <div class="auth-title">Willkommen zurück</div>
+      <div class="auth-hint">Melde dich in deinem Festlich-Konto an.</div>
+      <label class="f-label">E-Mail-Adresse</label>
+      <input id="login-email" class="f-input" type="email" placeholder="deine@email.de">
+      <label class="f-label">Passwort</label>
+      <input id="login-password" class="f-input" type="password" placeholder="••••••••">
+      <a class="auth-forgot" onclick="showPage('forgot')">Passwort vergessen?</a>
+      <button class="btn-primary" id="login-btn" onclick="handleLogin()">Anmelden</button>
+      <p class="auth-switch">Noch kein Konto? <a onclick="showPage('register')">Jetzt registrieren</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- PAGE: REGISTER -->
+<!-- ═══════════════════════════════════ -->
+<div id="pg-register" class="hidden">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">Festlich<span>.</span></div>
+      <div class="auth-sub">Kostenlos starten</div>
+      <div id="register-alert"></div>
+      <div class="auth-title">Konto erstellen</div>
+      <div class="auth-hint">Starte kostenlos — keine Kreditkarte nötig.</div>
+      <label class="f-label">Vollständiger Name</label>
+      <input id="reg-name" class="f-input" type="text" placeholder="Max Mustermann">
+      <label class="f-label">E-Mail-Adresse</label>
+      <input id="reg-email" class="f-input" type="email" placeholder="deine@email.de">
+      <label class="f-label">Passwort (min. 8 Zeichen)</label>
+      <input id="reg-password" class="f-input" type="password" placeholder="Starkes Passwort wählen">
+      <button class="btn-primary" id="register-btn" onclick="handleRegister()">Kostenlos registrieren →</button>
+      <p class="auth-switch">Bereits registriert? <a onclick="showPage('login')">Anmelden</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- PAGE: FORGOT PASSWORD -->
+<!-- ═══════════════════════════════════ -->
+<div id="pg-forgot" class="hidden">
+  <div class="auth-wrap">
+    <div class="auth-card">
+      <div class="auth-logo">Festlich<span>.</span></div>
+      <div class="auth-sub">Passwort zurücksetzen</div>
+      <div id="forgot-alert"></div>
+      <div class="auth-title">Passwort vergessen?</div>
+      <div class="auth-hint">Gib deine E-Mail-Adresse ein. Wir senden dir einen Reset-Link.</div>
+      <label class="f-label">E-Mail-Adresse</label>
+      <input id="forgot-email" class="f-input" type="email" placeholder="deine@email.de">
+      <button class="btn-primary" id="forgot-btn" onclick="handleForgotPassword()">Reset-Link senden</button>
+      <p class="auth-switch"><a onclick="showPage('login')">← Zurück zur Anmeldung</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ -->
+<!-- PAGE: DASHBOARD (App Shell) -->
+<!-- ═══════════════════════════════════ -->
+<div id="pg-dashboard" class="hidden">
+  <div class="app-shell">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-text">Festlich<span>.</span></div>
+      </div>
+      <div class="sidebar-inv-select">
+        <select class="inv-select" id="inv-select" onchange="switchInvitation(this.value)">
+          <option value="">Einladung wählen…</option>
+        </select>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Dashboard</div>
+        <a class="nav-item active" data-tab="overview" onclick="switchTab('overview')"><span class="nav-icon">📊</span><span>Übersicht</span></a>
+        <a class="nav-item" data-tab="guests" onclick="switchTab('guests')"><span class="nav-icon">👥</span><span>Gästeliste</span></a>
+        <a class="nav-item" data-tab="rsvps" onclick="switchTab('rsvps')"><span class="nav-icon">💌</span><span>RSVPs</span></a>
+        <div class="nav-section">Einladung</div>
+        <a class="nav-item" data-tab="editor" onclick="switchTab('editor')"><span class="nav-icon">✏️</span><span>Einladung</span></a>
+        <a class="nav-item" data-tab="gallery" onclick="switchTab('gallery')"><span class="nav-icon">🖼️</span><span>Galerie</span></a>
+        <a class="nav-item" data-tab="fonts" onclick="switchTab('fonts')"><span class="nav-icon">🔤</span><span>Design</span></a>
+        <a class="nav-item" data-tab="qr" onclick="switchTab('qr')"><span class="nav-icon">📱</span><span>QR-Code</span></a>
+        <a class="nav-item" data-tab="analytics" onclick="switchTab('analytics')"><span class="nav-icon">📈</span><span>Statistik</span></a>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="sidebar-user">
+          <div class="user-av" id="user-av">U</div>
+          <div>
+            <div class="user-name" id="user-name">Nutzer</div>
+            <div class="user-plan">Kostenlos</div>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="handleLogout()">Abmelden</button>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content" id="main-content">
+      <!-- Loading state -->
+      <div id="tab-loading" class="page-loading">
+        <div class="spinner" style="border-color:rgba(42,37,32,.2);border-top-color:var(--charcoal)"></div>
+      </div>
+
+      <!-- ── OVERVIEW TAB ── -->
+      <div id="tab-overview" class="hidden">
+        <div class="main-header">
+          <div>
+            <div class="main-title">Übersicht</div>
+            <div class="main-sub" id="inv-title-header">Wähle eine Einladung</div>
+          </div>
+          <button class="btn-gold" onclick="createNewInvitation()" style="padding:10px 20px;font-size:13.5px">+ Neue Einladung</button>
+        </div>
+        <div class="content-body">
+          <!-- No invitation state -->
+          <div id="no-inv-state" class="table-card hidden">
+            <div class="empty-state">
+              <div class="empty-icon">💌</div>
+              <div class="empty-title">Noch keine Einladung</div>
+              <div class="empty-desc">Erstelle deine erste digitale Einladung — kostenlos und in Minuten.</div>
+              <button class="btn-gold" onclick="createNewInvitation()">Erste Einladung erstellen →</button>
+            </div>
+          </div>
+          <!-- Stats -->
+          <div id="stats-area">
+            <div class="stats-row">
+              <div class="stat-card">
+                <div class="stat-icon" style="background:#EFF6FF">👁️</div>
+                <div class="stat-num" id="stat-views">–</div>
+                <div class="stat-label">Aufrufe</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon" style="background:#F0FDF4">✓</div>
+                <div class="stat-num" id="stat-attending">–</div>
+                <div class="stat-label">Zusagen</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon" style="background:#FEF2F2">✗</div>
+                <div class="stat-num" id="stat-declined">–</div>
+                <div class="stat-label">Absagen</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-icon" style="background:#FEFCE8">?</div>
+                <div class="stat-num" id="stat-pending">–</div>
+                <div class="stat-label">Offen</div>
+              </div>
+            </div>
+            <!-- Recent RSVPs -->
+            <div class="table-card">
+              <div class="table-header">
+                <div class="table-title">Aktuelle RSVPs</div>
+                <button class="btn-outline btn-sm" onclick="switchTab('rsvps')">Alle ansehen</button>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead><tr>
+                    <th>Gast</th><th>Status</th><th>Personen</th><th>Menü</th>
+                  </tr></thead>
+                  <tbody id="overview-rsvp-table"><tr><td colspan="4" class="empty-state" style="padding:24px;text-align:center">Keine RSVPs vorhanden</td></tr></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── GUESTS TAB ── -->
+      <div id="tab-guests" class="hidden">
+        <div class="main-header">
+          <div><div class="main-title">Gästeliste</div><div class="main-sub">Gäste hinzufügen und verwalten</div></div>
+          <button class="btn-gold" onclick="openAddGuestModal()" style="padding:10px 20px;font-size:13.5px">+ Gast hinzufügen</button>
+        </div>
+        <div class="content-body">
+          <div class="table-card">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Name</th><th>E-Mail</th><th>Tisch</th><th>VIP</th><th>Aktionen</th></tr></thead>
+                <tbody id="guests-table"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── RSVPS TAB ── -->
+      <div id="tab-rsvps" class="hidden">
+        <div class="main-header">
+          <div><div class="main-title">RSVPs</div><div class="main-sub">Alle Rückmeldungen deiner Gäste</div></div>
+          <button class="btn-outline" onclick="exportGuestList()" style="padding:9px 18px;font-size:13px">📥 CSV exportieren</button>
+        </div>
+        <div class="content-body">
+          <div class="table-card">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Gast</th><th>Status</th><th>Personen</th><th>Menü</th><th>Nachricht</th><th>Datum</th></tr></thead>
+                <tbody id="rsvps-table"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── EDITOR TAB ── -->
+      <div id="tab-editor" class="hidden">
+        <div class="main-header">
+          <div><div class="main-title">Einladung bearbeiten</div><div class="main-sub">Alle Details deiner Einladung</div></div>
+          <div style="display:flex;gap:10px;align-items:center">
+            <div class="toggle-row" style="padding:0;gap:8px">
+              <label class="toggle" title="Veröffentlicht">
+                <input type="checkbox" id="toggle-published" onchange="handlePublishToggle(this.checked)">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+              <span id="publish-label" style="font-size:13px;color:var(--char-soft)">Entwurf</span>
+            </div>
+            <button class="btn-gold" id="save-btn" onclick="saveEditorForm()" style="padding:10px 22px;font-size:13.5px">Speichern</button>
+          </div>
+        </div>
+        <div class="content-body" style="padding-bottom:0">
+          <!-- Invitation link -->
+          <div class="section-card">
+            <div class="card-title">🔗 Einladungslink</div>
+            <div class="inv-link-box">
+              <div class="inv-link-url" id="inv-link-display">–</div>
+              <button class="btn-outline btn-sm" onclick="copyInvLink()">Kopieren</button>
+              <a id="inv-link-open" href="#" target="_blank" class="btn-outline btn-sm" style="text-decoration:none">Öffnen →</a>
+            </div>
+          </div>
+
+          <!-- Basic info -->
+          <div class="section-card">
+            <div class="card-title">💍 Grundinformationen</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="f-label">Titel der Einladung</label>
+                <input id="ed-title" class="f-input" type="text" placeholder="z.B. Lena & Florian – Unsere Hochzeit">
+              </div>
+              <div class="form-group">
+                <label class="f-label">Art der Veranstaltung</label>
+                <select id="ed-type" class="f-select">
+                  <option value="wedding">Hochzeit</option>
+                  <option value="engagement">Verlobung</option>
+                  <option value="birthday">Geburtstag</option>
+                  <option value="reception">Empfang</option>
+                  <option value="celebration">Feier</option>
+                  <option value="other">Sonstiges</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="f-label">Name 1 (z.B. Braut)</label>
+                <input id="ed-name1" class="f-input" type="text" placeholder="Lena">
+              </div>
+              <div class="form-group">
+                <label class="f-label">Name 2 (z.B. Bräutigam)</label>
+                <input id="ed-name2" class="f-input" type="text" placeholder="Florian">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="f-label">Tagline / Untertitel</label>
+              <input id="ed-tagline" class="f-input" type="text" placeholder="z.B. Wir heiraten!">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="f-label">Datum</label>
+                <input id="ed-date" class="f-input" type="date">
+              </div>
+              <div class="form-group">
+                <label class="f-label">Uhrzeit Zeremonie</label>
+                <input id="ed-time" class="f-input" type="time">
+              </div>
+            </div>
+          </div>
+
+          <!-- Welcome note -->
+          <div class="section-card">
+            <div class="card-title">💌 Willkommenstext</div>
+            <div class="form-group">
+              <label class="f-label">Persönliche Nachricht (Deutsch)</label>
+              <textarea id="ed-welcome" class="f-textarea" placeholder="Mit großer Freude laden wir euch ein…"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="f-label">Personal message (English) — optional</label>
+              <textarea id="ed-welcome-en" class="f-textarea" placeholder="With great joy, we invite you…"></textarea>
+            </div>
+          </div>
+
+          <!-- Venue -->
+          <div class="section-card">
+            <div class="card-title">📍 Veranstaltungsort</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="f-label">Name des Veranstaltungsorts</label>
+                <input id="ed-venue" class="f-input" type="text" placeholder="Schloss Elmau">
+              </div>
+              <div class="form-group">
+                <label class="f-label">Stadt</label>
+                <input id="ed-city" class="f-input" type="text" placeholder="Krün, Bayern">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="f-label">Vollständige Adresse</label>
+              <input id="ed-address" class="f-input" type="text" placeholder="Elmau 2, 82493 Krün">
+            </div>
+            <div class="form-group">
+              <label class="f-label">Google Maps Link (optional)</label>
+              <input id="ed-mapurl" class="f-input" type="url" placeholder="https://maps.google.com/...">
+            </div>
+          </div>
+
+          <!-- RSVP Settings -->
+          <div class="section-card">
+            <div class="card-title">📋 RSVP-Einstellungen</div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">RSVP aktivieren</div>
+                <div class="toggle-desc">Gäste können Zu- oder Absagen</div>
+              </div>
+              <label class="toggle"><input type="checkbox" id="ed-rsvp-enabled" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="toggle-row">
+              <div>
+                <div class="toggle-label">Menüwahl erfassen</div>
+                <div class="toggle-desc">Fleisch, Vegetarisch, Vegan, etc.</div>
+              </div>
+              <label class="toggle"><input type="checkbox" id="ed-meal-pref" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div class="form-row" style="margin-top:12px">
+              <div class="form-group">
+                <label class="f-label">RSVP-Frist</label>
+                <input id="ed-rsvp-deadline" class="f-input" type="date">
+              </div>
+              <div class="form-group">
+                <label class="f-label">Max. Personen pro RSVP</label>
+                <select id="ed-max-guests" class="f-select">
+                  <option value="1">1</option><option value="2">2</option>
+                  <option value="3">3</option><option value="4" selected>4</option>
+                  <option value="5">5</option><option value="8">8</option><option value="10">10</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Extras -->
+          <div class="section-card">
+            <div class="card-title">✨ Weitere Details</div>
+            <div class="form-group">
+              <label class="f-label">Dresscode</label>
+              <input id="ed-dresscode" class="f-input" type="text" placeholder="Festlich elegant">
+            </div>
+            <div class="form-group">
+              <label class="f-label">Besondere Hinweise</label>
+              <textarea id="ed-notes" class="f-textarea" placeholder="Bitte keine roten oder weißen Kleidungsstücke…"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="f-label">Geschenke / Registrierungshinweis</label>
+              <textarea id="ed-registry" class="f-textarea" placeholder="Eure Anwesenheit ist das schönste Geschenk…"></textarea>
+            </div>
+          </div>
+
+          <div style="height:28px"></div>
+        </div>
+      </div>
+
+      <!-- ── GALLERY TAB ── -->
+      <div id="tab-gallery" class="hidden">
+        <div class="main-header">
+          <div><div class="main-title">Fotogalerie</div><div class="main-sub">Bilder für deine Einladung hochladen</div></div>
+        </div>
+        <div class="content-body">
+          <div class="section-card">
+            <div class="card-title">📤 Bild hochladen</div>
+            <div class="upload-zone" onclick="document.getElementById('gallery-upload').click()">
+              <div class="upload-icon">📷</div>
+              <div class="upload-text">Bilder hier ablegen oder klicken</div>
+              <div class="upload-hint">JPG, PNG, WebP bis 10 MB</div>
+              <input type="file" id="gallery-upload" class="upload-input" accept="image/*" multiple onchange="handleGalleryUpload(this)">
+            </div>
+            <div id="upload-progress" class="hidden" style="margin-top:14px">
+              <div style="background:var(--cream);border-radius:8px;height:6px;overflow:hidden">
+                <div id="upload-bar" style="width:0%;height:100%;background:var(--gold);transition:width .3s"></div>
+              </div>
+              <div style="font-size:12px;color:var(--taupe);margin-top:6px" id="upload-status">Wird hochgeladen…</div>
+            </div>
+          </div>
+          <div class="section-card">
+            <div class="card-title">🖼️ Hochgeladene Bilder</div>
+            <div class="gallery-grid" id="gallery-grid">
+              <div class="empty-state" style="grid-column:span 3;text-align:center;padding:32px">
+                <div class="empty-icon">🖼️</div>
+                <div class="empty-title">Noch keine Bilder</div>
+                <div class="empty-desc">Lade deine ersten Fotos hoch</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── FONTS / DESIGN TAB ── -->
+      <div id="tab-fonts" class="hidden">
+        <div class="main-header">
+          <div><div class="main-title">Design & Schriften</div><div class="main-sub">Wähle Schriften für deine Einladung</div></div>
+          <button class="btn-gold" id="save-fonts-btn" onclick="saveFonts()" style="padding:10px 22px;font-size:13.5px">Schriften speichern</button>
+        </div>
+        <div class="content-body">
+          <!-- Live preview -->
+          <div class="section-card">
+            <div class="card-title">👁️ Live-Vorschau</div>
+            <div class="live-preview-box">
+              <div class="preview-names" id="preview-names" style="font-family:'Great Vibes',cursive">Lena & Florian</div>
+              <div class="preview-date" id="preview-date" style="font-family:'Lato',sans-serif">21. JUNI 2025 · HOCHZEIT</div>
+              <div id="preview-body" style="font-family:'Lato',sans-serif;font-size:14px;color:var(--char-soft);margin-top:10px">
+                Mit großer Freude laden wir euch ein, unseren besonderen Tag mit uns zu feiern.
+              </div>
+            </div>
+          </div>
+
+          <!-- Font selector -->
+          <div class="section-card">
+            <div class="card-title">🔤 Schriftart auswählen</div>
+            <div class="font-panel">
+              <div class="font-tabs">
+                <div class="font-tab active" onclick="switchFontTab('presets')">Kombinationen</div>
+                <div class="font-tab" onclick="switchFontTab('heading')">Überschrift</div>
+                <div class="font-tab" onclick="switchFontTab('body')">Fließtext</div>
+              </div>
+              <!-- Presets panel -->
+              <div id="font-tab-presets" class="font-body-panel">
+                <div style="font-size:13px;color:var(--char-soft);margin-bottom:14px">Wähle eine vorgefertigte Schriftkombination:</div>
+                <div class="font-presets" id="preset-grid"></div>
+              </div>
+              <!-- Heading panel -->
+              <div id="font-tab-heading" class="font-body-panel hidden">
+                <div style="font-size:13px;color:var(--char-soft);margin-bottom:14px">Schrift für Namen und Überschriften:</div>
+                <div id="heading-font-list"></div>
+              </div>
+              <!-- Body panel -->
+              <div id="font-tab-body" class="font-body-panel hidden">
+                <div style="font-size:13px;color:var(--char-soft);margin-bottom:14px">Schrift für Fließtext und Details:</div>
+                <div id="body-font-list"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Color theme -->
+          <div class="section-card">
+            <div class="card-title">🎨 Farbschema</div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="f-label">Akzentfarbe</label>
+                <div style="display:flex;gap:10px;align-items:center">
+                  <input type="color" id="ed-color-primary" value="#B5924C"
+                    onchange="updateColorPreview()" style="width:48px;height:38px;border:none;border-radius:8px;cursor:pointer;padding:2px">
+                  <input class="f-input" id="ed-color-primary-hex" type="text" value="#B5924C" style="margin:0;flex:1"
+                    oninput="syncColorFromHex('primary',this.value)">
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="f-label">Hintergrundfarbe</label>
+                <div style="display:flex;gap:10px;align-items:center">
+                  <input type="color" id="ed-color-bg" value="#F9F6F0"
+                    onchange="updateColorPreview()" style="width:48px;height:38px;border:none;border-radius:8px;cursor:pointer;padding:2px">
+                  <input class="f-input" id="ed-color-bg-hex" type="text" value="#F9F6F0" style="margin:0;flex:1"
+                    oninput="syncColorFromHex('bg',this.value)">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── QR TAB ── -->
+      <div id="tab-qr" class="hidden">
+        <div class="main-header">
+          <div><div class="main-title">QR-Code</div><div class="main-sub">Teile deine Einladung mit einem QR-Code</div></div>
+        </div>
+        <div class="content-body">
+          <div class="section-card" style="max-width:420px;margin:0 auto">
+            <div class="card-title" style="justify-content:center">📱 QR-Code für deine Einladung</div>
+            <div class="qr-wrap">
+              <div id="qrcode"></div>
+              <div class="qr-url" id="qr-url-display">–</div>
+              <button class="btn-gold" onclick="downloadQR()" style="padding:12px 28px">QR-Code herunterladen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ANALYTICS TAB ── -->
+      <div id="tab-analytics" class="hidden">
+        <div class="main-header">
+          <div><div class="main-title">Statistik</div><div class="main-sub">Wie deine Einladung ankommt</div></div>
+        </div>
+        <div class="content-body">
+          <div class="stats-row">
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#EFF6FF">👁️</div>
+              <div class="stat-num" id="a-views">–</div>
+              <div class="stat-label">Gesamte Aufrufe</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#F0FDF4">✓</div>
+              <div class="stat-num" id="a-attending">–</div>
+              <div class="stat-label">Zusagen</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#FEF2F2">✗</div>
+              <div class="stat-num" id="a-declined">–</div>
+              <div class="stat-label">Absagen</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#FDF4FF">👫</div>
+              <div class="stat-num" id="a-total-guests">–</div>
+              <div class="stat-label">Gäste gesamt</div>
+            </div>
+          </div>
+          <div class="section-card">
+            <div class="card-title">📊 RSVP-Übersicht</div>
+            <div id="analytics-bar" style="height:16px;border-radius:8px;overflow:hidden;background:var(--cream);margin:16px 0;display:flex">
+              <div id="bar-attending" style="background:var(--green);height:100%;transition:width .5s"></div>
+              <div id="bar-declined" style="background:var(--red);height:100%;transition:width .5s"></div>
+              <div id="bar-pending" style="background:var(--yellow);height:100%;transition:width .5s"></div>
+            </div>
+            <div style="display:flex;gap:20px;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:50%;background:var(--green)"></div><span style="font-size:13px;color:var(--char-soft)">Zusagen</span></div>
+              <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:50%;background:var(--red)"></div><span style="font-size:13px;color:var(--char-soft)">Absagen</span></div>
+              <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:50%;background:var(--yellow)"></div><span style="font-size:13px;color:var(--char-soft)">Ausstehend</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ MODALS ═══════════════════ -->
+
+<!-- Add Guest Modal -->
+<div id="modal-guest" class="modal-backdrop hidden">
+  <div class="modal">
+    <div class="modal-title" id="guest-modal-title">Gast hinzufügen</div>
+    <div class="modal-sub">Füge einen Gast zur Einladung hinzu.</div>
+    <div id="guest-modal-alert"></div>
+    <input type="hidden" id="guest-edit-id">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="f-label">Name *</label>
+        <input id="g-name" class="f-input" type="text" placeholder="Max Mustermann">
+      </div>
+      <div class="form-group">
+        <label class="f-label">E-Mail</label>
+        <input id="g-email" class="f-input" type="email" placeholder="max@email.de">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="f-label">Telefon</label>
+        <input id="g-phone" class="f-input" type="tel" placeholder="+49 151 …">
+      </div>
+      <div class="form-group">
+        <label class="f-label">Tischnummer</label>
+        <input id="g-table" class="f-input" type="text" placeholder="Tisch 3">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="f-label">Notizen</label>
+      <textarea id="g-notes" class="f-textarea" placeholder="Interne Notizen zum Gast…" style="min-height:70px"></textarea>
+    </div>
+    <div class="form-group" style="display:flex;align-items:center;gap:10px">
+      <label class="toggle"><input type="checkbox" id="g-vip"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      <span class="f-label" style="margin:0">VIP-Gast</span>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('modal-guest')">Abbrechen</button>
+      <button class="btn-gold" id="guest-save-btn" onclick="saveGuest()" style="padding:11px 24px">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div id="modal-confirm" class="modal-backdrop hidden">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-title">Löschen bestätigen</div>
+    <div class="modal-sub" id="confirm-message">Bist du sicher?</div>
+    <div class="modal-actions">
+      <button class="btn-outline" onclick="closeModal('modal-confirm')">Abbrechen</button>
+      <button class="btn-danger" onclick="confirmDeleteAction()" style="padding:9px 22px;border-radius:50px">Löschen</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════
+// SUPABASE INIT — reads from env vars at runtime
+// In Next.js this would be process.env.NEXT_PUBLIC_SUPABASE_URL
+// For this demo, we embed them (they are public anon keys — safe)
+// ══════════════════════════════════════════════════════════
+const SUPA_URL  = 'https://odtvcglpxojsysxtmbtq.supabase.co'
+const SUPA_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kdHZjZ2xweG9qc3l4c3RtYnRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMTg2MTAsImV4cCI6MjA5MDc5NDYxMH0.HjODTfOS4OAM2z4T3naX2xHzwikgD-r_H1v-wtgd7GM'
+const APP_URL   = window.location.origin
+
+const { createClient } = supabase
+const sb = createClient(SUPA_URL, SUPA_KEY)
+
+// ── STATE ──
+let currentUser    = null
+let currentInvId   = null
+let allInvitations = []
+let pendingDelete  = null  // { type, id }
+let currentFontHeading = 'Great Vibes'
+let currentFontBody    = 'Lato'
+let currentFontPreset  = 'elegant_wedding'
+
+// ── FONT DATA ──
+const FONTS = [
+  // Elegant Script
+  {name:'Great Vibes',     family:"'Great Vibes',cursive",    g:'Great+Vibes',     cat:'elegant_script', preview:'Lena & Florian'},
+  {name:'Allura',          family:"'Allura',cursive",          g:'Allura',          cat:'elegant_script', preview:'Lena & Florian'},
+  {name:'Sacramento',      family:"'Sacramento',cursive",      g:'Sacramento',      cat:'elegant_script', preview:'Lena & Florian'},
+  {name:'Parisienne',      family:"'Parisienne',cursive",      g:'Parisienne',      cat:'elegant_script', preview:'Lena & Florian'},
+  {name:'Alex Brush',      family:"'Alex Brush',cursive",      g:'Alex+Brush',      cat:'elegant_script', preview:'Lena & Florian'},
+  {name:'Pinyon Script',   family:"'Pinyon Script',cursive",   g:'Pinyon+Script',   cat:'elegant_script', preview:'Lena & Florian'},
+  {name:'Tangerine',       family:"'Tangerine',cursive",       g:'Tangerine',       cat:'elegant_script', preview:'Lena & Florian'},
+  {name:'Italianno',       family:"'Italianno',cursive",       g:'Italianno',       cat:'elegant_script', preview:'Lena & Florian'},
+  {name:'Euphoria Script', family:"'Euphoria Script',cursive", g:'Euphoria+Script', cat:'elegant_script', preview:'Lena & Florian'},
+  {name:'Yellowtail',      family:"'Yellowtail',cursive",      g:'Yellowtail',      cat:'elegant_script', preview:'Lena & Florian'},
+  // Modern Script
+  {name:'Dancing Script',  family:"'Dancing Script',cursive",  g:'Dancing+Script',  cat:'modern_script',  preview:'Lena & Florian'},
+  {name:'Satisfy',         family:"'Satisfy',cursive",         g:'Satisfy',         cat:'modern_script',  preview:'Lena & Florian'},
+  {name:'Courgette',       family:"'Courgette',cursive",       g:'Courgette',       cat:'modern_script',  preview:'Lena & Florian'},
+  {name:'Clicker Script',  family:"'Clicker Script',cursive",  g:'Clicker+Script',  cat:'modern_script',  preview:'Lena & Florian'},
+  {name:'Marck Script',    family:"'Marck Script',cursive",    g:'Marck+Script',    cat:'modern_script',  preview:'Lena & Florian'},
+  {name:'Rouge Script',    family:"'Rouge Script',cursive",    g:'Rouge+Script',    cat:'modern_script',  preview:'Lena & Florian'},
+  // Classic Serif
+  {name:'Playfair Display',family:"'Playfair Display',serif",  g:'Playfair+Display',cat:'classic_serif',  preview:'Lena & Florian'},
+  {name:'Cormorant Garamond',family:"'Cormorant Garamond',serif",g:'Cormorant+Garamond',cat:'classic_serif',preview:'Lena & Florian'},
+  {name:'Cinzel',          family:"'Cinzel',serif",            g:'Cinzel',          cat:'classic_serif',  preview:'LENA & FLORIAN'},
+  {name:'Lora',            family:"'Lora',serif",              g:'Lora',            cat:'classic_serif',  preview:'Lena & Florian'},
+  {name:'Libre Baskerville',family:"'Libre Baskerville',serif",g:'Libre+Baskerville',cat:'classic_serif', preview:'Lena & Florian'},
+  {name:'EB Garamond',     family:"'EB Garamond',serif",       g:'EB+Garamond',     cat:'classic_serif',  preview:'Lena & Florian'},
+  {name:'Crimson Text',    family:"'Crimson Text',serif",      g:'Crimson+Text',    cat:'classic_serif',  preview:'Lena & Florian'},
+  {name:'GFS Didot',       family:"'GFS Didot',serif",         g:'GFS+Didot',       cat:'classic_serif',  preview:'Lena & Florian'},
+  // Minimal Sans
+  {name:'Josefin Sans',    family:"'Josefin Sans',sans-serif", g:'Josefin+Sans',    cat:'minimal_sans',   preview:'LENA & FLORIAN'},
+  {name:'Raleway',         family:"'Raleway',sans-serif",      g:'Raleway',         cat:'minimal_sans',   preview:'Lena & Florian'},
+  {name:'Jost',            family:"'Jost',sans-serif",         g:'Jost',            cat:'minimal_sans',   preview:'Lena & Florian'},
+  {name:'Montserrat',      family:"'Montserrat',sans-serif",   g:'Montserrat',      cat:'minimal_sans',   preview:'Lena & Florian'},
+  {name:'Lato',            family:"'Lato',sans-serif",         g:'Lato',            cat:'minimal_sans',   preview:'Lena & Florian'},
+  {name:'Nunito',          family:"'Nunito',sans-serif",       g:'Nunito',          cat:'minimal_sans',   preview:'Lena & Florian'},
+  {name:'Source Sans 3',   family:"'Source Sans 3',sans-serif",g:'Source+Sans+3',   cat:'minimal_sans',   preview:'Lena & Florian'},
+]
+
+const FONT_PRESETS = [
+  {id:'elegant_wedding', name:'Elegante Hochzeit', heading:'Great Vibes',          body:'Lora',            desc:'Romantisch & zeitlos'},
+  {id:'modern_minimal',  name:'Modern Minimal',    heading:'Josefin Sans',         body:'Raleway',         desc:'Klar & zeitgemäß'},
+  {id:'luxury_classic',  name:'Luxus Klassik',     heading:'Cormorant Garamond',   body:'EB Garamond',     desc:'Historisch & edel'},
+  {id:'romantic_script', name:'Romantik',          heading:'Sacramento',           body:'Lato',            desc:'Verträumt & persönlich'},
+  {id:'editorial',       name:'Editorial',         heading:'Playfair Display',     body:'Jost',            desc:'Modern & markant'},
+  {id:'parisian',        name:'Parisien',          heading:'Parisienne',           body:'Raleway',         desc:'Französisch & charmant'},
+  {id:'roman_classic',   name:'Römische Klassik',  heading:'Cinzel',               body:'Crimson Text',    desc:'Majestätisch & förmlich'},
+  {id:'dancing_modern',  name:'Handschrift',       heading:'Dancing Script',       body:'Montserrat',      desc:'Verspielt & lesbar'},
+]
+
+const CAT_LABELS = {
+  elegant_script:'Elegante Schrift', modern_script:'Moderne Schrift',
+  classic_serif:'Klassische Serife', minimal_sans:'Minimale Sans-Serif'
+}
+
+// ══════════════════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════════════════
+function showPage(page) {
+  ['loading','login','register','forgot','dashboard'].forEach(p=>{
+    document.getElementById('pg-'+p).classList.toggle('hidden', p!==page)
+  })
+}
+
+function showToast(msg, type='success') {
+  const t = document.createElement('div')
+  t.className = `toast ${type}`
+  t.innerHTML = `<span>${type==='success'?'✓':type==='error'?'✗':'ℹ'}</span>${msg}`
+  document.getElementById('toasts').appendChild(t)
+  setTimeout(()=>t.remove(), 4000)
+}
+
+function showAlert(id, msg, type='error') {
+  const el = document.getElementById(id)
+  if(!el) return
+  el.className = `alert alert-${type}`
+  el.textContent = msg
+  el.classList.remove('hidden')
+}
+
+function clearAlert(id) {
+  const el = document.getElementById(id)
+  if(el){ el.textContent=''; el.className='' }
+}
+
+function setLoading(btnId, loading) {
+  const btn = document.getElementById(btnId)
+  if(!btn) return
+  btn.disabled = loading
+  if(loading) { btn.dataset.orig = btn.innerHTML; btn.innerHTML = '<span class="spinner"></span>' }
+  else btn.innerHTML = btn.dataset.orig || btn.innerHTML
+}
+
+function closeModal(id) { document.getElementById(id).classList.add('hidden') }
+
+function getInvUrl(slug) { return `${APP_URL}/e/${slug}` }
+
+// ══════════════════════════════════════════════════════════
+// AUTH HANDLERS
+// ══════════════════════════════════════════════════════════
+async function handleLogin() {
+  clearAlert('login-alert')
+  const email = document.getElementById('login-email').value.trim()
+  const password = document.getElementById('login-password').value
+  if(!email || !password) { showAlert('login-alert','Bitte alle Felder ausfüllen'); return }
+  setLoading('login-btn', true)
+  const { error } = await sb.auth.signInWithPassword({ email, password })
+  setLoading('login-btn', false)
+  if(error) { showAlert('login-alert', error.message==='Invalid login credentials' ? 'E-Mail oder Passwort falsch.' : error.message); return }
+  await initDashboard()
+}
+
+async function handleRegister() {
+  clearAlert('register-alert')
+  const name     = document.getElementById('reg-name').value.trim()
+  const email    = document.getElementById('reg-email').value.trim()
+  const password = document.getElementById('reg-password').value
+  if(!name||!email||!password) { showAlert('register-alert','Bitte alle Felder ausfüllen'); return }
+  if(password.length < 8) { showAlert('register-alert','Passwort muss min. 8 Zeichen haben'); return }
+  setLoading('register-btn', true)
+  const { error } = await sb.auth.signUp({ email, password, options:{ data:{ full_name:name } } })
+  setLoading('register-btn', false)
+  if(error) { showAlert('register-alert', error.message); return }
+  showAlert('register-alert','Bitte bestätige deine E-Mail, dann kannst du dich anmelden.','success')
+}
+
+async function handleForgotPassword() {
+  clearAlert('forgot-alert')
+  const email = document.getElementById('forgot-email').value.trim()
+  if(!email) { showAlert('forgot-alert','Bitte E-Mail eingeben'); return }
+  setLoading('forgot-btn', true)
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: `${APP_URL}/reset-password` })
+  setLoading('forgot-btn', false)
+  if(error) { showAlert('forgot-alert', error.message); return }
+  showAlert('forgot-alert','Reset-Link gesendet! Bitte prüfe dein E-Mail-Postfach.','success')
+}
+
+async function handleLogout() {
+  await sb.auth.signOut()
+  currentUser = null; currentInvId = null; allInvitations = []
+  showPage('login')
+}
+
+// ══════════════════════════════════════════════════════════
+// INIT DASHBOARD
+// ══════════════════════════════════════════════════════════
+async function initDashboard() {
+  showPage('dashboard')
+  showTab('loading')
+
+  const { data:{ user } } = await sb.auth.getUser()
+  currentUser = user
+  if(!user) { showPage('login'); return }
+
+  // Show user info
+  const name = user.user_metadata?.full_name || user.email?.split('@')[0] || 'Nutzer'
+  document.getElementById('user-name').textContent = name
+  document.getElementById('user-av').textContent = name[0].toUpperCase()
+
+  // Load all user invitations
+  await loadInvitations()
+  buildFontUI()
+  showTab('overview')
+}
+
+async function loadInvitations() {
+  const { data, error } = await sb
+    .from('invitations')
+    .select('*')
+    .eq('owner_id', currentUser.id)
+    .order('created_at', { ascending: false })
+
+  if(error) { showToast('Fehler beim Laden: '+error.message, 'error'); return }
+  allInvitations = data || []
+
+  // Populate select
+  const sel = document.getElementById('inv-select')
+  sel.innerHTML = ''
+  if(allInvitations.length === 0) {
+    sel.innerHTML = '<option value="">Keine Einladungen</option>'
+    showNoInvState()
+  } else {
+    allInvitations.forEach(inv=>{
+      const opt = document.createElement('option')
+      opt.value = inv.id
+      opt.textContent = inv.title || 'Einladung'
+      sel.appendChild(opt)
+    })
+    if(!currentInvId) currentInvId = allInvitations[0].id
+    sel.value = currentInvId
+    await loadInvitationData()
+  }
+}
+
+function showNoInvState() {
+  document.getElementById('no-inv-state').classList.remove('hidden')
+  document.getElementById('stats-area').classList.add('hidden')
+}
+
+async function switchInvitation(id) {
+  if(!id) return
+  currentInvId = id
+  await loadInvitationData()
+}
+
+async function loadInvitationData() {
+  if(!currentInvId) return
+  const inv = allInvitations.find(i=>i.id===currentInvId)
+  if(!inv) return
+
+  document.getElementById('inv-title-header').textContent = inv.title
+  document.getElementById('no-inv-state').classList.add('hidden')
+  document.getElementById('stats-area').classList.remove('hidden')
+
+  // Fonts
+  currentFontHeading = inv.font_heading || 'Great Vibes'
+  currentFontBody    = inv.font_body    || 'Lato'
+  currentFontPreset  = inv.font_preset  || 'elegant_wedding'
+  loadGoogleFont(currentFontHeading)
+  loadGoogleFont(currentFontBody)
+  updateFontPreview()
+
+  // Stats
+  await loadStats()
+  await loadRSVPs()
+  await loadGuests()
+  await loadGallery()
+  populateEditor(inv)
+  updateInvLink(inv.slug)
+  generateQR(inv.slug)
+}
+
+// ══════════════════════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════════════════════
+async function loadStats() {
+  if(!currentInvId) return
+  const [rsvpRes, invRes] = await Promise.all([
+    sb.from('rsvps').select('attending,guest_count').eq('invitation_id', currentInvId),
+    sb.from('invitations').select('view_count').eq('id', currentInvId).single()
+  ])
+
+  const rsvps = rsvpRes.data || []
+  const attending = rsvps.filter(r=>r.attending===true).length
+  const declined  = rsvps.filter(r=>r.attending===false).length
+
+  // Pending = guests without rsvp
+  const { data: guests } = await sb.from('guests').select('id').eq('invitation_id', currentInvId)
+  const guestIds = (guests||[]).map(g=>g.id)
+  const { data: rsvpGuests } = await sb.from('rsvps').select('guest_id').eq('invitation_id', currentInvId)
+  const rsvpGuestIds = new Set((rsvpGuests||[]).map(r=>r.guest_id).filter(Boolean))
+  const pending = guestIds.filter(id=>!rsvpGuestIds.has(id)).length
+
+  const views = invRes.data?.view_count || 0
+
+  // Update all stat locations
+  for(const prefix of ['stat','a']) {
+    const v = document.getElementById(`${prefix}-views`)
+    const a = document.getElementById(`${prefix}-attending`)
+    const d = document.getElementById(`${prefix}-declined`)
+    const p = document.getElementById(`${prefix}-pending`)
+    if(v) v.textContent = views
+    if(a) a.textContent = attending
+    if(d) d.textContent = declined
+    if(p) p.textContent = pending
+  }
+
+  // Total guests in analytics
+  const totalG = rsvps.filter(r=>r.attending).reduce((s,r)=>s+(r.guest_count||1),0)
+  const ag = document.getElementById('a-total-guests')
+  if(ag) ag.textContent = totalG
+
+  // Analytics bar
+  const total = attending + declined + pending
+  if(total > 0) {
+    document.getElementById('bar-attending').style.width = `${attending/total*100}%`
+    document.getElementById('bar-declined').style.width  = `${declined/total*100}%`
+    document.getElementById('bar-pending').style.width   = `${pending/total*100}%`
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+// RSVPS
+// ══════════════════════════════════════════════════════════
+async function loadRSVPs() {
+  if(!currentInvId) return
+  const { data } = await sb.from('rsvps').select('*').eq('invitation_id', currentInvId).order('submitted_at', {ascending:false})
+  const rsvps = data || []
+
+  const mealMap = {meat:'Fleisch',fish:'Fisch',vegetarian:'Vegetarisch',vegan:'Vegan',dietary:'Spezial',none:'–'}
+  const rows = rsvps.map(r=>`
+    <tr>
+      <td>${esc(r.guest_name)}</td>
+      <td>${r.attending
+        ? '<span class="pill pill-green">✓ Zusage</span>'
+        : '<span class="pill pill-red">✗ Absage</span>'}</td>
+      <td>${r.guest_count}</td>
+      <td>${mealMap[r.meal_preference]||'–'}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.message||'–')}</td>
+      <td style="font-size:12px;color:var(--taupe)">${new Date(r.submitted_at).toLocaleDateString('de-DE')}</td>
+    </tr>`).join('')
+
+  const tableHTML = rows || '<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--taupe)">Noch keine RSVPs</td></tr>'
+  document.getElementById('rsvps-table').innerHTML = tableHTML
+  document.getElementById('overview-rsvp-table').innerHTML = rows.slice(0,5) || '<tr><td colspan="4" style="padding:24px;text-align:center;color:var(--taupe)">Noch keine RSVPs</td></tr>'
+}
+
+// ══════════════════════════════════════════════════════════
+// GUESTS
+// ══════════════════════════════════════════════════════════
+async function loadGuests() {
+  if(!currentInvId) return
+  const { data } = await sb.from('guests').select('*').eq('invitation_id', currentInvId).order('created_at')
+  const guests = data || []
+
+  if(guests.length === 0) {
+    document.getElementById('guests-table').innerHTML =
+      '<tr><td colspan="5"><div class="empty-state"><div class="empty-icon">👥</div><div class="empty-title">Noch keine Gäste</div><div class="empty-desc">Füge Gäste zur Liste hinzu.</div></div></td></tr>'
+    return
+  }
+
+  document.getElementById('guests-table').innerHTML = guests.map(g=>`
+    <tr>
+      <td>
+        <div style="font-weight:500">${esc(g.name)} ${g.is_vip?'<span style="color:var(--gold);font-size:11px">★ VIP</span>':''}</div>
+        ${g.notes?`<div style="font-size:12px;color:var(--taupe)">${esc(g.notes)}</div>`:''}
+      </td>
+      <td style="font-size:13px">${esc(g.email||'–')}</td>
+      <td>${esc(g.table_number||'–')}</td>
+      <td>${g.is_vip?'<span class="pill pill-green">VIP</span>':'–'}</td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn-outline btn-sm" onclick="openEditGuestModal('${g.id}')">Bearbeiten</button>
+          <button class="btn-danger" onclick="confirmDelete('guest','${g.id}')">Löschen</button>
+        </div>
+      </td>
+    </tr>`).join('')
+}
+
+function openAddGuestModal() {
+  if(!currentInvId) { showToast('Bitte zuerst eine Einladung wählen oder erstellen','info'); return }
+  document.getElementById('guest-modal-title').textContent = 'Gast hinzufügen'
+  document.getElementById('guest-edit-id').value = ''
+  ;['g-name','g-email','g-phone','g-table','g-notes'].forEach(id=>document.getElementById(id).value='')
+  document.getElementById('g-vip').checked = false
+  clearAlert('guest-modal-alert')
+  document.getElementById('modal-guest').classList.remove('hidden')
+}
+
+async function openEditGuestModal(guestId) {
+  const { data } = await sb.from('guests').select('*').eq('id', guestId).single()
+  if(!data) return
+  document.getElementById('guest-modal-title').textContent = 'Gast bearbeiten'
+  document.getElementById('guest-edit-id').value = data.id
+  document.getElementById('g-name').value     = data.name || ''
+  document.getElementById('g-email').value    = data.email || ''
+  document.getElementById('g-phone').value    = data.phone || ''
+  document.getElementById('g-table').value    = data.table_number || ''
+  document.getElementById('g-notes').value    = data.notes || ''
+  document.getElementById('g-vip').checked    = data.is_vip || false
+  clearAlert('guest-modal-alert')
+  document.getElementById('modal-guest').classList.remove('hidden')
+}
+
+async function saveGuest() {
+  clearAlert('guest-modal-alert')
+  const name = document.getElementById('g-name').value.trim()
+  if(!name) { showAlert('guest-modal-alert','Name ist erforderlich'); return }
+
+  const guestData = {
+    name,
+    email:        document.getElementById('g-email').value.trim(),
+    phone:        document.getElementById('g-phone').value.trim(),
+    table_number: document.getElementById('g-table').value.trim(),
+    notes:        document.getElementById('g-notes').value.trim(),
+    is_vip:       document.getElementById('g-vip').checked,
+  }
+
+  const editId = document.getElementById('guest-edit-id').value
+  setLoading('guest-save-btn', true)
+
+  let error
+  if(editId) {
+    const res = await sb.from('guests').update(guestData).eq('id', editId)
+    error = res.error
+  } else {
+    const res = await sb.from('guests').insert({ ...guestData, invitation_id: currentInvId })
+    error = res.error
+  }
+
+  setLoading('guest-save-btn', false)
+  if(error) { showAlert('guest-modal-alert', error.message); return }
+  showToast(editId ? 'Gast aktualisiert' : 'Gast hinzugefügt')
+  closeModal('modal-guest')
+  await loadGuests()
+  await loadStats()
+}
+
+// ══════════════════════════════════════════════════════════
+// EDITOR
+// ══════════════════════════════════════════════════════════
+function populateEditor(inv) {
+  const set = (id, val) => { const el=document.getElementById(id); if(el) el.value = val||'' }
+  set('ed-title',        inv.title)
+  set('ed-type',         inv.event_type)
+  set('ed-name1',        inv.host_name_1)
+  set('ed-name2',        inv.host_name_2)
+  set('ed-tagline',      inv.tagline)
+  set('ed-welcome',      inv.welcome_note)
+  set('ed-welcome-en',   inv.welcome_note_en)
+  set('ed-date',         inv.event_date||'')
+  set('ed-time',         inv.ceremony_time||'')
+  set('ed-venue',        inv.venue_name)
+  set('ed-city',         inv.venue_city)
+  set('ed-address',      inv.venue_address)
+  set('ed-mapurl',       inv.venue_map_url)
+  set('ed-dresscode',    inv.dress_code)
+  set('ed-notes',        inv.special_notes)
+  set('ed-registry',     inv.registry_message)
+  set('ed-rsvp-deadline',inv.rsvp_deadline||'')
+  set('ed-max-guests',   inv.max_guests_per_rsvp||4)
+  const rsvpEn = document.getElementById('ed-rsvp-enabled')
+  const mealEn = document.getElementById('ed-meal-pref')
+  if(rsvpEn) rsvpEn.checked = inv.rsvp_enabled !== false
+  if(mealEn) mealEn.checked = inv.collect_meal_pref !== false
+
+  const pubToggle = document.getElementById('toggle-published')
+  if(pubToggle) pubToggle.checked = inv.is_published || false
+  document.getElementById('publish-label').textContent = inv.is_published ? 'Veröffentlicht' : 'Entwurf'
+
+  // Colors
+  const cp = document.getElementById('ed-color-primary')
+  const cb = document.getElementById('ed-color-bg')
+  const cph = document.getElementById('ed-color-primary-hex')
+  const cbh = document.getElementById('ed-color-bg-hex')
+  if(cp) { cp.value = inv.theme_primary_color||'#B5924C'; if(cph) cph.value = inv.theme_primary_color||'#B5924C' }
+  if(cb) { cb.value = inv.theme_bg_color||'#F9F6F0'; if(cbh) cbh.value = inv.theme_bg_color||'#F9F6F0' }
+}
+
+async function saveEditorForm() {
+  if(!currentInvId) { showToast('Keine Einladung ausgewählt','error'); return }
+  setLoading('save-btn', true)
+
+  const data = {
+    title:               document.getElementById('ed-title').value.trim(),
+    event_type:          document.getElementById('ed-type').value,
+    host_name_1:         document.getElementById('ed-name1').value.trim(),
+    host_name_2:         document.getElementById('ed-name2').value.trim(),
+    tagline:             document.getElementById('ed-tagline').value.trim(),
+    welcome_note:        document.getElementById('ed-welcome').value.trim(),
+    welcome_note_en:     document.getElementById('ed-welcome-en').value.trim(),
+    event_date:          document.getElementById('ed-date').value || null,
+    ceremony_time:       document.getElementById('ed-time').value || null,
+    venue_name:          document.getElementById('ed-venue').value.trim(),
+    venue_city:          document.getElementById('ed-city').value.trim(),
+    venue_address:       document.getElementById('ed-address').value.trim(),
+    venue_map_url:       document.getElementById('ed-mapurl').value.trim(),
+    dress_code:          document.getElementById('ed-dresscode').value.trim(),
+    special_notes:       document.getElementById('ed-notes').value.trim(),
+    registry_message:    document.getElementById('ed-registry').value.trim(),
+    rsvp_enabled:        document.getElementById('ed-rsvp-enabled').checked,
+    collect_meal_pref:   document.getElementById('ed-meal-pref').checked,
+    rsvp_deadline:       document.getElementById('ed-rsvp-deadline').value || null,
+    max_guests_per_rsvp: parseInt(document.getElementById('ed-max-guests').value)||4,
+    theme_primary_color: document.getElementById('ed-color-primary').value,
+    theme_bg_color:      document.getElementById('ed-color-bg').value,
+    updated_at:          new Date().toISOString(),
+  }
+
+  if(!data.title) { showToast('Titel darf nicht leer sein','error'); setLoading('save-btn',false); return }
+
+  const { error } = await sb.from('invitations').update(data).eq('id', currentInvId).eq('owner_id', currentUser.id)
+  setLoading('save-btn', false)
+
+  if(error) { showToast('Fehler: '+error.message, 'error'); return }
+  showToast('Einladung gespeichert ✓')
+
+  // Refresh local cache
+  const idx = allInvitations.findIndex(i=>i.id===currentInvId)
+  if(idx>-1) allInvitations[idx] = { ...allInvitations[idx], ...data }
+  document.getElementById('inv-title-header').textContent = data.title
+
+  // Update select option text
+  const opt = document.querySelector(`#inv-select option[value="${currentInvId}"]`)
+  if(opt) opt.textContent = data.title
+}
+
+async function handlePublishToggle(published) {
+  if(!currentInvId) return
+  const { error } = await sb.from('invitations').update({ is_published: published }).eq('id', currentInvId)
+  if(error) { showToast('Fehler: '+error.message,'error'); return }
+  document.getElementById('publish-label').textContent = published ? 'Veröffentlicht ✓' : 'Entwurf'
+  showToast(published ? 'Einladung veröffentlicht!' : 'Einladung als Entwurf gespeichert', published ? 'success' : 'info')
+}
+
+// ══════════════════════════════════════════════════════════
+// CREATE INVITATION
+// ══════════════════════════════════════════════════════════
+async function createNewInvitation() {
+  if(!currentUser) { showPage('login'); return }
+  setLoading('save-btn', true)
+
+  const { data, error } = await sb.from('invitations')
+    .insert({ owner_id: currentUser.id, title: 'Neue Einladung' })
+    .select().single()
+
+  setLoading('save-btn', false)
+  if(error) { showToast('Fehler: '+error.message,'error'); return }
+
+  allInvitations.unshift(data)
+  const sel = document.getElementById('inv-select')
+  const opt = document.createElement('option')
+  opt.value = data.id; opt.textContent = data.title
+  sel.insertBefore(opt, sel.firstChild)
+  sel.value = data.id
+  currentInvId = data.id
+  await loadInvitationData()
+  switchTab('editor')
+  showToast('Neue Einladung erstellt!')
+}
+
+// ══════════════════════════════════════════════════════════
+// INVITATION LINK
+// ══════════════════════════════════════════════════════════
+function updateInvLink(slug) {
+  const url = getInvUrl(slug)
+  document.getElementById('inv-link-display').textContent = url
+  const openLink = document.getElementById('inv-link-open')
+  if(openLink) openLink.href = url
+}
+
+function copyInvLink() {
+  const inv = allInvitations.find(i=>i.id===currentInvId)
+  if(!inv) return
+  navigator.clipboard.writeText(getInvUrl(inv.slug)).then(()=>showToast('Link kopiert!'))
+}
+
+// ══════════════════════════════════════════════════════════
+// QR CODE
+// ══════════════════════════════════════════════════════════
+let qrInstance = null
+function generateQR(slug) {
+  const url = getInvUrl(slug)
+  document.getElementById('qr-url-display').textContent = url
+  const el = document.getElementById('qrcode')
+  el.innerHTML = ''
+  if(typeof QRCode !== 'undefined') {
+    qrInstance = new QRCode(el, { text:url, width:200, height:200,
+      colorDark:'#2A2520', colorLight:'#FDFCF9', correctLevel:QRCode.CorrectLevel.M })
+  }
+}
+
+function downloadQR() {
+  const canvas = document.querySelector('#qrcode canvas')
+  if(!canvas) { showToast('QR nicht verfügbar','error'); return }
+  const a = document.createElement('a')
+  a.href = canvas.toDataURL('image/png')
+  a.download = 'festlich-qr.png'
+  a.click()
+  showToast('QR-Code heruntergeladen!')
+}
+
+// ══════════════════════════════════════════════════════════
+// GALLERY
+// ══════════════════════════════════════════════════════════
+async function loadGallery() {
+  if(!currentInvId) return
+  const { data } = await sb.from('gallery_items').select('*').eq('invitation_id', currentInvId).order('sort_order')
+  const items = data || []
+  const grid = document.getElementById('gallery-grid')
+
+  if(items.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:span 3;text-align:center;padding:32px">
+      <div class="empty-icon">🖼️</div><div class="empty-title">Noch keine Bilder</div>
+      <div class="empty-desc">Lade deine ersten Fotos hoch</div></div>`
+    return
+  }
+
+  grid.innerHTML = items.map(item=>`
+    <div class="gallery-item">
+      <img class="gallery-img" src="${item.url}" alt="${esc(item.caption||'')}">
+      <button class="gallery-del" onclick="deleteGalleryItem('${item.id}','${item.storage_path}')">Löschen</button>
+    </div>`).join('')
+}
+
+async function handleGalleryUpload(input) {
+  if(!currentInvId || !input.files.length) return
+  const files = Array.from(input.files)
+  const progress = document.getElementById('upload-progress')
+  const bar = document.getElementById('upload-bar')
+  const status = document.getElementById('upload-status')
+  progress.classList.remove('hidden')
+
+  for(let i=0; i<files.length; i++) {
+    const file = files[i]
+    const pct = Math.round((i/files.length)*100)
+    bar.style.width = pct+'%'
+    status.textContent = `Lade hoch: ${file.name} (${i+1}/${files.length})`
+
+    const path = `${currentUser.id}/${currentInvId}/${Date.now()}-${file.name}`
+    const { data:upload, error:upErr } = await sb.storage
+      .from('invitation-gallery')
+      .upload(path, file, { cacheControl:'3600', upsert:false })
+
+    if(upErr) { showToast('Upload-Fehler: '+upErr.message,'error'); continue }
+
+    const { data:{ publicUrl } } = sb.storage.from('invitation-gallery').getPublicUrl(path)
+
+    await sb.from('gallery_items').insert({
+      invitation_id: currentInvId,
+      storage_path: path,
+      url: publicUrl,
+      size_bytes: file.size,
+      sort_order: i,
+    })
+  }
+
+  bar.style.width = '100%'
+  status.textContent = 'Fertig!'
+  setTimeout(()=>progress.classList.add('hidden'), 1500)
+  input.value = ''
+  await loadGallery()
+  showToast(`${files.length} Bild(er) hochgeladen`)
+}
+
+async function deleteGalleryItem(id, path) {
+  const { error } = await sb.from('gallery_items').delete().eq('id', id)
+  if(error) { showToast('Fehler: '+error.message,'error'); return }
+  // Also remove from storage (best effort)
+  await sb.storage.from('invitation-gallery').remove([path])
+  await loadGallery()
+  showToast('Bild gelöscht')
+}
+
+// ══════════════════════════════════════════════════════════
+// FONT SYSTEM
+// ══════════════════════════════════════════════════════════
+const loadedFonts = new Set(['Great Vibes','Lato'])  // default fonts pre-loaded
+
+function loadGoogleFont(fontName) {
+  if(loadedFonts.has(fontName)) return
+  const f = FONTS.find(f=>f.name===fontName)
+  if(!f) return
+  const linkId = 'gf-'+f.g
+  if(document.getElementById(linkId)) { loadedFonts.add(fontName); return }
+  const link = document.createElement('link')
+  link.id = linkId; link.rel = 'stylesheet'
+  link.href = `https://fonts.googleapis.com/css2?family=${f.g}:wght@400;700&display=swap`
+  document.head.appendChild(link)
+  loadedFonts.add(fontName)
+}
+
+function buildFontUI() {
+  // Presets
+  const presetGrid = document.getElementById('preset-grid')
+  if(presetGrid) {
+    presetGrid.innerHTML = FONT_PRESETS.map(p=>`
+      <div class="preset-card ${p.id===currentFontPreset?'selected':''}" onclick="selectPreset('${p.id}')">
+        <div class="preset-name">${p.name}</div>
+        <div class="preset-preview" id="preset-prev-${p.id}" style="font-family:'Great Vibes',cursive">Lena & Florian</div>
+        <div class="preset-desc">${p.desc}</div>
+      </div>`).join('')
+    // Load and apply preview fonts
+    FONT_PRESETS.forEach(p=>{
+      loadGoogleFont(p.heading)
+      setTimeout(()=>{
+        const el = document.getElementById('preset-prev-'+p.id)
+        if(el) el.style.fontFamily = FONTS.find(f=>f.name===p.heading)?.family || p.heading
+      }, 600)
+    })
+  }
+
+  // Heading list
+  buildFontList('heading-font-list', 'heading')
+  buildFontList('body-font-list', 'body')
+}
+
+function buildFontList(containerId, type) {
+  const container = document.getElementById(containerId)
+  if(!container) return
+  const cats = ['elegant_script','modern_script','classic_serif','minimal_sans']
+  container.innerHTML = cats.map(cat=>{
+    const fonts = FONTS.filter(f=>f.cat===cat)
+    return `<div class="font-category">
+      <div class="font-cat-title">${CAT_LABELS[cat]}</div>
+      <div class="font-list">${fonts.map(f=>`
+        <div class="font-item ${(type==='heading'?currentFontHeading:currentFontBody)===f.name?'selected':''}"
+             id="fi-${type}-${f.name.replace(/\s+/g,'-')}"
+             onclick="selectFont('${f.name}','${type}')">
+          <div class="font-preview-text" style="font-family:${f.family}">${f.preview}</div>
+          <div class="font-meta">
+            <div class="font-name">${f.name}</div>
+            <div class="font-mood">${cat.replace('_',' ')}</div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`
+  }).join('')
+
+  // Load visible fonts (defer to not block)
+  setTimeout(()=>{
+    FONTS.forEach(f=>loadGoogleFont(f.name))
+  }, 500)
+}
+
+function selectPreset(presetId) {
+  const preset = FONT_PRESETS.find(p=>p.id===presetId)
+  if(!preset) return
+  currentFontPreset = presetId
+  selectFont(preset.heading, 'heading', false)
+  selectFont(preset.body, 'body', false)
+  // Update preset selection UI
+  document.querySelectorAll('.preset-card').forEach(c=>{
+    c.classList.toggle('selected', c.getAttribute('onclick')===`selectPreset('${presetId}')`)
+  })
+  updateFontPreview()
+}
+
+function selectFont(fontName, type, rebuildList=true) {
+  loadGoogleFont(fontName)
+  if(type==='heading') currentFontHeading = fontName
+  else currentFontBody = fontName
+
+  // Update selection in list
+  document.querySelectorAll(`.font-item`).forEach(el=>{
+    const id = `fi-${type}-${fontName.replace(/\s+/g,'-')}`
+    if(el.id.startsWith('fi-'+type)) el.classList.remove('selected')
+    if(el.id === id) el.classList.add('selected')
+  })
+
+  updateFontPreview()
+}
+
+function updateFontPreview() {
+  const hFont = FONTS.find(f=>f.name===currentFontHeading)
+  const bFont = FONTS.find(f=>f.name===currentFontBody)
+  const pNames = document.getElementById('preview-names')
+  const pDate  = document.getElementById('preview-date')
+  const pBody  = document.getElementById('preview-body')
+  const inv    = allInvitations.find(i=>i.id===currentInvId)
+  const n1 = inv?.host_name_1 || 'Lena'
+  const n2 = inv?.host_name_2 || 'Florian'
+  if(pNames) { pNames.textContent = `${n1} & ${n2}`; pNames.style.fontFamily = hFont?.family || currentFontHeading }
+  if(pDate)  { pDate.style.fontFamily = bFont?.family || currentFontBody }
+  if(pBody)  { pBody.style.fontFamily = bFont?.family || currentFontBody }
+}
+
+async function saveFonts() {
+  if(!currentInvId) { showToast('Keine Einladung ausgewählt','error'); return }
+  setLoading('save-fonts-btn', true)
+  const { error } = await sb.from('invitations').update({
+    font_heading: currentFontHeading,
+    font_body:    currentFontBody,
+    font_preset:  currentFontPreset,
+  }).eq('id', currentInvId)
+  setLoading('save-fonts-btn', false)
+  if(error) { showToast('Fehler: '+error.message,'error'); return }
+  showToast('Schriften gespeichert ✓')
+  const idx = allInvitations.findIndex(i=>i.id===currentInvId)
+  if(idx>-1) {
+    allInvitations[idx].font_heading = currentFontHeading
+    allInvitations[idx].font_body    = currentFontBody
+    allInvitations[idx].font_preset  = currentFontPreset
+  }
+}
+
+function switchFontTab(tab) {
+  ;['presets','heading','body'].forEach(t=>{
+    document.getElementById('font-tab-'+t).classList.toggle('hidden', t!==tab)
+  })
+  document.querySelectorAll('.font-tab').forEach((el,i)=>{
+    el.classList.toggle('active',['presets','heading','body'][i]===tab)
+  })
+}
+
+function syncColorFromHex(which, val) {
+  if(!/^#[0-9A-Fa-f]{6}$/.test(val)) return
+  const picker = document.getElementById(`ed-color-${which}`)
+  if(picker) picker.value = val
+}
+
+function updateColorPreview() {
+  const cp = document.getElementById('ed-color-primary')
+  const cb = document.getElementById('ed-color-bg')
+  const cph = document.getElementById('ed-color-primary-hex')
+  const cbh = document.getElementById('ed-color-bg-hex')
+  if(cp && cph) cph.value = cp.value
+  if(cb && cbh) cbh.value = cb.value
+}
+
+// ══════════════════════════════════════════════════════════
+// DELETE CONFIRMATION
+// ══════════════════════════════════════════════════════════
+function confirmDelete(type, id) {
+  pendingDelete = { type, id }
+  const msgs = { guest:'Diesen Gast wirklich löschen? Zugehörige RSVPs werden ebenfalls gelöscht.' }
+  document.getElementById('confirm-message').textContent = msgs[type] || 'Wirklich löschen?'
+  document.getElementById('modal-confirm').classList.remove('hidden')
+}
+
+async function confirmDeleteAction() {
+  if(!pendingDelete) return
+  const { type, id } = pendingDelete
+  closeModal('modal-confirm')
+
+  if(type === 'guest') {
+    // Delete RSVPs first
+    await sb.from('rsvps').delete().eq('guest_id', id)
+    const { error } = await sb.from('guests').delete().eq('id', id)
+    if(error) { showToast('Fehler: '+error.message,'error'); return }
+    showToast('Gast gelöscht')
+    await loadGuests()
+    await loadStats()
+  }
+  pendingDelete = null
+}
+
+// ══════════════════════════════════════════════════════════
+// EXPORT
+// ══════════════════════════════════════════════════════════
+async function exportGuestList() {
+  if(!currentInvId) return
+  const [guestRes, rsvpRes] = await Promise.all([
+    sb.from('guests').select('*').eq('invitation_id', currentInvId),
+    sb.from('rsvps').select('*').eq('invitation_id', currentInvId)
+  ])
+  const guests = guestRes.data || []
+  const rsvps  = rsvpRes.data  || []
+  const rsvpMap = {}
+  rsvps.forEach(r=>{ if(r.guest_id) rsvpMap[r.guest_id]=r })
+
+  const mealMap = {meat:'Fleisch',fish:'Fisch',vegetarian:'Vegetarisch',vegan:'Vegan',dietary:'Spezial',none:'–'}
+  const header = ['Name','E-Mail','Telefon','Tisch','VIP','Status','Personen','Menü','Nachricht']
+  const rows = guests.map(g=>{
+    const r = rsvpMap[g.id]
+    return [g.name,g.email,g.phone,g.table_number,g.is_vip?'Ja':'Nein',
+      r?(r.attending?'Zusage':'Absage'):'Ausstehend',r?.guest_count||'–',
+      mealMap[r?.meal_preference]||'–',r?.message||'']
+  })
+
+  const csv = [header,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n')
+  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'})
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = 'gaesteliste.csv'
+  a.click()
+  showToast('CSV exportiert!')
+}
+
+// ══════════════════════════════════════════════════════════
+// TAB SWITCHING
+// ══════════════════════════════════════════════════════════
+function showTab(tab) {
+  const tabs = ['loading','overview','guests','rsvps','editor','gallery','fonts','qr','analytics']
+  tabs.forEach(t=>{
+    const el = document.getElementById(`tab-${t}`)
+    if(el) el.classList.toggle('hidden', t!==tab)
+  })
+}
+
+function switchTab(tab) {
+  showTab(tab)
+  document.querySelectorAll('.nav-item').forEach(el=>{
+    el.classList.toggle('active', el.dataset.tab===tab)
+  })
+  // Refresh data on tab open
+  if(tab==='guests') loadGuests()
+  else if(tab==='rsvps') loadRSVPs()
+  else if(tab==='gallery') loadGallery()
+  else if(tab==='overview'||tab==='analytics') loadStats()
+  else if(tab==='qr'&&currentInvId) {
+    const inv = allInvitations.find(i=>i.id===currentInvId)
+    if(inv) generateQR(inv.slug)
+  }
+  else if(tab==='fonts') { buildFontUI(); updateFontPreview() }
+}
+
+// ══════════════════════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════════════════════
+function esc(str) {
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+}
+
+// Load default font css upfront
+function preloadDefaultFonts() {
+  const link = document.createElement('link')
+  link.rel = 'stylesheet'
+  link.href = 'https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lato:wght@300;400;700&display=swap'
+  document.head.appendChild(link)
+  loadedFonts.add('Great Vibes'); loadedFonts.add('Lato')
+}
+
+// ══════════════════════════════════════════════════════════
+// BOOT
+// ══════════════════════════════════════════════════════════
+preloadDefaultFonts()
+
+;(async()=>{
+  showPage('loading')
+  const { data:{ session } } = await sb.auth.getSession()
+  if(session) {
+    currentUser = session.user
+    await initDashboard()
+  } else {
+    // Check URL for action (e.g. came from CTA on landing page)
+    const params = new URLSearchParams(window.location.search)
+    if(params.get('action')==='register') showPage('register')
+    else showPage('login')
+  }
+
+  // Listen for auth changes
+  sb.auth.onAuthStateChange(async(event, session)=>{
+    if(event==='SIGNED_IN' && session) {
+      currentUser = session.user
+      await initDashboard()
+    } else if(event==='SIGNED_OUT') {
+      showPage('login')
+    }
+  })
+})()
+</script>
+</body>
+</html>
