@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Festlich — Digitale Einladungen, neu gedacht</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ivory:    #F9F6F0;
+  --cream:    #F2ECE0;
+  --sand:     #E8DCC8;
+  --champagne:#D4BC96;
+  --taupe:    #B89E7E;
+  --warm:     #8C7660;
+  --blush:    #E2C4B8;
+  --rose:     #C8907E;
+  --charcoal: #2A2520;
+  --char-soft:#46403A;
+  --gold:     #B5924C;
+  --gold-lt:  #D4AF70;
+  --w:        #FDFCF9;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Jost',sans-serif;background:var(--w);color:var(--charcoal);overflow-x:hidden;line-height:1.7;font-size:16px}
+.serif{font-family:'Playfair Display',serif}
+.container{max-width:1160px;margin:0 auto;padding:0 24px}
+
+/* ── LANG BADGE ── */
+.lang-bar{background:var(--charcoal);padding:8px 0;text-align:center}
+.lang-bar-inner{display:flex;align-items:center;justify-content:center;gap:20px;font-size:12px;color:rgba(249,246,240,.5);letter-spacing:.12em}
+.lang-btn{background:none;border:none;cursor:pointer;font-family:'Jost',sans-serif;font-size:12px;letter-spacing:.12em;text-transform:uppercase;padding:3px 10px;border-radius:4px;transition:all .2s}
+.lang-btn.active{background:rgba(181,146,76,.25);color:var(--gold-lt)}
+.lang-btn:not(.active){color:rgba(249,246,240,.45)}
+.lang-btn:not(.active):hover{color:rgba(249,246,240,.75)}
+
+/* ── NAV ── */
+nav{position:fixed;top:36px;left:0;right:0;z-index:100;transition:all .35s ease}
+nav.compact{top:0;background:rgba(253,252,249,.93);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 1px 0 rgba(42,37,32,.06)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;max-width:1160px;margin:0 auto}
+.logo{font-family:'Playfair Display',serif;font-size:24px;font-weight:500;letter-spacing:.05em;color:var(--charcoal);text-decoration:none}
+.logo span{color:var(--gold)}
+.nav-links{display:flex;gap:34px}
+.nav-links a{font-size:13.5px;color:var(--char-soft);text-decoration:none;letter-spacing:.02em;transition:color .2s}
+.nav-links a:hover{color:var(--charcoal)}
+.nav-actions{display:flex;gap:10px;align-items:center}
+.btn{display:inline-flex;align-items:center;gap:7px;border-radius:100px;font-family:'Jost',sans-serif;font-weight:400;letter-spacing:.03em;cursor:pointer;transition:all .22s ease;text-decoration:none;white-space:nowrap}
+.btn-sm{font-size:13px;padding:9px 22px}
+.btn-md{font-size:14px;padding:13px 30px}
+.btn-lg{font-size:15px;padding:15px 36px}
+.btn-ghost{background:transparent;border:1.5px solid rgba(42,37,32,.18);color:var(--charcoal)}
+.btn-ghost:hover{border-color:var(--charcoal);background:rgba(42,37,32,.04)}
+.btn-dark{background:var(--charcoal);border:1.5px solid var(--charcoal);color:var(--ivory)}
+.btn-dark:hover{background:var(--char-soft);transform:translateY(-1px);box-shadow:0 6px 20px rgba(42,37,32,.22)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-lt));border:none;color:#fff;box-shadow:0 4px 18px rgba(181,146,76,.3)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 28px rgba(181,146,76,.42)}
+
+/* tag / label */
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.eyebrow::before,.eyebrow::after{content:'';display:block;width:24px;height:1px;background:var(--gold);opacity:.5}
+
+/* ── HERO ── */
+.hero{min-height:100vh;display:flex;align-items:center;position:relative;overflow:hidden;padding-top:120px}
+.hero-mesh{position:absolute;inset:0;background:
+  radial-gradient(ellipse 70% 60% at 75% 35%, rgba(212,188,150,.18) 0%, transparent 65%),
+  radial-gradient(ellipse 50% 70% at 15% 85%, rgba(226,196,184,.14) 0%, transparent 60%),
+  radial-gradient(ellipse 40% 40% at 85% 90%, rgba(181,146,76,.07) 0%, transparent 55%)}
+.hero-grain{position:absolute;inset:0;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px}
+.hero-layout{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;padding:72px 0 96px;position:relative;z-index:2}
+.hero-headline{font-family:'Playfair Display',serif;font-size:clamp(50px,5.5vw,78px);font-weight:400;line-height:1.07;letter-spacing:-.01em;color:var(--charcoal);margin-bottom:22px}
+.hero-headline em{font-style:italic;color:var(--gold)}
+.hero-sub{font-size:17px;color:var(--char-soft);font-weight:300;line-height:1.72;max-width:430px;margin-bottom:38px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.hero-trust{display:flex;gap:36px;margin-top:52px;padding-top:40px;border-top:1px solid rgba(42,37,32,.09)}
+.trust-num{font-family:'Playfair Display',serif;font-size:34px;font-weight:500;color:var(--charcoal);line-height:1}
+.trust-lbl{font-size:11.5px;color:var(--taupe);letter-spacing:.1em;text-transform:uppercase;margin-top:3px}
+
+/* ── INVITATION MOCK ── */
+.mock-wrap{position:relative;display:flex;justify-content:center}
+.mock-card{
+  width:320px;background:linear-gradient(160deg,#FDFCF9,#F5EDE0);
+  border-radius:22px;box-shadow:0 36px 90px rgba(42,37,32,.16),0 2px 8px rgba(42,37,32,.06);
+  overflow:hidden;position:relative;
+  animation:cardFloat 7s ease-in-out infinite;
+}
+@keyframes cardFloat{0%,100%{transform:rotate(-2deg) translateY(0);}50%{transform:rotate(-2deg) translateY(-10px)}}
+.mock-card:hover{animation:none;transform:rotate(0deg) scale(1.02);transition:transform .4s ease}
+.mock-cover{
+  height:180px;
+  background:linear-gradient(140deg,#8C7660 0%,#C8907E 45%,#E2C4B8 100%);
+  display:flex;align-items:flex-end;padding:22px;position:relative;overflow:hidden
+}
+.mock-cover::before{content:'';position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='50' cy='50' r='40' fill='none' stroke='white' stroke-opacity='.07' stroke-width='.5'/%3E%3Ccircle cx='50' cy='50' r='25' fill='none' stroke='white' stroke-opacity='.05' stroke-width='.5'/%3E%3C/svg%3E");background-size:60px;opacity:.8}
+.mock-cover-text{position:relative;z-index:1;color:white}
+.mock-couple{font-family:'Playfair Display',serif;font-size:22px;font-weight:400;letter-spacing:.04em;line-height:1.2}
+.mock-date{font-size:11px;letter-spacing:.2em;text-transform:uppercase;opacity:.75;margin-top:5px}
+.mock-body{padding:18px}
+.mock-row{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
+.mock-icon{width:30px;height:30px;border-radius:8px;background:var(--cream);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;margin-top:1px}
+.mock-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:var(--taupe);font-weight:500;margin-bottom:1px}
+.mock-val{font-size:13px;font-weight:400;color:var(--charcoal)}
+.mock-footer{background:var(--charcoal);margin:0 18px 18px;border-radius:10px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--ivory)}
+.mock-badge{background:rgba(181,146,76,.25);color:var(--gold-lt);font-size:10px;padding:3px 10px;border-radius:20px;letter-spacing:.06em}
+
+/* floating chips */
+.chip{position:absolute;background:white;border-radius:14px;padding:12px 16px;box-shadow:0 10px 32px rgba(42,37,32,.12);font-size:12px;white-space:nowrap;display:flex;align-items:center;gap:9px}
+.chip-1{top:-14px;right:-28px}
+.chip-2{bottom:52px;left:-44px}
+.chip-dot{width:8px;height:8px;border-radius:50%}
+
+/* ── SECTION UTILS ── */
+section{padding:96px 0}
+.section-hd{text-align:center;max-width:660px;margin:0 auto 68px}
+.section-title{font-family:'Playfair Display',serif;font-size:clamp(38px,4vw,56px);font-weight:400;line-height:1.14;letter-spacing:-.01em;color:var(--charcoal);margin-bottom:16px}
+.section-title em{font-style:italic;color:var(--gold)}
+.section-sub{font-size:16px;color:var(--char-soft);font-weight:300;line-height:1.75}
+.rule{width:48px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 20px}
+
+/* ── FEATURES ── */
+.features{background:linear-gradient(180deg,var(--w) 0%,var(--ivory) 100%)}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.feat-card{background:white;border-radius:18px;padding:32px 28px;border:1px solid rgba(42,37,32,.06);transition:all .3s ease;position:relative;overflow:hidden}
+.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2.5px;background:linear-gradient(90deg,var(--sand),var(--gold));transform:scaleX(0);transform-origin:left;transition:transform .3s}
+.feat-card:hover{transform:translateY(-4px);box-shadow:0 18px 48px rgba(42,37,32,.09)}
+.feat-card:hover::before{transform:scaleX(1)}
+.feat-ico{width:48px;height:48px;border-radius:13px;background:linear-gradient(135deg,var(--cream),var(--sand));display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:20px}
+.feat-title{font-size:17px;font-weight:500;color:var(--charcoal);margin-bottom:9px}
+.feat-desc{font-size:13.5px;color:var(--char-soft);line-height:1.68;font-weight:300}
+
+/* ── HOW ── */
+.how-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative}
+.how-line{position:absolute;top:32px;left:calc(12.5% + 16px);right:calc(12.5% + 16px);height:1px;background:linear-gradient(90deg,transparent,var(--sand) 15%,var(--sand) 85%,transparent)}
+.how-step{text-align:center;padding:0 14px}
+.how-circle{width:64px;height:64px;border-radius:50%;border:1.5px solid var(--sand);background:var(--w);display:flex;align-items:center;justify-content:center;margin:0 auto 22px;font-family:'Playfair Display',serif;font-size:24px;font-weight:500;color:var(--gold);position:relative;z-index:1;box-shadow:0 4px 16px rgba(42,37,32,.06)}
+.how-title{font-size:15px;font-weight:500;color:var(--charcoal);margin-bottom:8px}
+.how-desc{font-size:13px;color:var(--char-soft);line-height:1.65;font-weight:300}
+
+/* ── CATEGORIES ── */
+.cat-section{background:var(--charcoal);padding:96px 0}
+.cat-section .section-title{color:var(--ivory)}
+.cat-section .section-sub{color:rgba(249,246,240,.5)}
+.cat-section .rule{background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.cat-item{position:relative;height:220px;overflow:hidden;cursor:pointer}
+.cat-item:first-child{grid-column:span 2}
+.cat-bg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:72px;transition:transform .5s ease}
+.cat-item:hover .cat-bg{transform:scale(1.09)}
+.cat-veil{position:absolute;inset:0;background:linear-gradient(180deg,transparent 25%,rgba(0,0,0,.62) 100%)}
+.cat-label{position:absolute;bottom:0;left:0;right:0;padding:20px 22px;color:white}
+.cat-name{font-family:'Playfair Display',serif;font-size:24px;font-weight:400}
+.cat-count{font-size:11px;letter-spacing:.12em;text-transform:uppercase;opacity:.65;margin-top:2px}
+
+/* ── DEMO INVITE ── */
+.demo-wrap{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.demo-bg{background:var(--ivory);padding:110px 0}
+.demo-card{background:white;border-radius:26px;overflow:hidden;box-shadow:0 44px 110px rgba(42,37,32,.14)}
+.demo-cover{background:linear-gradient(150deg,#6B5A4A 0%,#C8907E 45%,#E8D0C2 100%);padding:52px 36px;text-align:center;color:white;position:relative;overflow:hidden}
+.demo-cover::after{content:'— ✦ —';position:absolute;top:18px;left:0;right:0;text-align:center;font-size:11px;letter-spacing:.5em;opacity:.35}
+.demo-couple{font-family:'Playfair Display',serif;font-size:38px;font-weight:400;line-height:1.18;margin-bottom:8px}
+.demo-and{font-style:italic;opacity:.7}
+.demo-datelbl{font-size:12px;letter-spacing:.25em;text-transform:uppercase;opacity:.65;margin-bottom:22px}
+.demo-cd{display:flex;gap:12px;justify-content:center}
+.cd-box{background:rgba(255,255,255,.14);backdrop-filter:blur(8px);border-radius:9px;padding:11px 15px;text-align:center;min-width:52px}
+.cd-num{font-family:'Playfair Display',serif;font-size:26px;line-height:1}
+.cd-lbl{font-size:9px;letter-spacing:.12em;text-transform:uppercase;opacity:.6;margin-top:1px}
+.demo-body{padding:28px}
+.demo-stitle{font-family:'Playfair Display',serif;font-size:20px;color:var(--charcoal);margin-bottom:14px;font-weight:400}
+.sched-row{display:flex;gap:14px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid rgba(42,37,32,.06)}
+.sched-time{font-size:12px;color:var(--gold);font-weight:500;min-width:46px;padding-top:1px}
+.sched-event{font-size:13.5px;font-weight:500;color:var(--charcoal);margin-bottom:1px}
+.sched-venue{font-size:12px;color:var(--char-soft);font-weight:300}
+.rsvp-box{background:var(--ivory);border-radius:14px;padding:22px}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.f-in{padding:11px 14px;border:1.5px solid rgba(42,37,32,.1);border-radius:9px;font-family:'Jost',sans-serif;font-size:13px;color:var(--charcoal);background:white;outline:none;width:100%;transition:border-color .2s}
+.f-in:focus{border-color:var(--gold)}
+.f-sel{padding:11px 14px;border:1.5px solid rgba(42,37,32,.1);border-radius:9px;font-family:'Jost',sans-serif;font-size:13px;color:var(--charcoal);background:white;outline:none;width:100%;cursor:pointer}
+.rsvp-submit{width:100%;background:var(--charcoal);color:var(--ivory);border:none;border-radius:9px;padding:13px;font-family:'Jost',sans-serif;font-size:14px;font-weight:400;cursor:pointer;transition:all .2s;letter-spacing:.03em;margin-top:2px}
+.rsvp-submit:hover{background:var(--char-soft)}
+
+/* ── TEMPLATES ── */
+.tpl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.tpl-card{border-radius:14px;overflow:hidden;cursor:pointer;transition:all .3s;box-shadow:0 4px 14px rgba(42,37,32,.07)}
+.tpl-card:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(42,37,32,.14)}
+.tpl-thumb{height:200px;display:flex;align-items:center;justify-content:center;font-size:36px;position:relative}
+.tpl-overlay{position:absolute;inset:0;background:rgba(42,37,32,.55);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .3s;font-size:12.5px;color:white;letter-spacing:.1em;text-transform:uppercase;font-weight:500}
+.tpl-card:hover .tpl-overlay{opacity:1}
+.tpl-info{background:white;padding:14px 16px}
+.tpl-name{font-size:14px;font-weight:500;color:var(--charcoal);margin-bottom:3px}
+.tpl-type{font-size:11px;color:var(--taupe);text-transform:uppercase;letter-spacing:.1em}
+
+/* ── DASHBOARD ── */
+.dash-section{background:var(--charcoal);padding:110px 0}
+.dash-section .section-title{color:var(--ivory)}
+.dash-section .section-sub{color:rgba(249,246,240,.5)}
+.dash-section .rule{background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.dash-frame{background:rgba(249,246,240,.04);border:1px solid rgba(249,246,240,.1);border-radius:24px;overflow:hidden;backdrop-filter:blur(10px)}
+.dash-bar{background:rgba(249,246,240,.06);padding:14px 22px;display:flex;align-items:center;gap:8px;border-bottom:1px solid rgba(249,246,240,.08)}
+.dash-dot{width:9px;height:9px;border-radius:50%}
+.dash-url{font-size:12px;color:rgba(249,246,240,.3);margin-left:12px;letter-spacing:.02em}
+.dash-inner{display:grid;grid-template-columns:200px 1fr;min-height:360px}
+.dash-side{background:rgba(249,246,240,.04);padding:22px;border-right:1px solid rgba(249,246,240,.08)}
+.dash-nav-group{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:rgba(249,246,240,.25);margin-bottom:12px;margin-top:16px}
+.dash-nav-item{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:9px;font-size:13px;color:rgba(249,246,240,.55);cursor:pointer;transition:all .2s;margin-bottom:2px;letter-spacing:.01em}
+.dash-nav-item:hover,.dash-nav-item.on{background:rgba(249,246,240,.08);color:var(--ivory)}
+.dash-nav-item.on{color:var(--champagne)}
+.dash-main{padding:22px}
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.stat-box{background:rgba(249,246,240,.06);border:1px solid rgba(249,246,240,.09);border-radius:12px;padding:14px 16px}
+.stat-n{font-family:'Playfair Display',serif;font-size:26px;color:var(--ivory);line-height:1;margin-bottom:3px}
+.stat-l{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(249,246,240,.4)}
+.dash-table{background:rgba(249,246,240,.04);border:1px solid rgba(249,246,240,.09);border-radius:12px;overflow:hidden}
+.dash-th{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:10px 14px;background:rgba(249,246,240,.06);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:rgba(249,246,240,.35);border-bottom:1px solid rgba(249,246,240,.08)}
+.dash-tr{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:11px 14px;font-size:12.5px;color:rgba(249,246,240,.7);border-bottom:1px solid rgba(249,246,240,.05);transition:background .2s}
+.dash-tr:hover{background:rgba(249,246,240,.04)}
+.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:500}
+.pill-yes{background:rgba(134,239,172,.15);color:#86EFAC}
+.pill-no{background:rgba(252,165,165,.15);color:#FCA5A5}
+.pill-pend{background:rgba(253,224,71,.15);color:#FDE047}
+
+/* ── TESTIMONIALS ── */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.testi-card{background:white;border-radius:18px;padding:30px 26px;border:1px solid rgba(42,37,32,.06);position:relative}
+.testi-q{font-family:'Playfair Display',serif;font-size:56px;line-height:1;color:var(--sand);position:absolute;top:14px;left:22px;font-weight:400}
+.testi-stars{color:var(--gold);font-size:12px;margin-bottom:2px}
+.testi-text{font-size:14px;color:var(--char-soft);line-height:1.78;font-weight:300;font-style:italic;margin-top:28px;margin-bottom:20px}
+.testi-auth{display:flex;align-items:center;gap:11px}
+.testi-av{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--blush),var(--sand));display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:17px;color:var(--char-soft)}
+.testi-name{font-size:13.5px;font-weight:500;color:var(--charcoal)}
+.testi-evt{font-size:11.5px;color:var(--taupe)}
+
+/* ── PRICING ── */
+.price-bg{background:var(--ivory)}
+.price-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:start}
+.price-card{background:white;border-radius:22px;padding:38px 30px;border:1.5px solid rgba(42,37,32,.07);transition:all .3s ease;position:relative}
+.price-card:hover{box-shadow:0 18px 52px rgba(42,37,32,.09)}
+.price-card.feat{background:var(--charcoal);border-color:var(--charcoal);transform:scale(1.03);box-shadow:0 22px 60px rgba(42,37,32,.22)}
+.feat-top{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:white;font-size:10.5px;font-weight:500;padding:5px 16px;border-radius:20px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+.plan-name{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;font-weight:500}
+.price-card.feat .plan-name{color:var(--champagne)}
+.plan-price{font-family:'Playfair Display',serif;font-size:52px;font-weight:400;color:var(--charcoal);line-height:1;margin-bottom:4px}
+.price-card.feat .plan-price{color:var(--ivory)}
+.plan-period{font-size:13px;color:var(--char-soft);font-weight:300;margin-bottom:20px}
+.price-card.feat .plan-period{color:rgba(249,246,240,.5)}
+.plan-div{height:1px;background:rgba(42,37,32,.08);margin-bottom:22px}
+.price-card.feat .plan-div{background:rgba(249,246,240,.12)}
+.plan-feats{list-style:none;margin-bottom:28px}
+.plan-feat{display:flex;gap:9px;font-size:13.5px;color:var(--char-soft);margin-bottom:10px;align-items:flex-start}
+.price-card.feat .plan-feat{color:rgba(249,246,240,.75)}
+.pf-ck{color:var(--gold);flex-shrink:0;margin-top:1px}
+.price-card.feat .pf-ck{color:var(--champagne)}
+.plan-btn{width:100%;border-radius:50px;padding:13px;font-family:'Jost',sans-serif;font-size:14px;font-weight:400;cursor:pointer;transition:all .2s;letter-spacing:.03em}
+.plan-btn-out{background:transparent;border:1.5px solid rgba(42,37,32,.18);color:var(--charcoal)}
+.plan-btn-out:hover{border-color:var(--charcoal);background:rgba(42,37,32,.04)}
+.plan-btn-feat{background:linear-gradient(135deg,var(--gold),var(--gold-lt));border:none;color:white;box-shadow:0 4px 18px rgba(181,146,76,.35)}
+.plan-btn-feat:hover{box-shadow:0 8px 26px rgba(181,146,76,.48);transform:translateY(-1px)}
+
+/* ── FAQ ── */
+.faq-wrap{max-width:740px;margin:0 auto}
+.faq-item{border-bottom:1px solid rgba(42,37,32,.09);overflow:hidden}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:22px 0;cursor:pointer;font-size:15.5px;font-weight:400;color:var(--charcoal);user-select:none;gap:18px;transition:color .2s}
+.faq-q:hover{color:var(--gold)}
+.faq-ico{font-size:18px;flex-shrink:0;color:var(--gold);transition:transform .3s;line-height:1}
+.faq-item.open .faq-ico{transform:rotate(45deg)}
+.faq-a{font-size:14px;color:var(--char-soft);line-height:1.78;max-height:0;overflow:hidden;font-weight:300;transition:max-height .4s ease,padding .3s}
+.faq-item.open .faq-a{max-height:220px;padding-bottom:22px}
+
+/* ── BANNER ── */
+.cta-banner{background:linear-gradient(135deg,var(--charcoal) 0%,#3A342E 100%);padding:96px 0;text-align:center;position:relative;overflow:hidden}
+.cta-banner::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 75% at 50% 50%,rgba(181,146,76,.11),transparent)}
+.cta-title{font-family:'Playfair Display',serif;font-size:clamp(38px,5vw,62px);font-weight:400;color:var(--ivory);line-height:1.1;margin-bottom:18px}
+.cta-title em{font-style:italic;color:var(--champagne)}
+.cta-sub{font-size:17px;color:rgba(249,246,240,.55);font-weight:300;margin-bottom:36px}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+/* ── FOOTER ── */
+footer{background:var(--charcoal);color:rgba(249,246,240,.6);padding:76px 0 36px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:52px;margin-bottom:56px}
+.footer-logo{font-family:'Playfair Display',serif;font-size:26px;font-weight:500;color:var(--ivory);display:block;margin-bottom:14px;text-decoration:none}
+.footer-logo span{color:var(--gold)}
+.footer-tag{font-size:13px;line-height:1.7;font-weight:300;margin-bottom:22px}
+.footer-soc{display:flex;gap:8px}
+.soc-btn{width:34px;height:34px;border-radius:50%;background:rgba(249,246,240,.08);display:flex;align-items:center;justify-content:center;font-size:13px;color:rgba(249,246,240,.55);cursor:pointer;transition:all .2s;text-decoration:none}
+.soc-btn:hover{background:rgba(249,246,240,.15);color:var(--ivory)}
+.footer-col-h{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--ivory);margin-bottom:18px;font-weight:500}
+.footer-links{list-style:none}
+.footer-links li{margin-bottom:10px}
+.footer-links a{font-size:13px;color:rgba(249,246,240,.55);text-decoration:none;font-weight:300;transition:color .2s}
+.footer-links a:hover{color:var(--ivory)}
+.footer-btm{border-top:1px solid rgba(249,246,240,.07);padding-top:26px;display:flex;justify-content:space-between;align-items:center}
+.footer-copy{font-size:12px;font-weight:300;color:rgba(249,246,240,.35)}
+.footer-leg{display:flex;gap:22px}
+.footer-leg a{font-size:12px;color:rgba(249,246,240,.35);text-decoration:none}
+.footer-leg a:hover{color:var(--ivory)}
+
+/* ── AUTH PAGES ── */
+.auth-page{display:none;min-height:100vh;background:var(--ivory);align-items:center;justify-content:center;padding:80px 24px}
+.auth-page.show{display:flex}
+.auth-card{background:white;border-radius:24px;padding:52px 44px;width:100%;max-width:440px;box-shadow:0 28px 72px rgba(42,37,32,.1)}
+.auth-logo{font-family:'Playfair Display',serif;font-size:28px;font-weight:500;color:var(--charcoal);text-align:center;margin-bottom:8px}
+.auth-logo span{color:var(--gold)}
+.auth-tagline{text-align:center;font-size:14px;color:var(--char-soft);font-weight:300;margin-bottom:36px}
+.auth-title{font-family:'Playfair Display',serif;font-size:26px;font-weight:400;color:var(--charcoal);margin-bottom:6px}
+.auth-sub{font-size:14px;color:var(--char-soft);font-weight:300;margin-bottom:28px}
+.auth-label{font-size:12px;font-weight:500;color:var(--charcoal);letter-spacing:.04em;display:block;margin-bottom:6px}
+.auth-in{width:100%;padding:13px 16px;border:1.5px solid rgba(42,37,32,.12);border-radius:10px;font-family:'Jost',sans-serif;font-size:14px;color:var(--charcoal);background:white;outline:none;transition:border-color .2s;margin-bottom:16px}
+.auth-in:focus{border-color:var(--gold)}
+.auth-forgot{font-size:12.5px;color:var(--taupe);text-align:right;margin-top:-10px;margin-bottom:16px;cursor:pointer;text-decoration:none;display:block}
+.auth-forgot:hover{color:var(--gold)}
+.auth-submit{width:100%;background:var(--charcoal);color:var(--ivory);border:none;border-radius:50px;padding:14px;font-family:'Jost',sans-serif;font-size:14px;cursor:pointer;transition:all .2s;letter-spacing:.04em;margin-bottom:16px}
+.auth-submit:hover{background:var(--char-soft);transform:translateY(-1px);box-shadow:0 6px 20px rgba(42,37,32,.2)}
+.auth-divider{display:flex;align-items:center;gap:12px;margin-bottom:16px;color:var(--taupe);font-size:12px}
+.auth-divider::before,.auth-divider::after{content:'';flex:1;height:1px;background:rgba(42,37,32,.1)}
+.auth-switch{text-align:center;font-size:13.5px;color:var(--char-soft);font-weight:300}
+.auth-switch a{color:var(--gold);text-decoration:none;font-weight:400}
+.supabase-note{background:rgba(42,37,32,.04);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--char-soft);margin-bottom:20px;border-left:3px solid var(--gold)}
+
+/* ── ANIMATIONS ── */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .65s ease,transform .65s ease}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+/* ── LANG CONTENT ── */
+[data-de],[data-en]{transition:opacity .2s}
+
+/* ── PAGE VIEWS ── */
+.page{display:none}
+.page.active{display:block}
+
+/* ── MOBILE ── */
+@media(max-width:900px){
+  .hero-layout{grid-template-columns:1fr;gap:48px;text-align:center}
+  .hero-btns{justify-content:center}
+  .hero-trust{justify-content:center}
+  .mock-wrap{order:-1}
+  .chip-1,.chip-2{display:none}
+  .feat-grid{grid-template-columns:1fr}
+  .how-grid{grid-template-columns:1fr 1fr}
+  .how-line{display:none}
+  .cat-grid{grid-template-columns:1fr}
+  .cat-item:first-child{grid-column:span 1}
+  .demo-wrap{grid-template-columns:1fr}
+  .tpl-grid{grid-template-columns:1fr 1fr}
+  .testi-grid{grid-template-columns:1fr}
+  .price-grid{grid-template-columns:1fr}
+  .price-card.feat{transform:none}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:36px}
+  .nav-links{display:none}
+  .footer-btm{flex-direction:column;gap:14px;text-align:center}
+  .f-row{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  section{padding:64px 0}
+  .how-grid,.tpl-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr}
+  .dash-inner{grid-template-columns:1fr}
+  .stat-row{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- LANG TOP BAR -->
+<div class="lang-bar">
+  <div class="lang-bar-inner">
+    <button class="lang-btn active" id="btnDE" onclick="setLang('de')">🇩🇪 Deutsch</button>
+    <span>·</span>
+    <button class="lang-btn" id="btnEN" onclick="setLang('en')">🇬🇧 English</button>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo" onclick="showPage('home')">Festlich<span>.</span></a>
+    <div class="nav-links">
+      <a href="#" data-de="Funktionen" data-en="Features" onclick="return false">Funktionen</a>
+      <a href="#" data-de="Vorlagen" data-en="Templates" onclick="return false">Vorlagen</a>
+      <a href="#" data-de="Preise" data-en="Pricing" onclick="return false">Preise</a>
+    </div>
+    <div class="nav-actions">
+      <button class="btn btn-sm btn-ghost" onclick="showPage('signin')" data-de="Anmelden" data-en="Sign in">Anmelden</button>
+      <button class="btn btn-sm btn-dark" onclick="showPage('signup')" data-de="Kostenlos starten →" data-en="Start free →">Kostenlos starten →</button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════ HOME PAGE ═══════════════════ -->
+<div id="page-home" class="page active">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-mesh"></div>
+  <div class="hero-grain"></div>
+  <div class="container">
+    <div class="hero-layout">
+      <div class="reveal">
+        <div class="eyebrow" data-de="✦ Premium Digitale Einladungen" data-en="✦ Premium Digital Invitations">✦ Premium Digitale Einladungen</div>
+        <h1 class="hero-headline">
+          <span data-de="Teile deinen<br>besonderen Tag<br>mit <em>Stil</em>" data-en="Share your<br>special day<br>with <em>style</em>">Teile deinen<br>besonderen Tag<br>mit <em>Stil</em></span>
+        </h1>
+        <p class="hero-sub" data-de="Festlich erschafft digitale Einladungen von unvergesslicher Eleganz — für Hochzeiten, Verlobungen und alle besonderen Feiern." data-en="Festlich creates digital invitations of unforgettable elegance — for weddings, engagements, and every special celebration.">
+          Festlich erschafft digitale Einladungen von unvergesslicher Eleganz — für Hochzeiten, Verlobungen und alle besonderen Feiern.
+        </p>
+        <div class="hero-btns">
+          <button class="btn btn-lg btn-dark" onclick="showPage('signup')" data-de="Einladung erstellen →" data-en="Create invitation →">Einladung erstellen →</button>
+          <button class="btn btn-lg btn-ghost" onclick="showPage('demo')" data-de="Live-Demo ansehen" data-en="View live demo">Live-Demo ansehen</button>
+        </div>
+        <div class="hero-trust">
+          <div>
+            <div class="trust-num">52K+</div>
+            <div class="trust-lbl" data-de="Einladungen" data-en="Invitations">Einladungen</div>
+          </div>
+          <div>
+            <div class="trust-num">97%</div>
+            <div class="trust-lbl" data-de="Zufriedenheit" data-en="Satisfaction">Zufriedenheit</div>
+          </div>
+          <div>
+            <div class="trust-num">140+</div>
+            <div class="trust-lbl" data-de="Vorlagen" data-en="Templates">Vorlagen</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mock-wrap reveal" style="transition-delay:.2s">
+        <div class="chip chip-1">
+          <div class="chip-dot" style="background:#86EFAC"></div>
+          <span style="font-weight:500;color:#2A2520" data-de="18 neue Zusagen heute" data-en="18 new RSVPs today">18 neue Zusagen heute</span>
+        </div>
+        <div class="chip chip-2">
+          <span style="font-size:18px">📍</span>
+          <div>
+            <div style="font-size:12px;font-weight:500;color:#2A2520" data-de="Schloss Elmau, Bayern" data-en="Schloss Elmau, Bavaria">Schloss Elmau, Bayern</div>
+            <div style="font-size:11px;color:#8C7660" data-de="Route anzeigen" data-en="Get directions">Route anzeigen</div>
+          </div>
+        </div>
+        <div class="mock-card">
+          <div class="mock-cover">
+            <div class="mock-cover-text">
+              <div class="mock-couple">Lena &amp; Florian</div>
+              <div class="mock-date" data-de="21. Juni 2025 · Hochzeit" data-en="21 June 2025 · Wedding">21. Juni 2025 · Hochzeit</div>
+            </div>
+          </div>
+          <div class="mock-body">
+            <div class="mock-row">
+              <div class="mock-icon">🕐</div>
+              <div>
+                <div class="mock-lbl" data-de="Zeremonie" data-en="Ceremony">Zeremonie</div>
+                <div class="mock-val" data-de="14:00 Uhr — Schlosskirche" data-en="2:00 PM — Castle Chapel">14:00 Uhr — Schlosskirche</div>
+              </div>
+            </div>
+            <div class="mock-row">
+              <div class="mock-icon">📍</div>
+              <div>
+                <div class="mock-lbl" data-de="Ort" data-en="Venue">Ort</div>
+                <div class="mock-val" data-de="Schloss Elmau, Krün" data-en="Schloss Elmau, Bavaria">Schloss Elmau, Krün</div>
+              </div>
+            </div>
+            <div class="mock-row">
+              <div class="mock-icon">👗</div>
+              <div>
+                <div class="mock-lbl" data-de="Dresscode" data-en="Dress code">Dresscode</div>
+                <div class="mock-val" data-de="Festlich elegant" data-en="Black tie preferred">Festlich elegant</div>
+              </div>
+            </div>
+          </div>
+          <div class="mock-footer">
+            <span data-de="RSVP bis 1. Mai" data-en="RSVP by May 1st">RSVP bis 1. Mai</span>
+            <span class="mock-badge">54 ✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section style="background:linear-gradient(180deg,var(--w) 0%,var(--ivory) 100%)">
+  <div class="container">
+    <div class="section-hd reveal">
+      <div class="eyebrow" data-de="Alles was du brauchst" data-en="Everything you need">Alles was du brauchst</div>
+      <div class="rule"></div>
+      <h2 class="section-title" data-de="Ein vollständiges Einladungs-<em>erlebnis</em>" data-en="A complete invitation <em>experience</em>">Ein vollständiges Einladungs-<em>erlebnis</em></h2>
+      <p class="section-sub" data-de="Alles, was deine Gäste brauchen — von der Wegbeschreibung bis zur Zu- oder Absage — wunderschön an einem Ort." data-en="Everything your guests need — from directions to RSVPs — beautifully presented in one place.">
+        Alles, was deine Gäste brauchen — von der Wegbeschreibung bis zur Zu- oder Absage — wunderschön an einem Ort.
+      </p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card reveal">
+        <div class="feat-ico">✨</div>
+        <div class="feat-title" data-de="Elegante Vorlagen" data-en="Elegant Templates">Elegante Vorlagen</div>
+        <div class="feat-desc" data-de="140+ sorgfältig gestaltete Designs für Hochzeiten, Geburtstage, Jubiläen und mehr. Jede Vorlage vollständig anpassbar." data-en="140+ carefully crafted designs for weddings, birthdays, anniversaries and more. Every template fully customisable.">140+ sorgfältig gestaltete Designs für Hochzeiten, Geburtstage, Jubiläen und mehr. Jede Vorlage vollständig anpassbar.</div>
+      </div>
+      <div class="feat-card reveal" style="transition-delay:.08s">
+        <div class="feat-ico">💌</div>
+        <div class="feat-title" data-de="RSVP-Verwaltung" data-en="RSVP Management">RSVP-Verwaltung</div>
+        <div class="feat-desc" data-de="Gäste antworten mit einem Tipp. Behalte Zusagen, Absagen, Mahlzeitwünsche und Begleitpersonen im Blick." data-en="Guests respond in one tap. Track attendance, meal preferences, dietary needs, and plus-ones from your dashboard.">Gäste antworten mit einem Tipp. Behalte Zusagen, Absagen, Mahlzeitwünsche und Begleitpersonen im Blick.</div>
+      </div>
+      <div class="feat-card reveal" style="transition-delay:.16s">
+        <div class="feat-ico">🗺️</div>
+        <div class="feat-title" data-de="Ort &amp; Navigation" data-en="Venue &amp; Navigation">Ort &amp; Navigation</div>
+        <div class="feat-desc" data-de="Wunderschöne Ortskarten mit integrierten Kartenlinks. Ein Tipp führt deine Gäste direkt zur Navigation." data-en="Beautiful venue cards with integrated map links. One tap takes your guests directly to navigation.">Wunderschöne Ortskarten mit integrierten Kartenlinks. Ein Tipp führt deine Gäste direkt zur Navigation.</div>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-ico">🖼️</div>
+        <div class="feat-title" data-de="Fotogalerie" data-en="Photo Gallery">Fotogalerie</div>
+        <div class="feat-desc" data-de="Teile deine Verlobungsfotos, Hochzeitsporträts oder Erinnerungen in einer kuratierten, mobiloptimierten Galerie." data-en="Share your engagement photos, wedding portraits, or memories in a curated, mobile-optimised gallery.">Teile deine Verlobungsfotos, Hochzeitsporträts oder Erinnerungen in einer kuratierten Galerie.</div>
+      </div>
+      <div class="feat-card reveal" style="transition-delay:.08s">
+        <div class="feat-ico">⏱️</div>
+        <div class="feat-title" data-de="Live-Countdown" data-en="Live Countdown">Live-Countdown</div>
+        <div class="feat-desc" data-de="Ein Echtzeit-Countdown hält die Vorfreude lebendig. Tage, Stunden und Minuten bis zu eurem besonderen Moment." data-en="A real-time countdown keeps excitement building. Days, hours and minutes until your special moment.">Ein Echtzeit-Countdown hält die Vorfreude lebendig. Tage, Stunden und Minuten bis zu eurem Moment.</div>
+      </div>
+      <div class="feat-card reveal" style="transition-delay:.16s">
+        <div class="feat-ico">📱</div>
+        <div class="feat-title" data-de="QR-Code-Sharing" data-en="QR Code Sharing">QR-Code-Sharing</div>
+        <div class="feat-desc" data-de="Erzeuge einen druckbereiten QR-Code für deine Papier-Save-the-Dates. Scannen — und sofort auf der Einladung." data-en="Generate a print-ready QR code for your paper save-the-dates. Scan and arrive instantly on your invitation.">Erzeuge einen druckbereiten QR-Code für deine Save-the-Dates. Scannen — und sofort auf der Einladung.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section>
+  <div class="container">
+    <div class="section-hd reveal">
+      <div class="eyebrow" data-de="Einfach von Anfang an" data-en="Simple from the start">Einfach von Anfang an</div>
+      <div class="rule"></div>
+      <h2 class="section-title" data-de="Von der Idee zur Einladung <em>in Minuten</em>" data-en="From idea to invitation <em>in minutes</em>">Von der Idee zur Einladung <em>in Minuten</em></h2>
+    </div>
+    <div class="how-grid">
+      <div class="how-line"></div>
+      <div class="how-step reveal">
+        <div class="how-circle">1</div>
+        <div class="how-title" data-de="Vorlage wählen" data-en="Choose a template">Vorlage wählen</div>
+        <div class="how-desc" data-de="Stöbere durch kuratierte Designs. Filter nach Anlass, Farbpalette oder Stil." data-en="Browse curated designs. Filter by occasion, colour palette, or style.">Stöbere durch kuratierte Designs. Filter nach Anlass oder Stil.</div>
+      </div>
+      <div class="how-step reveal" style="transition-delay:.1s">
+        <div class="how-circle">2</div>
+        <div class="how-title" data-de="Personalisieren" data-en="Personalise it">Personalisieren</div>
+        <div class="how-desc" data-de="Füge Namen, Datum, Ort, Fotos und alle Details ein, die deinen Tag einzigartig machen." data-en="Add your names, date, venue, photos and all the details that make your day unique.">Füge Namen, Datum, Ort, Fotos und alle Details hinzu.</div>
+      </div>
+      <div class="how-step reveal" style="transition-delay:.2s">
+        <div class="how-circle">3</div>
+        <div class="how-title" data-de="Sofort teilen" data-en="Share instantly">Sofort teilen</div>
+        <div class="how-desc" data-de="Link kopieren, per WhatsApp teilen oder QR-Code drucken. Deine Einladung ist sofort live." data-en="Copy a link, share via WhatsApp, or print a QR code. Your invitation is live immediately.">Link kopieren, per WhatsApp teilen oder QR-Code drucken.</div>
+      </div>
+      <div class="how-step reveal" style="transition-delay:.3s">
+        <div class="how-circle">4</div>
+        <div class="how-title" data-de="RSVPs verwalten" data-en="Manage RSVPs">RSVPs verwalten</div>
+        <div class="how-desc" data-de="Beobachte, wie Antworten im Dashboard eingehen. Gästeliste jederzeit exportieren." data-en="Watch responses arrive in your dashboard. Export the guest list whenever you need it.">Beobachte Antworten im Dashboard. Gästeliste jederzeit exportieren.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="cat-section">
+  <div class="container">
+    <div class="section-hd reveal">
+      <div class="eyebrow" style="color:var(--champagne)" data-de="Jede Feier" data-en="Every celebration">Jede Feier</div>
+      <div class="rule"></div>
+      <h2 class="section-title" data-de="Gemacht für jeden <em style='color:var(--champagne)'>besonderen Moment</em>" data-en="Made for every <em style='color:var(--champagne)'>special moment</em>">Gemacht für jeden <em style="color:var(--champagne)">besonderen Moment</em></h2>
+    </div>
+  </div>
+  <div class="cat-grid">
+    <div class="cat-item">
+      <div class="cat-bg" style="background:linear-gradient(140deg,#7A5F4A,#C8907E)">💍</div>
+      <div class="cat-veil"></div>
+      <div class="cat-label">
+        <div class="cat-name" data-de="Hochzeiten" data-en="Weddings">Hochzeiten</div>
+        <div class="cat-count" data-de="52 Vorlagen" data-en="52 templates">52 Vorlagen</div>
+      </div>
+    </div>
+    <div class="cat-item">
+      <div class="cat-bg" style="background:linear-gradient(140deg,#5A4E6A,#9880B0)">💑</div>
+      <div class="cat-veil"></div>
+      <div class="cat-label">
+        <div class="cat-name" data-de="Verlobungen" data-en="Engagements">Verlobungen</div>
+        <div class="cat-count" data-de="28 Vorlagen" data-en="28 templates">28 Vorlagen</div>
+      </div>
+    </div>
+    <div class="cat-item">
+      <div class="cat-bg" style="background:linear-gradient(140deg,#4A6A5A,#80B098)">🥂</div>
+      <div class="cat-veil"></div>
+      <div class="cat-label">
+        <div class="cat-name" data-de="Empfänge" data-en="Receptions">Empfänge</div>
+        <div class="cat-count" data-de="20 Vorlagen" data-en="20 templates">20 Vorlagen</div>
+      </div>
+    </div>
+    <div class="cat-item">
+      <div class="cat-bg" style="background:linear-gradient(140deg,#6A5A4A,#B09880)">🎂</div>
+      <div class="cat-veil"></div>
+      <div class="cat-label">
+        <div class="cat-name" data-de="Geburtstage" data-en="Birthdays">Geburtstage</div>
+        <div class="cat-count" data-de="34 Vorlagen" data-en="34 templates">34 Vorlagen</div>
+      </div>
+    </div>
+    <div class="cat-item">
+      <div class="cat-bg" style="background:linear-gradient(140deg,#4A5A6A,#8098B0)">🎊</div>
+      <div class="cat-veil"></div>
+      <div class="cat-label">
+        <div class="cat-name" data-de="Feiern" data-en="Celebrations">Feiern</div>
+        <div class="cat-count" data-de="26 Vorlagen" data-en="26 templates">26 Vorlagen</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEMPLATES PREVIEW -->
+<section>
+  <div class="container">
+    <div class="section-hd reveal">
+      <div class="eyebrow" data-de="140+ Designs" data-en="140+ Designs">140+ Designs</div>
+      <div class="rule"></div>
+      <h2 class="section-title" data-de="Finde deine perfekte <em>Vorlage</em>" data-en="Find your perfect <em>template</em>">Finde deine perfekte <em>Vorlage</em></h2>
+    </div>
+    <div class="tpl-grid">
+      <div class="tpl-card reveal">
+        <div class="tpl-thumb" style="background:linear-gradient(145deg,#F2E8D8,#E2C4B8)">
+          <div class="tpl-overlay" data-de="Vorschau →" data-en="Preview →">Vorschau →</div>🌸
+        </div>
+        <div class="tpl-info">
+          <div class="tpl-name">Rosenblüte</div>
+          <div class="tpl-type" data-de="Hochzeit · Blush" data-en="Wedding · Blush">Hochzeit · Blush</div>
+        </div>
+      </div>
+      <div class="tpl-card reveal" style="transition-delay:.08s">
+        <div class="tpl-thumb" style="background:linear-gradient(145deg,#2A2520,#46403A)">
+          <div class="tpl-overlay" data-de="Vorschau →" data-en="Preview →">Vorschau →</div>🖤
+        </div>
+        <div class="tpl-info">
+          <div class="tpl-name">Mitternacht</div>
+          <div class="tpl-type" data-de="Hochzeit · Dunkel" data-en="Wedding · Dark">Hochzeit · Dunkel</div>
+        </div>
+      </div>
+      <div class="tpl-card reveal" style="transition-delay:.16s">
+        <div class="tpl-thumb" style="background:linear-gradient(145deg,#E8F4F0,#B8D8CC)">
+          <div class="tpl-overlay" data-de="Vorschau →" data-en="Preview →">Vorschau →</div>🌿
+        </div>
+        <div class="tpl-info">
+          <div class="tpl-name">Botanik</div>
+          <div class="tpl-type" data-de="Hochzeit · Grün" data-en="Wedding · Green">Hochzeit · Grün</div>
+        </div>
+      </div>
+      <div class="tpl-card reveal" style="transition-delay:.24s">
+        <div class="tpl-thumb" style="background:linear-gradient(145deg,#EDE0C8,#B8956A)">
+          <div class="tpl-overlay" data-de="Vorschau →" data-en="Preview →">Vorschau →</div>✨
+        </div>
+        <div class="tpl-info">
+          <div class="tpl-name">Champagner</div>
+          <div class="tpl-type" data-de="Empfang · Gold" data-en="Reception · Gold">Empfang · Gold</div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:44px">
+      <button class="btn btn-md btn-ghost" data-de="Alle 140+ Vorlagen ansehen →" data-en="Browse all 140+ templates →">Alle 140+ Vorlagen ansehen →</button>
+    </div>
+  </div>
+</section>
+
+<!-- DASHBOARD PREVIEW -->
+<section class="dash-section">
+  <div class="container">
+    <div class="section-hd reveal">
+      <div class="eyebrow" style="color:var(--champagne)" data-de="Deine Schaltzentrale" data-en="Your control centre">Deine Schaltzentrale</div>
+      <div class="rule"></div>
+      <h2 class="section-title" data-de="Alles auf einen <em style='color:var(--champagne)'>Blick</em>" data-en="Everything at a <em style='color:var(--champagne)'>glance</em>">Alles auf einen <em style="color:var(--champagne)">Blick</em></h2>
+      <p class="section-sub" data-de="Ein elegantes Dashboard für RSVPs, Gäste, Analytics und alles andere rund um deine Feier." data-en="An elegant dashboard to manage RSVPs, guests, analytics and everything about your celebration.">Ein elegantes Dashboard für RSVPs, Gäste, Analytics und alles rund um deine Feier.</p>
+    </div>
+    <div class="dash-frame reveal">
+      <div class="dash-bar">
+        <div class="dash-dot" style="background:#FF6B6B"></div>
+        <div class="dash-dot" style="background:#FFD93D"></div>
+        <div class="dash-dot" style="background:#6BCB77"></div>
+        <div class="dash-url">festlich.de/dashboard — Lena &amp; Florian · 21. Juni</div>
+      </div>
+      <div class="dash-inner">
+        <div class="dash-side">
+          <div class="dash-nav-group" data-de="Navigation" data-en="Navigation">Navigation</div>
+          <div class="dash-nav-item on">📊 &nbsp;<span data-de="Übersicht" data-en="Overview">Übersicht</span></div>
+          <div class="dash-nav-item">👥 &nbsp;<span data-de="Gästeliste" data-en="Guests">Gästeliste</span></div>
+          <div class="dash-nav-item">💌 &nbsp;<span data-de="RSVPs" data-en="RSVPs">RSVPs</span></div>
+          <div class="dash-nav-item">✏️ &nbsp;<span data-de="Einladung" data-en="Invitation">Einladung</span></div>
+          <div class="dash-nav-item">🖼️ &nbsp;<span data-de="Galerie" data-en="Gallery">Galerie</span></div>
+          <div class="dash-nav-item">🎨 &nbsp;<span data-de="Design" data-en="Theme">Design</span></div>
+          <div class="dash-nav-item">📱 &nbsp;<span data-de="QR-Code" data-en="QR Code">QR-Code</span></div>
+          <div class="dash-nav-item">📈 &nbsp;<span data-de="Statistik" data-en="Analytics">Statistik</span></div>
+        </div>
+        <div class="dash-main">
+          <div class="stat-row">
+            <div class="stat-box"><div class="stat-n">318</div><div class="stat-l" data-de="Aufrufe" data-en="Views">Aufrufe</div></div>
+            <div class="stat-box"><div class="stat-n">54</div><div class="stat-l" data-de="Zusagen" data-en="Attending">Zusagen</div></div>
+            <div class="stat-box"><div class="stat-n">6</div><div class="stat-l" data-de="Absagen" data-en="Declined">Absagen</div></div>
+            <div class="stat-box"><div class="stat-n">20</div><div class="stat-l" data-de="Offen" data-en="Pending">Offen</div></div>
+          </div>
+          <div class="dash-table">
+            <div class="dash-th">
+              <div data-de="Gast" data-en="Guest">Gast</div>
+              <div data-de="Status" data-en="Status">Status</div>
+              <div data-de="Personen" data-en="Guests">Personen</div>
+              <div data-de="Menü" data-en="Meal">Menü</div>
+            </div>
+            <div class="dash-tr">
+              <div>Emma &amp; Thomas Berger</div><div><span class="pill pill-yes" data-de="Zusage" data-en="Yes">Zusage</span></div><div>2</div><div data-de="Fleisch" data-en="Chicken">Fleisch</div>
+            </div>
+            <div class="dash-tr">
+              <div>Sophie Kaufmann</div><div><span class="pill pill-yes" data-de="Zusage" data-en="Yes">Zusage</span></div><div>1</div><div data-de="Vegetarisch" data-en="Vegetarian">Vegetarisch</div>
+            </div>
+            <div class="dash-tr">
+              <div>Klaus &amp; Maria Hoffmann</div><div><span class="pill pill-pend" data-de="Offen" data-en="Pending">Offen</span></div><div>—</div><div>—</div>
+            </div>
+            <div class="dash-tr">
+              <div>Richard Müller</div><div><span class="pill pill-no" data-de="Absage" data-en="Declined">Absage</span></div><div>—</div><div>—</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section>
+  <div class="container">
+    <div class="section-hd reveal">
+      <div class="eyebrow" data-de="Von echten Paaren" data-en="From real couples">Von echten Paaren</div>
+      <div class="rule"></div>
+      <h2 class="section-title" data-de="Geliebt von denen, die <em>gefeiert</em> haben" data-en="Loved by those who <em>celebrated</em>">Geliebt von denen, die <em>gefeiert</em> haben</h2>
+    </div>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-q">"</div>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text" data-de="Unsere Gäste in 12 Ländern konnten so einfach zusagen — alle vom Handy, in Sekunden. Selbst meine Oma hat es geschafft!" data-en="Our guests in 12 countries could RSVP so easily — all from their phone in seconds. Even my grandmother managed it!">Unsere Gäste in 12 Ländern konnten so einfach zusagen — alle vom Handy, in Sekunden. Selbst meine Oma hat es geschafft!</div>
+        <div class="testi-auth">
+          <div class="testi-av">L</div>
+          <div><div class="testi-name">Lena &amp; Florian</div><div class="testi-evt" data-de="Hochzeit · München, 2024" data-en="Wedding · Munich, 2024">Hochzeit · München, 2024</div></div>
+        </div>
+      </div>
+      <div class="testi-card reveal" style="transition-delay:.1s">
+        <div class="testi-q">"</div>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text" data-de="Das Design war so wunderschön, dass Gäste unsere Einladung lobten, bevor sie überhaupt den Veranstaltungsort gesehen hatten." data-en="The design was so beautiful that guests were complimenting our invitation before they'd even seen the venue.">Das Design war so wunderschön, dass Gäste unsere Einladung lobten, bevor sie den Veranstaltungsort gesehen hatten.</div>
+        <div class="testi-auth">
+          <div class="testi-av">J</div>
+          <div><div class="testi-name">Jana &amp; Markus</div><div class="testi-evt" data-de="Hochzeit · Hamburg, 2024" data-en="Wedding · Hamburg, 2024">Hochzeit · Hamburg, 2024</div></div>
+        </div>
+      </div>
+      <div class="testi-card reveal" style="transition-delay:.2s">
+        <div class="testi-q">"</div>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-text" data-de="Das RSVP-Dashboard hat uns Stunden gespart. Statt Familienmitglieder nachzuhaken, schauten wir einfach aufs Handy. Jeden Cent wert!" data-en="The RSVP dashboard saved us hours. Instead of chasing family members, we just checked our phone. Worth every cent!">Das RSVP-Dashboard hat uns Stunden gespart. Statt Familienmitglieder nachzuhaken, schauten wir einfach auf das Handy.</div>
+        <div class="testi-auth">
+          <div class="testi-av">S</div>
+          <div><div class="testi-name">Sara &amp; David</div><div class="testi-evt" data-de="Hochzeit · Berlin, 2025" data-en="Wedding · Berlin, 2025">Hochzeit · Berlin, 2025</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="price-bg">
+  <div class="container">
+    <div class="section-hd reveal">
+      <div class="eyebrow" data-de="Klare Preise" data-en="Simple pricing">Klare Preise</div>
+      <div class="rule"></div>
+      <h2 class="section-title" data-de="Ein Preis, ein <em>wunderschöner</em> Tag" data-en="One price, one <em>beautiful</em> day">Ein Preis, ein <em>wunderschöner</em> Tag</h2>
+      <p class="section-sub" data-de="Keine versteckten Gebühren, keine Kosten pro Gast. Einmal zahlen, mit allen teilen." data-en="No hidden fees, no per-guest charges. Pay once, share with everyone.">Keine versteckten Gebühren, keine Kosten pro Gast. Einmal zahlen, mit allen teilen.</p>
+    </div>
+    <div class="price-grid">
+      <div class="price-card reveal">
+        <div class="plan-name" data-de="Kostenlos" data-en="Free">Kostenlos</div>
+        <div class="plan-price" data-de="0 €" data-en="Free">0 €</div>
+        <div class="plan-period" data-de="Für immer gratis · keine Kreditkarte" data-en="Forever free · no credit card needed">Für immer gratis · keine Kreditkarte</div>
+        <div class="plan-div"></div>
+        <ul class="plan-feats">
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="1 aktive Einladung" data-en="1 active invitation">1 aktive Einladung</span></li>
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="Bis zu 30 Gäste" data-en="Up to 30 guests">Bis zu 30 Gäste</span></li>
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="RSVP-Erfassung" data-en="RSVP collection">RSVP-Erfassung</span></li>
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="5 Galeriefotos" data-en="5 gallery photos">5 Galeriefotos</span></li>
+        </ul>
+        <button class="plan-btn plan-btn-out" data-de="Kostenlos starten" data-en="Start free">Kostenlos starten</button>
+      </div>
+      <div class="price-card feat reveal" style="transition-delay:.1s">
+        <div class="feat-top" data-de="Beliebteste Wahl" data-en="Most popular">Beliebteste Wahl</div>
+        <div class="plan-name" data-de="Premium" data-en="Premium">Premium</div>
+        <div class="plan-price" style="color:var(--ivory)">29 €</div>
+        <div class="plan-period" data-de="einmalige Zahlung · unbegrenzte Nutzung" data-en="one-time payment · lifetime access">einmalige Zahlung · unbegrenzte Nutzung</div>
+        <div class="plan-div"></div>
+        <ul class="plan-feats">
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="3 aktive Einladungen" data-en="3 active invitations">3 aktive Einladungen</span></li>
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="Unbegrenzte Gäste" data-en="Unlimited guests">Unbegrenzte Gäste</span></li>
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="Alle Premium-Vorlagen" data-en="All premium templates">Alle Premium-Vorlagen</span></li>
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="50 Galeriefotos" data-en="50 gallery photos">50 Galeriefotos</span></li>
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="QR-Code-Generierung" data-en="QR code generation">QR-Code-Generierung</span></li>
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="Kein Festlich-Branding" data-en="No Festlich branding">Kein Festlich-Branding</span></li>
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="Gästeliste exportieren" data-en="Export guest list">Gästeliste exportieren</span></li>
+        </ul>
+        <button class="plan-btn plan-btn-feat" data-de="Premium wählen →" data-en="Choose Premium →">Premium wählen →</button>
+      </div>
+      <div class="price-card reveal" style="transition-delay:.2s">
+        <div class="plan-name" data-de="Luxus" data-en="Luxury">Luxus</div>
+        <div class="plan-price">79 €</div>
+        <div class="plan-period" data-de="einmalige Zahlung · unbegrenzte Nutzung" data-en="one-time payment · lifetime access">einmalige Zahlung · unbegrenzte Nutzung</div>
+        <div class="plan-div"></div>
+        <ul class="plan-feats">
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="Unbegrenzte Einladungen" data-en="Unlimited invitations">Unbegrenzte Einladungen</span></li>
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="Unbegrenzte Gäste &amp; Fotos" data-en="Unlimited guests &amp; photos">Unbegrenzte Gäste &amp; Fotos</span></li>
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="Personalisierte Gastlinks" data-en="Personalised guest links">Personalisierte Gastlinks</span></li>
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="Erweiterte Statistik" data-en="Advanced analytics">Erweiterte Statistik</span></li>
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="Prioritätssupport" data-en="Priority support">Prioritätssupport</span></li>
+          <li class="plan-feat"><span class="pf-ck">✓</span><span data-de="Video-Hintergründe" data-en="Video backgrounds">Video-Hintergründe</span></li>
+        </ul>
+        <button class="plan-btn plan-btn-out" data-de="Luxus wählen →" data-en="Choose Luxury →">Luxus wählen →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section>
+  <div class="container">
+    <div class="section-hd reveal">
+      <div class="eyebrow" data-de="Häufige Fragen" data-en="FAQ">Häufige Fragen</div>
+      <div class="rule"></div>
+      <h2 class="section-title" data-de="Alles, was du <em>wissen möchtest</em>" data-en="Everything you <em>wanted to know</em>">Alles, was du <em>wissen möchtest</em></h2>
+    </div>
+    <div class="faq-wrap">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span data-de="Wie lange bleibt meine Einladung online?" data-en="How long does my invitation stay live?">Wie lange bleibt meine Einladung online?</span>
+          <span class="faq-ico">+</span>
+        </div>
+        <div class="faq-a" data-de="Deine Einladung bleibt so lange aktiv, wie dein Account besteht. Alle bezahlten Pläne beinhalten unbegrenzten Zugang — du zahlst einmal und deine Einladung ist dauerhaft für deine Gäste erreichbar." data-en="Your invitation stays live as long as your account is active. All paid plans include lifetime access — pay once and your invitation is available to guests indefinitely.">Deine Einladung bleibt so lange aktiv, wie dein Account besteht. Alle bezahlten Pläne beinhalten unbegrenzten Zugang.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span data-de="Können Gäste von jedem Gerät aus antworten?" data-en="Can guests RSVP from any device?">Können Gäste von jedem Gerät aus antworten?</span>
+          <span class="faq-ico">+</span>
+        </div>
+        <div class="faq-a" data-de="Absolut. Festlich ist mobile-first entwickelt. Die Einladung sieht auf jedem Smartphone, Tablet oder Desktop wunderschön aus und funktioniert einwandfrei. Kein App-Download nötig." data-en="Absolutely. Festlich is built mobile-first. Your invitation looks beautiful and works perfectly on any smartphone, tablet, or desktop. No app download needed.">Absolut. Festlich ist mobile-first entwickelt. Die Einladung sieht auf jedem Gerät wunderschön aus. Kein App-Download nötig.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span data-de="Kann ich die Einladung nach dem Teilen noch bearbeiten?" data-en="Can I edit the invitation after sharing it?">Kann ich die Einladung nach dem Teilen noch bearbeiten?</span>
+          <span class="faq-ico">+</span>
+        </div>
+        <div class="faq-a" data-de="Ja, jederzeit. Du kannst Ort, Uhrzeit, Zeitplan und Fotos jederzeit ändern. Änderungen erscheinen sofort auf der Live-Einladung — der Link bleibt derselbe." data-en="Yes, at any time. You can edit venue, time, schedule, and photos whenever you like. Changes appear instantly on the live invitation — the link stays the same.">Ja, jederzeit. Änderungen erscheinen sofort auf der Live-Einladung — der Link bleibt derselbe.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span data-de="Ist die Plattform auch auf Deutsch verfügbar?" data-en="Is the platform available in German?">Ist die Plattform auch auf Deutsch verfügbar?</span>
+          <span class="faq-ico">+</span>
+        </div>
+        <div class="faq-a" data-de="Ja! Festlich ist vollständig zweisprachig — Deutsch und Englisch. Sowohl die Oberfläche als auch die Einladungsseiten können in beiden Sprachen angezeigt werden. Die Spracherkennung erfolgt automatisch." data-en="Yes! Festlich is fully bilingual — German and English. Both the interface and the invitation pages can be displayed in either language. Language detection happens automatically.">Ja! Festlich ist vollständig zweisprachig — Deutsch und Englisch. Sowohl die Oberfläche als auch die Einladungsseiten.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span data-de="Gibt es eine Rückgabegarantie?" data-en="Is there a refund policy?">Gibt es eine Rückgabegarantie?</span>
+          <span class="faq-ico">+</span>
+        </div>
+        <div class="faq-a" data-de="Wir bieten eine vollständige Rückerstattung innerhalb von 14 Tagen nach dem Kauf, wenn du nicht zufrieden bist — keine Fragen gestellt. Deine Zufriedenheit ist uns wichtiger als alles andere." data-en="We offer a full refund within 14 days of purchase if you're not satisfied — no questions asked. Your peace of mind matters more than anything.">Wir bieten eine vollständige Rückerstattung innerhalb von 14 Tagen, keine Fragen gestellt.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <div class="container" style="position:relative;z-index:2">
+    <h2 class="cta-title reveal" data-de="Eure Liebesgeschichte verdient<br>einen <em>wunderschönen Anfang</em>" data-en="Your love story deserves<br>a <em>beautiful beginning</em>">Eure Liebesgeschichte verdient<br>einen <em>wunderschönen Anfang</em></h2>
+    <p class="cta-sub reveal" data-de="Erstelle deine digitale Einladung heute. Kostenlos starten, dauert weniger als fünf Minuten." data-en="Create your digital invitation today. Free to start, takes less than five minutes.">Erstelle deine digitale Einladung heute. Kostenlos starten, dauert weniger als fünf Minuten.</p>
+    <div class="cta-btns">
+      <button class="btn btn-lg btn-gold" onclick="showPage('signup')" data-de="Einladung erstellen →" data-en="Create your invitation →">Einladung erstellen →</button>
+      <button class="btn btn-lg btn-ghost" onclick="showPage('demo')" style="border-color:rgba(249,246,240,.2);color:var(--ivory)" data-de="Live-Demo sehen" data-en="View live demo">Live-Demo sehen</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="#" class="footer-logo" onclick="showPage('home');return false">Festlich<span>.</span></a>
+        <p class="footer-tag" data-de="Premium digitale Einladungen für Hochzeiten und besondere Feiern. Schön, persönlich, mühelos." data-en="Premium digital invitations for weddings and special celebrations. Beautiful, personal, effortless.">Premium digitale Einladungen für Hochzeiten und besondere Feiern. Schön, persönlich, mühelos.</p>
+        <div class="footer-soc">
+          <a class="soc-btn" title="Instagram">𝕀</a>
+          <a class="soc-btn" title="Pinterest">𝕻</a>
+          <a class="soc-btn" title="TikTok">𝕋</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-h" data-de="Produkt" data-en="Product">Produkt</div>
+        <ul class="footer-links">
+          <li><a href="#" data-de="Funktionen" data-en="Features">Funktionen</a></li>
+          <li><a href="#" data-de="Vorlagen" data-en="Templates">Vorlagen</a></li>
+          <li><a href="#" data-de="Preise" data-en="Pricing">Preise</a></li>
+          <li><a href="#" onclick="showPage('demo');return false" data-de="Live-Demo" data-en="Live demo">Live-Demo</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-h" data-de="Anlässe" data-en="Events">Anlässe</div>
+        <ul class="footer-links">
+          <li><a href="#" data-de="Hochzeiten" data-en="Weddings">Hochzeiten</a></li>
+          <li><a href="#" data-de="Verlobungen" data-en="Engagements">Verlobungen</a></li>
+          <li><a href="#" data-de="Geburtstage" data-en="Birthdays">Geburtstage</a></li>
+          <li><a href="#" data-de="Empfänge" data-en="Receptions">Empfänge</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-h" data-de="Unternehmen" data-en="Company">Unternehmen</div>
+        <ul class="footer-links">
+          <li><a href="#" data-de="Über uns" data-en="About">Über uns</a></li>
+          <li><a href="#" data-de="Blog" data-en="Blog">Blog</a></li>
+          <li><a href="#" data-de="Support" data-en="Support">Support</a></li>
+          <li><a href="#" data-de="Datenschutz" data-en="Privacy">Datenschutz</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-btm">
+      <div class="footer-copy" data-de="© 2025 Festlich. Alle Rechte vorbehalten." data-en="© 2025 Festlich. All rights reserved.">© 2025 Festlich. Alle Rechte vorbehalten.</div>
+      <div class="footer-leg">
+        <a href="#" data-de="Datenschutz" data-en="Privacy">Datenschutz</a>
+        <a href="#" data-de="Nutzungsbedingungen" data-en="Terms">Nutzungsbedingungen</a>
+        <a href="#" data-de="Cookies" data-en="Cookies">Cookies</a>
+      </div>
+    </div>
+  </div>
+</footer>
+</div><!-- end page-home -->
+
+<!-- ═══════════════════ DEMO / INVITATION PAGE ═══════════════════ -->
+<div id="page-demo" class="page">
+  <div style="background:var(--ivory);padding-top:80px">
+    <div style="max-width:680px;margin:0 auto;padding:0 20px 80px">
+      <div style="text-align:center;margin-bottom:16px;font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)" data-de="— Einladung zu —" data-en="— Invitation to —">— Einladung zu —</div>
+      <!-- Demo cover -->
+      <div class="demo-card">
+        <div class="demo-cover">
+          <div class="demo-couple">Lena<br><span class="demo-and">&amp;</span><br>Florian</div>
+          <div class="demo-datelbl" data-de="Samstag · 21. Juni 2025" data-en="Saturday · 21 June 2025">Samstag · 21. Juni 2025</div>
+          <div class="demo-cd">
+            <div class="cd-box"><div class="cd-num" id="dd">142</div><div class="cd-lbl" data-de="Tage" data-en="Days">Tage</div></div>
+            <div class="cd-box"><div class="cd-num" id="dh">08</div><div class="cd-lbl" data-de="Std." data-en="Hrs">Std.</div></div>
+            <div class="cd-box"><div class="cd-num" id="dm">34</div><div class="cd-lbl" data-de="Min." data-en="Min">Min.</div></div>
+            <div class="cd-box"><div class="cd-num" id="ds">19</div><div class="cd-lbl" data-de="Sek." data-en="Sec">Sek.</div></div>
+          </div>
+        </div>
+        <div class="demo-body">
+          <!-- Welcome note -->
+          <div style="text-align:center;margin-bottom:24px;padding:20px;background:var(--ivory);border-radius:14px">
+            <p style="font-family:'Playfair Display',serif;font-size:17px;font-style:italic;color:var(--char-soft);line-height:1.7" data-de="Mit großer Freude laden wir euch ein, unseren besonderen Tag mit uns zu feiern. Eure Anwesenheit bedeutet uns alles." data-en="With great joy, we invite you to celebrate our special day with us. Your presence means everything to us.">Mit großer Freude laden wir euch ein, unseren besonderen Tag mit uns zu feiern. Eure Anwesenheit bedeutet uns alles.</p>
+          </div>
+
+          <!-- Schedule -->
+          <div class="demo-stitle" data-de="Ablauf" data-en="Schedule">Ablauf</div>
+          <div class="sched-row"><div class="sched-time">13:30</div><div><div class="sched-event" data-de="Empfang &amp; Sekt" data-en="Welcome &amp; Champagne">Empfang &amp; Sekt</div><div class="sched-venue" data-de="Schlossgarten, Elmau" data-en="Castle Garden, Elmau">Schlossgarten, Elmau</div></div></div>
+          <div class="sched-row"><div class="sched-time">14:00</div><div><div class="sched-event" data-de="Trauungszeremonie" data-en="Wedding Ceremony">Trauungszeremonie</div><div class="sched-venue" data-de="Schlosskirche St. Lukas" data-en="Castle Chapel St. Lucas">Schlosskirche St. Lukas</div></div></div>
+          <div class="sched-row" style="border:none;margin:0;padding-bottom:0"><div class="sched-time">19:00</div><div><div class="sched-event" data-de="Dinner &amp; Tanz" data-en="Dinner &amp; Dancing">Dinner &amp; Tanz</div><div class="sched-venue" data-de="Großer Festsaal, Schloss Elmau" data-en="Grand Ballroom, Schloss Elmau">Großer Festsaal, Schloss Elmau</div></div></div>
+
+          <div style="height:1px;background:rgba(42,37,32,.07);margin:22px 0"></div>
+
+          <!-- Venue -->
+          <div class="demo-stitle" data-de="Veranstaltungsort" data-en="Venue">Veranstaltungsort</div>
+          <div style="background:var(--ivory);border-radius:14px;padding:18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;gap:12px;flex-wrap:wrap">
+            <div>
+              <div style="font-size:15px;font-weight:500;color:var(--charcoal)" data-de="Schloss Elmau, Bayern" data-en="Schloss Elmau, Bavaria">Schloss Elmau, Bayern</div>
+              <div style="font-size:13px;color:var(--char-soft);font-weight:300;margin-top:2px">Elmau 2, 82493 Krün</div>
+            </div>
+            <button class="btn btn-sm btn-dark" data-de="Route →" data-en="Directions →">Route →</button>
+          </div>
+
+          <!-- RSVP -->
+          <div class="demo-stitle" data-de="Rückmeldung" data-en="RSVP">Rückmeldung</div>
+          <div class="rsvp-box">
+            <div class="f-row">
+              <input class="f-in" type="text" placeholder-de="Vollständiger Name" placeholder-en="Full name" data-de-placeholder="Vollständiger Name" data-en-placeholder="Full name">
+              <input class="f-in" type="email" placeholder-de="E-Mail-Adresse" placeholder-en="Email address" data-de-placeholder="E-Mail-Adresse" data-en-placeholder="Email address">
+            </div>
+            <select class="f-sel" style="margin-bottom:10px">
+              <option data-de="Ich freue mich zu kommen ✓" data-en="I'll be there with joy ✓">Ich freue mich zu kommen ✓</option>
+              <option data-de="Leider kann ich nicht kommen" data-en="Regretfully unable to attend">Leider kann ich nicht kommen</option>
+            </select>
+            <div class="f-row" style="margin-bottom:10px">
+              <select class="f-sel">
+                <option data-de="1 Person" data-en="1 guest">1 Person</option>
+                <option data-de="2 Personen" data-en="2 guests">2 Personen</option>
+                <option data-de="3 Personen" data-en="3 guests">3 Personen</option>
+              </select>
+              <select class="f-sel">
+                <option data-de="Menüwahl: Fleisch" data-en="Meal: Meat">Menüwahl: Fleisch</option>
+                <option data-de="Menüwahl: Vegetarisch" data-en="Meal: Vegetarian">Menüwahl: Vegetarisch</option>
+                <option data-de="Menüwahl: Vegan" data-en="Meal: Vegan">Menüwahl: Vegan</option>
+              </select>
+            </div>
+            <input class="f-in" type="text" style="margin-bottom:10px;width:100%" data-de-placeholder="Unverträglichkeiten oder Anmerkungen (optional)" data-en-placeholder="Dietary requirements or notes (optional)">
+            <button class="rsvp-submit" data-de="Rückmeldung bestätigen →" data-en="Confirm attendance →">Rückmeldung bestätigen →</button>
+          </div>
+
+          <div style="height:1px;background:rgba(42,37,32,.07);margin:22px 0"></div>
+
+          <!-- Dress code -->
+          <div class="demo-stitle" data-de="Dresscode" data-en="Dress Code">Dresscode</div>
+          <div style="background:var(--ivory);border-radius:14px;padding:18px;font-size:14px;color:var(--char-soft);font-weight:300" data-de="Wir freuen uns über festliche Abendgarderobe. Für die Damen empfehlen wir bodenlange oder knienlange Kleider, für die Herren Anzug oder Smoking." data-en="We would love to see our guests in formal evening attire. Ladies: floor-length or knee-length dresses. Gentlemen: suit or black tie.">Wir freuen uns über festliche Abendgarderobe. Für die Damen empfehlen wir bodenlange oder knienlange Kleider, für die Herren Anzug oder Smoking.</div>
+
+          <div style="height:1px;background:rgba(42,37,32,.07);margin:22px 0"></div>
+
+          <!-- Registry -->
+          <div class="demo-stitle" data-de="Geschenke" data-en="Gifts">Geschenke</div>
+          <p style="font-size:14px;color:var(--char-soft);font-weight:300;margin-bottom:16px;font-style:italic" data-de="Eure Anwesenheit ist das schönste Geschenk. Wer uns dennoch eine Freude bereiten möchte:" data-en="Your presence is the greatest gift. For those who wish to give a little extra:">Eure Anwesenheit ist das schönste Geschenk. Wer uns dennoch eine Freude bereiten möchte:</p>
+          <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:22px">
+            <div style="background:var(--ivory);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+              <div style="display:flex;gap:12px;align-items:center"><span style="font-size:20px">🏠</span><div><div style="font-size:13.5px;font-weight:500" data-de="Wunschliste Einrichtung" data-en="Home Wishlist">Wunschliste Einrichtung</div><div style="font-size:12px;color:var(--taupe)">Amazon Wunschliste</div></div></div>
+              <button class="btn btn-sm btn-ghost" data-de="Ansehen →" data-en="View →">Ansehen →</button>
+            </div>
+            <div style="background:var(--ivory);border-radius:12px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between">
+              <div style="display:flex;gap:12px;align-items:center"><span style="font-size:20px">✈️</span><div><div style="font-size:13.5px;font-weight:500" data-de="Flitterwochen-Fonds" data-en="Honeymoon Fund">Flitterwochen-Fonds</div><div style="font-size:12px;color:var(--taupe)" data-de="Banküberweisung" data-en="Bank transfer">Banküberweisung</div></div></div>
+              <button class="btn btn-sm btn-ghost" data-de="Details →" data-en="Details →">Details →</button>
+            </div>
+          </div>
+
+          <!-- Share / QR -->
+          <div class="demo-stitle" data-de="Teilen" data-en="Share">Teilen</div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-sm btn-dark" data-de="🔗 Link kopieren" data-en="🔗 Copy link">🔗 Link kopieren</button>
+            <button class="btn btn-sm btn-ghost" style="color:#25D366;border-color:#25D366">💬 WhatsApp</button>
+            <button class="btn btn-sm btn-ghost" data-de="📱 QR-Code" data-en="📱 QR Code">📱 QR-Code</button>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:32px">
+        <button class="btn btn-md btn-ghost" onclick="showPage('home')" data-de="← Zurück zur Startseite" data-en="← Back to home">← Zurück zur Startseite</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SIGN IN ═══════════════════ -->
+<div id="page-signin" class="page">
+  <div class="auth-page show">
+    <div class="auth-card">
+      <div class="auth-logo">Festlich<span>.</span></div>
+      <div class="auth-tagline" data-de="Digitale Einladungen, die berühren" data-en="Digital invitations that touch hearts">Digitale Einladungen, die berühren</div>
+      <h2 class="auth-title" data-de="Willkommen zurück" data-en="Welcome back">Willkommen zurück</h2>
+      <p class="auth-sub" data-de="Melde dich in deinem Festlich-Konto an." data-en="Sign in to your Festlich account.">Melde dich in deinem Festlich-Konto an.</p>
+      <div class="supabase-note">
+        <strong>🔐 Supabase Auth</strong> — <span data-de="Diese Seite verbindet sich mit deiner bestehenden Supabase-Authentifizierung. Kein Neuaufbau nötig." data-en="This page connects to your existing Supabase auth. No rebuild needed.">Diese Seite verbindet sich mit deiner bestehenden Supabase-Authentifizierung.</span>
+      </div>
+      <label class="auth-label" data-de="E-Mail-Adresse" data-en="Email address">E-Mail-Adresse</label>
+      <input class="auth-in" type="email" data-de-placeholder="deine@email.de" data-en-placeholder="your@email.com">
+      <label class="auth-label" data-de="Passwort" data-en="Password">Passwort</label>
+      <input class="auth-in" type="password" data-de-placeholder="••••••••" data-en-placeholder="••••••••">
+      <a href="#" class="auth-forgot" data-de="Passwort vergessen?" data-en="Forgot password?">Passwort vergessen?</a>
+      <button class="auth-submit" data-de="Anmelden" data-en="Sign in">Anmelden</button>
+      <p class="auth-switch">
+        <span data-de="Noch kein Konto?" data-en="No account yet?">Noch kein Konto?</span>
+        <a href="#" onclick="showPage('signup');return false" data-de=" Jetzt registrieren" data-en=" Sign up"> Jetzt registrieren</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SIGN UP ═══════════════════ -->
+<div id="page-signup" class="page">
+  <div class="auth-page show">
+    <div class="auth-card">
+      <div class="auth-logo">Festlich<span>.</span></div>
+      <div class="auth-tagline" data-de="Digitale Einladungen, die berühren" data-en="Digital invitations that touch hearts">Digitale Einladungen, die berühren</div>
+      <h2 class="auth-title" data-de="Konto erstellen" data-en="Create account">Konto erstellen</h2>
+      <p class="auth-sub" data-de="Starte kostenlos — keine Kreditkarte nötig." data-en="Start for free — no credit card needed.">Starte kostenlos — keine Kreditkarte nötig.</p>
+      <div class="supabase-note">
+        <strong>🔐 Supabase Auth</strong> — <span data-de="Registrierung läuft über dein bestehendes Supabase-Auth-System. Alle Felder und Validierungen passen sich deiner Konfiguration an." data-en="Registration runs through your existing Supabase auth system. All fields and validation adapt to your configuration.">Registrierung läuft über dein bestehendes Supabase-Auth-System.</span>
+      </div>
+      <label class="auth-label" data-de="Vollständiger Name" data-en="Full name">Vollständiger Name</label>
+      <input class="auth-in" type="text" data-de-placeholder="Max Mustermann" data-en-placeholder="Jane Smith">
+      <label class="auth-label" data-de="E-Mail-Adresse" data-en="Email address">E-Mail-Adresse</label>
+      <input class="auth-in" type="email" data-de-placeholder="deine@email.de" data-en-placeholder="your@email.com">
+      <label class="auth-label" data-de="Passwort (min. 8 Zeichen)" data-en="Password (min. 8 characters)">Passwort (min. 8 Zeichen)</label>
+      <input class="auth-in" type="password" data-de-placeholder="Wähle ein starkes Passwort" data-en-placeholder="Choose a strong password">
+      <button class="auth-submit" data-de="Kostenlos registrieren →" data-en="Create free account →">Kostenlos registrieren →</button>
+      <p class="auth-switch">
+        <span data-de="Bereits registriert?" data-en="Already have an account?">Bereits registriert?</span>
+        <a href="#" onclick="showPage('signin');return false" data-de=" Jetzt anmelden" data-en=" Sign in"> Jetzt anmelden</a>
+      </p>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── LANGUAGE ──
+let lang = 'de';
+function setLang(l){
+  lang = l;
+  document.getElementById('btnDE').classList.toggle('active', l==='de');
+  document.getElementById('btnEN').classList.toggle('active', l==='en');
+  // Update all text nodes
+  document.querySelectorAll('[data-de]').forEach(el=>{
+    const txt = el.getAttribute('data-'+l);
+    if(txt) el.innerHTML = txt;
+  });
+  // Update placeholders
+  document.querySelectorAll('[data-de-placeholder]').forEach(el=>{
+    const ph = el.getAttribute('data-'+l+'-placeholder');
+    if(ph) el.placeholder = ph;
+  });
+  // Update select options
+  document.querySelectorAll('select option[data-de]').forEach(el=>{
+    const txt = el.getAttribute('data-'+l);
+    if(txt) el.textContent = txt;
+  });
+  document.documentElement.lang = l;
+}
+// Init placeholders
+document.querySelectorAll('[data-de-placeholder]').forEach(el=>{
+  el.placeholder = el.getAttribute('data-de-placeholder');
+});
+
+// ── PAGE ROUTING ──
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  window.scrollTo({top:0,behavior:'smooth'});
+  reobserve();
+}
+
+// ── NAV SCROLL ──
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('compact', window.scrollY > 50);
+});
+
+// ── FAQ ──
+function toggleFaq(el){
+  const item = el.parentElement;
+  const open = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if(!open) item.classList.add('open');
+}
+
+// ── SCROLL REVEAL ──
+let obs;
+function reobserve(){
+  if(obs) obs.disconnect();
+  obs = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('in'); });
+  },{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+reobserve();
+
+// ── COUNTDOWN ──
+function tick(){
+  const t = new Date('2025-06-21T14:00:00');
+  const n = new Date();
+  const diff = Math.max(0,t-n);
+  const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000),
+        m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000);
+  ['dd','dh','dm','ds'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el) el.textContent=String([d,h,m,s][i]).padStart(2,'0');
+  });
+}
+tick(); setInterval(tick,1000);
+</script>
+</body>
+</html>
