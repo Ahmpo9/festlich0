@@ -1,0 +1,2948 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Festlich — Digitale Einladungen, die berühren</title>
+<meta name="description" content="Premium digitale Einladungen für Hochzeiten und besondere Feiern. Elegant, persönlich, unvergesslich.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+/* ═══════════════════════════════════════════════════
+   FESTLICH DESIGN SYSTEM — Premium Wedding Platform
+   ═══════════════════════════════════════════════════ */
+:root {
+  --ivory:     #FAF8F3;
+  --cream:     #F3EDE0;
+  --sand:      #E5D8C3;
+  --champagne: #CEB98A;
+  --taupe:     #AE8E6C;
+  --warm:      #8A6E52;
+  --blush:     #DDB9AC;
+  --rose:      #C28A7A;
+  --charcoal:  #262019;
+  --char-60:   #3F3828;
+  --char-40:   #5C5442;
+  --gold:      #A87C3E;
+  --gold-lt:   #C89855;
+  --w:         #FEFCF9;
+  --sidebar:   250px;
+  --nav-h:     70px;
+}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0 }
+html { scroll-behavior: smooth; font-size: 16px }
+body { font-family: 'Jost', sans-serif; background: var(--w); color: var(--charcoal);
+  overflow-x: hidden; line-height: 1.7; -webkit-font-smoothing: antialiased }
+.serif { font-family: 'Cormorant Garamond', serif }
+img { max-width: 100%; display: block }
+button { font-family: 'Jost', sans-serif; cursor: pointer }
+input, select, textarea { font-family: 'Jost', sans-serif }
+.hidden { display: none !important }
+
+/* ── REVEAL ANIMATIONS ── */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s ease }
+.reveal.visible { opacity: 1; transform: none }
+
+/* ── CONTAINER ── */
+.container { max-width: 1160px; margin: 0 auto; padding: 0 28px }
+
+/* ── EYEBROW ── */
+.eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 11px;
+  font-weight: 500; letter-spacing: .22em; text-transform: uppercase; color: var(--gold) }
+.eyebrow::before, .eyebrow::after { content: ''; width: 26px; height: 1px;
+  background: currentColor; opacity: .5 }
+
+/* ── SECTION HEADERS ── */
+.sec-h { text-align: center; margin-bottom: 64px }
+.sec-title { font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 4.5vw, 58px); font-weight: 400; line-height: 1.1;
+  letter-spacing: -.01em; color: var(--charcoal); margin: 14px 0 18px }
+.sec-title em { font-style: italic; color: var(--gold) }
+.sec-sub { font-size: 16px; color: var(--char-40); font-weight: 300; line-height: 1.75;
+  max-width: 560px; margin: 0 auto }
+.rule { width: 44px; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0 auto 20px }
+
+/* ── BUTTONS ── */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: 100px; font-family: 'Jost', sans-serif; font-weight: 400;
+  letter-spacing: .04em; cursor: pointer; transition: all .22s ease;
+  text-decoration: none; border: none; white-space: nowrap }
+.btn-sm  { font-size: 13px; padding: 9px 20px }
+.btn-md  { font-size: 14px; padding: 12px 28px }
+.btn-lg  { font-size: 15px; padding: 14px 34px }
+.btn-xl  { font-size: 16px; padding: 17px 42px }
+.btn-dark { background: var(--charcoal); color: var(--ivory) }
+.btn-dark:hover { background: var(--char-60); transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(38,32,25,.25) }
+.btn-gold { background: linear-gradient(135deg, var(--gold), var(--gold-lt)); color: #fff;
+  box-shadow: 0 4px 18px rgba(168,124,62,.3) }
+.btn-gold:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(168,124,62,.45) }
+.btn-outline { background: transparent; border: 1.5px solid rgba(38,32,25,.2); color: var(--charcoal) }
+.btn-outline:hover { border-color: var(--charcoal); background: rgba(38,32,25,.04) }
+.btn-ghost-light { background: transparent; border: 1.5px solid rgba(250,248,243,.28); color: var(--ivory) }
+.btn-ghost-light:hover { border-color: var(--ivory); background: rgba(250,248,243,.09) }
+.btn-ghost { background: rgba(38,32,25,.06); border: none; color: var(--charcoal) }
+.btn-ghost:hover { background: rgba(38,32,25,.1) }
+.btn[disabled] { opacity: .5; cursor: not-allowed; transform: none !important; box-shadow: none !important }
+
+/* ── FORM ELEMENTS ── */
+.f-group { margin-bottom: 18px }
+.f-label { display: block; font-size: 11.5px; font-weight: 500; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--charcoal); margin-bottom: 7px }
+.f-input, .f-textarea, .f-select {
+  width: 100%; padding: 12px 15px; border: 1.5px solid rgba(38,32,25,.12);
+  border-radius: 9px; font-family: 'Jost', sans-serif; font-size: 14px;
+  color: var(--charcoal); background: white; outline: none;
+  transition: border-color .2s, box-shadow .2s }
+.f-input:focus, .f-textarea:focus, .f-select:focus {
+  border-color: var(--gold); box-shadow: 0 0 0 3px rgba(168,124,62,.11) }
+.f-textarea { resize: vertical; min-height: 90px; line-height: 1.6 }
+.f-select { cursor: pointer; appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23AE8E6C' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center }
+.f-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px }
+@media(max-width: 600px) { .f-row { grid-template-columns: 1fr } }
+
+/* ── ALERTS ── */
+.alert { padding: 13px 16px; border-radius: 9px; font-size: 14px; margin-bottom: 16px }
+.alert-error { background: #FDF0EF; color: #9B2C2C; border: 1px solid #F5C0BA }
+.alert-success { background: #EFF7F0; color: #166534; border: 1px solid #86EFAC }
+.alert-info { background: #EFF6FF; color: #1E40AF; border: 1px solid #93C5FD }
+
+/* ── TOASTS ── */
+#toast-wrap { position: fixed; top: 22px; right: 22px; z-index: 9000;
+  display: flex; flex-direction: column; gap: 10px; pointer-events: none }
+.toast { background: white; border-radius: 12px; padding: 13px 17px;
+  box-shadow: 0 12px 40px rgba(38,32,25,.15); font-size: 14px;
+  display: flex; align-items: center; gap: 10px; min-width: 250px; max-width: 360px;
+  border-left: 3px solid var(--gold); pointer-events: all;
+  animation: toastIn .3s ease }
+.toast.err { border-left-color: #E53E3E }
+.toast.ok  { border-left-color: #38A169 }
+@keyframes toastIn { from { opacity: 0; transform: translateX(20px) } to { opacity: 1; transform: none } }
+
+/* ── SPINNER ── */
+.spin { display: inline-block; width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,.3); border-top-color: white;
+  border-radius: 50%; animation: spinning .7s linear infinite }
+.spin-dark { border-color: rgba(38,32,25,.2); border-top-color: var(--charcoal) }
+@keyframes spinning { to { transform: rotate(360deg) } }
+
+/* ── MODAL ── */
+.modal-bg { position: fixed; inset: 0; background: rgba(38,32,25,.48); z-index: 500;
+  display: flex; align-items: center; justify-content: center; padding: 24px }
+.modal { background: white; border-radius: 22px; padding: 34px; width: 100%; max-width: 500px;
+  box-shadow: 0 32px 80px rgba(38,32,25,.2); max-height: 90vh; overflow-y: auto }
+.modal-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 400;
+  color: var(--charcoal); margin-bottom: 6px }
+.modal-sub { font-size: 13.5px; color: var(--char-40); font-weight: 300; margin-bottom: 22px }
+.modal-footer { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px }
+
+/* ── TOGGLE ── */
+.toggle-wrap { display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 0; border-bottom: 1px solid rgba(38,32,25,.06) }
+.toggle-wrap:last-of-type { border-bottom: none; padding-bottom: 0 }
+.toggle-info-title { font-size: 14px; color: var(--charcoal) }
+.toggle-info-desc  { font-size: 12px; color: var(--taupe); font-weight: 300; margin-top: 1px }
+.toggle { position: relative; width: 42px; height: 23px; cursor: pointer; flex-shrink: 0 }
+.toggle input { opacity: 0; width: 0; height: 0; position: absolute }
+.toggle-track { position: absolute; inset: 0; background: #CCC; border-radius: 12px;
+  transition: background .2s }
+.toggle input:checked + .toggle-track { background: var(--gold) }
+.toggle-thumb { position: absolute; top: 2px; left: 2px; width: 19px; height: 19px;
+  background: white; border-radius: 50%; transition: transform .2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,.15) }
+.toggle input:checked ~ .toggle-thumb { transform: translateX(19px) }
+
+/* ═══════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════ */
+#nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  height: var(--nav-h); transition: all .35s ease;
+}
+#nav.scrolled {
+  background: rgba(254,252,249,.94);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  box-shadow: 0 1px 0 rgba(38,32,25,.07);
+}
+#nav.nav-inv { /* transparent, on dark bg — make text light */ }
+.nav-inner { display: flex; align-items: center; justify-content: space-between;
+  height: 100%; max-width: 1160px; margin: 0 auto; padding: 0 28px }
+.nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 500;
+  letter-spacing: .06em; color: var(--charcoal); cursor: pointer; user-select: none;
+  transition: color .2s }
+.nav-logo span { color: var(--gold) }
+.nav-links { display: flex; gap: 32px; align-items: center }
+.nav-link { font-size: 13.5px; color: var(--char-40); cursor: pointer;
+  transition: color .2s; user-select: none }
+.nav-link:hover { color: var(--charcoal) }
+.nav-right { display: flex; align-items: center; gap: 10px }
+/* lang switcher */
+.lang-sw { display: flex; align-items: center; background: rgba(38,32,25,.06);
+  border-radius: 20px; padding: 3px; gap: 2px; margin-right: 6px }
+.lang-btn { padding: 4px 12px; border-radius: 16px; font-size: 11.5px; font-weight: 500;
+  letter-spacing: .06em; cursor: pointer; border: none; background: transparent;
+  color: var(--char-40); transition: all .2s; font-family: 'Jost', sans-serif }
+.lang-btn.on { background: var(--charcoal); color: var(--ivory) }
+/* hamburger */
+.nav-burger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 5px }
+.nav-burger span { display: block; width: 22px; height: 1.5px; background: var(--charcoal); transition: all .3s }
+@media(max-width: 860px) { .nav-links { display: none } .nav-burger { display: flex } }
+
+/* mobile menu */
+#mob-menu { position: fixed; inset: 0; background: var(--charcoal); z-index: 300;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 34px;
+  opacity: 0; pointer-events: none; transition: opacity .3s }
+#mob-menu.open { opacity: 1; pointer-events: all }
+.mob-link { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300;
+  color: rgba(250,248,243,.7); cursor: pointer; transition: color .2s }
+.mob-link:hover { color: var(--ivory) }
+.mob-close { position: absolute; top: 24px; right: 28px; background: none; border: none;
+  color: var(--ivory); font-size: 28px; cursor: pointer; opacity: .7 }
+
+/* ═══════════════════════════════════════════════════
+   PUBLIC PAGES WRAPPER
+   ═══════════════════════════════════════════════════ */
+section { padding: 96px 0 }
+
+/* ── HERO ── */
+.hero { min-height: 100vh; display: flex; align-items: center; position: relative;
+  overflow: hidden; padding-top: var(--nav-h); background: var(--ivory) }
+.hero-mesh {
+  position: absolute; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 70% 55% at 72% 32%, rgba(206,185,138,.22), transparent 65%),
+    radial-gradient(ellipse 50% 65% at 18% 80%, rgba(221,185,172,.17), transparent 60%),
+    radial-gradient(ellipse 40% 40% at 88% 88%, rgba(168,124,62,.08), transparent 55%);
+}
+.hero-grain { position: absolute; inset: 0; opacity: .025; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 260px }
+.hero-grid { display: grid; grid-template-columns: 1fr 1fr; align-items: center;
+  gap: 80px; padding: 80px 0 96px; position: relative; z-index: 2 }
+.hero-hl { font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(52px, 6vw, 84px); font-weight: 400; line-height: 1.06;
+  letter-spacing: -.015em; color: var(--charcoal); margin-bottom: 24px }
+.hero-hl em { font-style: italic; color: var(--gold) }
+.hero-sub { font-size: 17px; color: var(--char-40); font-weight: 300; line-height: 1.74;
+  max-width: 430px; margin-bottom: 40px }
+.hero-btns { display: flex; gap: 12px; flex-wrap: wrap }
+.hero-stats { display: flex; gap: 44px; margin-top: 52px; padding-top: 42px;
+  border-top: 1px solid rgba(38,32,25,.1) }
+.hs-n { font-family: 'Cormorant Garamond', serif; font-size: 38px; font-weight: 500;
+  color: var(--charcoal); line-height: 1 }
+.hs-l { font-size: 11px; color: var(--taupe); letter-spacing: .12em;
+  text-transform: uppercase; margin-top: 3px }
+
+/* ── INV CARD MOCKUP ── */
+.hero-visual { display: flex; justify-content: center; align-items: center; position: relative }
+.inv-mock { width: 295px; background: linear-gradient(162deg, var(--w), #F2E8D5);
+  border-radius: 20px; box-shadow: 0 36px 90px rgba(38,32,25,.16), 0 2px 6px rgba(38,32,25,.05);
+  overflow: hidden; animation: cardFloat 7s ease-in-out infinite }
+@keyframes cardFloat { 0%,100% { transform: rotate(-2.5deg) translateY(0) }
+  50% { transform: rotate(-2.5deg) translateY(-11px) } }
+.inv-mock:hover { animation: none; transform: rotate(0) scale(1.02); transition: transform .4s ease }
+.inv-mock-cover { height: 165px;
+  background: linear-gradient(148deg, #7A5C48 0%, #BE8070 48%, #DBBCAA 100%);
+  display: flex; align-items: flex-end; padding: 18px; position: relative; overflow: hidden }
+.inv-mock-cover::before { content: '';
+  position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(45deg,
+    rgba(255,255,255,.04) 0, rgba(255,255,255,.04) 1px, transparent 0, transparent 50%);
+  background-size: 8px 8px }
+.inv-mock-text { position: relative; z-index: 1; color: white }
+.inv-mock-couple { font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 400;
+  letter-spacing: .04em; line-height: 1.2 }
+.inv-mock-date { font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
+  opacity: .72; margin-top: 4px }
+.inv-mock-body { padding: 16px }
+.inv-mock-row { display: flex; gap: 9px; align-items: flex-start; margin-bottom: 11px }
+.inv-mock-ico { width: 27px; height: 27px; border-radius: 7px; background: var(--cream);
+  display: flex; align-items: center; justify-content: center; font-size: 12px;
+  flex-shrink: 0; margin-top: 1px }
+.inv-mock-lbl { font-size: 9.5px; text-transform: uppercase; letter-spacing: .13em;
+  color: var(--taupe); margin-bottom: 1px }
+.inv-mock-val { font-size: 12.5px; color: var(--charcoal) }
+.inv-mock-foot { background: var(--charcoal); margin: 0 16px 16px; border-radius: 9px;
+  padding: 11px 14px; display: flex; align-items: center; justify-content: space-between }
+.inv-mock-foot-txt { font-size: 11.5px; color: rgba(250,248,243,.8) }
+.inv-mock-badge { background: rgba(168,124,62,.25); color: var(--gold-lt);
+  font-size: 9.5px; padding: 3px 9px; border-radius: 20px; letter-spacing: .06em }
+/* floating chips */
+.chip { position: absolute; background: white; border-radius: 13px; padding: 11px 15px;
+  box-shadow: 0 10px 32px rgba(38,32,25,.13); font-size: 11.5px;
+  display: flex; align-items: center; gap: 9px; white-space: nowrap }
+.chip-1 { top: -18px; right: -36px }
+.chip-2 { bottom: 44px; left: -50px }
+.chip-dot { width: 8px; height: 8px; border-radius: 50% }
+@media(max-width: 860px) { .chip { display: none } }
+
+/* ── FEATURES ── */
+.features-sec { background: linear-gradient(180deg, var(--w) 0%, var(--ivory) 100%) }
+.feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px }
+.feat-card { background: white; border-radius: 20px; padding: 32px 28px;
+  border: 1px solid rgba(38,32,25,.06); transition: all .3s; position: relative; overflow: hidden }
+.feat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2.5px;
+  background: linear-gradient(90deg, var(--sand), var(--gold));
+  transform: scaleX(0); transform-origin: left; transition: transform .35s }
+.feat-card:hover { transform: translateY(-5px); box-shadow: 0 18px 50px rgba(38,32,25,.09) }
+.feat-card:hover::after { transform: scaleX(1) }
+.feat-ico { width: 50px; height: 50px; border-radius: 13px;
+  background: linear-gradient(135deg, var(--cream), var(--sand));
+  display: flex; align-items: center; justify-content: center; font-size: 22px; margin-bottom: 20px }
+.feat-title { font-size: 17px; font-weight: 500; color: var(--charcoal); margin-bottom: 10px }
+.feat-desc { font-size: 14px; color: var(--char-40); line-height: 1.7; font-weight: 300 }
+
+/* ── HOW IT WORKS ── */
+.how-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative }
+.how-line { position: absolute; top: 31px; left: calc(12.5% + 16px); right: calc(12.5% + 16px);
+  height: 1px; background: linear-gradient(90deg, transparent, var(--sand) 15%, var(--sand) 85%, transparent) }
+.how-step { text-align: center; padding: 0 14px }
+.how-num { width: 62px; height: 62px; border-radius: 50%; border: 1.5px solid var(--sand);
+  background: var(--w); display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 22px; font-family: 'Cormorant Garamond', serif; font-size: 24px;
+  font-weight: 500; color: var(--gold); position: relative; z-index: 1;
+  box-shadow: 0 4px 14px rgba(38,32,25,.06) }
+.how-title { font-size: 15px; font-weight: 500; color: var(--charcoal); margin-bottom: 9px }
+.how-desc { font-size: 13.5px; color: var(--char-40); line-height: 1.65; font-weight: 300 }
+
+/* ── CATEGORIES ── */
+.cat-sec { background: var(--charcoal); padding: 96px 0 0 }
+.cat-sec .sec-title { color: var(--ivory) }
+.cat-sec .sec-sub { color: rgba(250,248,243,.5) }
+.cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; margin-top: 56px }
+.cat-card { position: relative; height: 230px; overflow: hidden; cursor: pointer }
+.cat-card:first-child { grid-column: span 2 }
+.cat-bg { position: absolute; inset: 0; display: flex; align-items: center;
+  justify-content: center; font-size: 80px; transition: transform .6s ease }
+.cat-card:hover .cat-bg { transform: scale(1.1) }
+.cat-veil { position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 25%, rgba(0,0,0,.65) 100%) }
+.cat-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 22px 24px; color: white }
+.cat-name { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 400 }
+.cat-count { font-size: 11px; letter-spacing: .13em; text-transform: uppercase;
+  opacity: .62; margin-top: 2px }
+
+/* ── DEMO PREVIEW ── */
+.demo-sec { background: var(--ivory) }
+.demo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center }
+.demo-card { background: white; border-radius: 26px; overflow: hidden;
+  box-shadow: 0 44px 110px rgba(38,32,25,.14) }
+.demo-cover { background: linear-gradient(152deg, #5C4838 0%, #BE8070 48%, #E8CEBC 100%);
+  padding: 54px 36px; text-align: center; color: white; position: relative; overflow: hidden }
+.demo-cover::after { content: '— ✦ —'; position: absolute; top: 20px; left: 0; right: 0;
+  text-align: center; font-size: 11px; letter-spacing: .5em; opacity: .32 }
+.demo-couple { font-family: 'Cormorant Garamond', serif; font-size: 42px; font-weight: 300;
+  letter-spacing: .03em; line-height: 1.15; margin-bottom: 8px }
+.demo-and { font-style: italic; opacity: .65 }
+.demo-date-lbl { font-size: 11.5px; letter-spacing: .25em; text-transform: uppercase;
+  opacity: .62; margin-bottom: 22px }
+.countdown { display: flex; gap: 12px; justify-content: center }
+.cd-box { background: rgba(255,255,255,.14); backdrop-filter: blur(8px);
+  border-radius: 9px; padding: 11px 15px; text-align: center; min-width: 54px }
+.cd-n { font-family: 'Cormorant Garamond', serif; font-size: 28px; line-height: 1 }
+.cd-l { font-size: 9px; letter-spacing: .12em; text-transform: uppercase; opacity: .58; margin-top: 2px }
+.demo-body { padding: 28px }
+.demo-stitle { font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 400;
+  color: var(--charcoal); margin-bottom: 14px }
+.sched-row { display: flex; gap: 14px; margin-bottom: 14px; padding-bottom: 14px;
+  border-bottom: 1px solid rgba(38,32,25,.06) }
+.sched-time { font-size: 12px; color: var(--gold); font-weight: 500; min-width: 46px; padding-top: 2px }
+.sched-evt { font-size: 14px; font-weight: 500; color: var(--charcoal); margin-bottom: 1px }
+.sched-venue { font-size: 12.5px; color: var(--char-40); font-weight: 300 }
+/* mini rsvp */
+.mini-rsvp { background: var(--ivory); border-radius: 13px; padding: 20px }
+.mini-rsvp-row { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-bottom: 9px }
+.mini-in { padding: 10px 13px; border: 1.5px solid rgba(38,32,25,.11); border-radius: 8px;
+  font-family: 'Jost', sans-serif; font-size: 13px; background: white; outline: none;
+  width: 100%; transition: border-color .2s; color: var(--charcoal) }
+.mini-in:focus { border-color: var(--gold) }
+.mini-sel { padding: 10px 13px; border: 1.5px solid rgba(38,32,25,.11); border-radius: 8px;
+  font-family: 'Jost', sans-serif; font-size: 13px; background: white; outline: none; width: 100% }
+.mini-btn { width: 100%; background: var(--charcoal); color: var(--ivory); border: none;
+  border-radius: 8px; padding: 12px; font-family: 'Jost', sans-serif; font-size: 14px;
+  cursor: pointer; transition: all .2s; margin-top: 3px; letter-spacing: .03em }
+.mini-btn:hover { background: var(--char-60) }
+
+/* ── TEMPLATES GRID ── */
+.tpl-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px }
+.tpl-card { border-radius: 14px; overflow: hidden; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(38,32,25,.07); transition: all .3s }
+.tpl-card:hover { transform: translateY(-4px); box-shadow: 0 14px 38px rgba(38,32,25,.14) }
+.tpl-thumb { height: 200px; display: flex; align-items: center; justify-content: center;
+  font-size: 40px; position: relative }
+.tpl-overlay { position: absolute; inset: 0; background: rgba(38,32,25,.55);
+  display: flex; align-items: center; justify-content: center; opacity: 0;
+  transition: opacity .3s; font-size: 13px; color: white; letter-spacing: .1em; text-transform: uppercase }
+.tpl-card:hover .tpl-overlay { opacity: 1 }
+.tpl-info { background: white; padding: 14px 16px }
+.tpl-name { font-size: 14px; font-weight: 500; color: var(--charcoal); margin-bottom: 3px }
+.tpl-type { font-size: 11.5px; color: var(--taupe); text-transform: uppercase; letter-spacing: .1em }
+
+/* ── TESTIMONIALS ── */
+.testi-sec { background: var(--ivory) }
+.testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px }
+.testi-card { background: white; border-radius: 20px; padding: 30px 26px;
+  border: 1px solid rgba(38,32,25,.06); position: relative }
+.testi-q { font-family: 'Cormorant Garamond', serif; font-size: 60px; line-height: 1;
+  color: var(--sand); position: absolute; top: 14px; left: 22px; font-weight: 300 }
+.testi-stars { color: var(--gold); font-size: 13px; margin-bottom: 2px }
+.testi-txt { font-size: 14px; color: var(--char-40); line-height: 1.78; font-weight: 300;
+  font-style: italic; margin-top: 30px; margin-bottom: 22px }
+.testi-auth { display: flex; align-items: center; gap: 11px }
+.testi-av { width: 43px; height: 43px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blush), var(--sand));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--char-40) }
+.testi-name { font-size: 14px; font-weight: 500; color: var(--charcoal) }
+.testi-evt { font-size: 11.5px; color: var(--taupe) }
+
+/* ── PRICING ── */
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; align-items: start }
+.price-card { background: white; border-radius: 22px; padding: 38px 30px;
+  border: 1.5px solid rgba(38,32,25,.08); transition: all .3s; position: relative }
+.price-card:hover { box-shadow: 0 18px 52px rgba(38,32,25,.09) }
+.price-card.feat { background: var(--charcoal); border-color: var(--charcoal);
+  transform: scale(1.04); box-shadow: 0 24px 64px rgba(38,32,25,.22) }
+.popular-badge { position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--gold), var(--gold-lt)); color: white;
+  font-size: 10.5px; font-weight: 500; padding: 5px 16px; border-radius: 20px;
+  letter-spacing: .12em; text-transform: uppercase; white-space: nowrap }
+.plan-tier { font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 10px; font-weight: 500 }
+.price-card.feat .plan-tier { color: var(--champagne) }
+.plan-price { font-family: 'Cormorant Garamond', serif; font-size: 54px; font-weight: 400;
+  color: var(--charcoal); line-height: 1; margin-bottom: 4px }
+.price-card.feat .plan-price { color: var(--ivory) }
+.plan-period { font-size: 13px; color: var(--char-40); font-weight: 300; margin-bottom: 22px }
+.price-card.feat .plan-period { color: rgba(250,248,243,.5) }
+.plan-div { height: 1px; background: rgba(38,32,25,.08); margin-bottom: 24px }
+.price-card.feat .plan-div { background: rgba(250,248,243,.12) }
+.plan-feats { list-style: none; margin-bottom: 28px }
+.plan-feat { display: flex; gap: 9px; font-size: 13.5px; color: var(--char-40);
+  margin-bottom: 11px; align-items: flex-start }
+.price-card.feat .plan-feat { color: rgba(250,248,243,.75) }
+.plan-ck { color: var(--gold); flex-shrink: 0; margin-top: 1px }
+.price-card.feat .plan-ck { color: var(--champagne) }
+
+/* ── FAQ ── */
+.faq-sec { background: var(--ivory) }
+.faq-wrap { max-width: 760px; margin: 0 auto }
+.faq-item { border-bottom: 1px solid rgba(38,32,25,.09); overflow: hidden }
+.faq-q { display: flex; justify-content: space-between; align-items: center;
+  padding: 22px 0; cursor: pointer; font-size: 15.5px; font-weight: 400;
+  color: var(--charcoal); user-select: none; gap: 18px; transition: color .2s }
+.faq-q:hover { color: var(--gold) }
+.faq-ico { font-size: 20px; flex-shrink: 0; color: var(--gold); transition: transform .3s; line-height: 1 }
+.faq-item.open .faq-ico { transform: rotate(45deg) }
+.faq-a { font-size: 14.5px; color: var(--char-40); line-height: 1.78; max-height: 0;
+  overflow: hidden; font-weight: 300; transition: max-height .4s ease, padding-bottom .3s }
+.faq-item.open .faq-a { max-height: 220px; padding-bottom: 22px }
+
+/* ── CTA BANNER ── */
+.cta-banner { background: linear-gradient(135deg, var(--charcoal) 0%, #3A3020 100%);
+  padding: 96px 0; text-align: center; position: relative; overflow: hidden }
+.cta-banner::before { content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 55% 70% at 50% 50%, rgba(168,124,62,.11), transparent) }
+.cta-title { font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(38px, 5vw, 64px); font-weight: 400; color: var(--ivory);
+  line-height: 1.1; margin-bottom: 18px; position: relative }
+.cta-title em { font-style: italic; color: var(--champagne) }
+.cta-sub { font-size: 17px; color: rgba(250,248,243,.55); font-weight: 300;
+  margin-bottom: 36px; position: relative }
+.cta-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; position: relative }
+
+/* ── FOOTER ── */
+.site-footer { background: var(--charcoal); padding: 78px 0 40px }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 54px; margin-bottom: 58px }
+.footer-logo { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 500;
+  color: var(--ivory); display: block; margin-bottom: 14px; cursor: pointer;
+  letter-spacing: .05em }
+.footer-logo span { color: var(--gold) }
+.footer-tagline { font-size: 13.5px; line-height: 1.7; font-weight: 300;
+  margin-bottom: 22px; color: rgba(250,248,243,.48) }
+.footer-soc { display: flex; gap: 8px }
+.soc-btn { width: 34px; height: 34px; border-radius: 50%; background: rgba(250,248,243,.08);
+  display: flex; align-items: center; justify-content: center; font-size: 13px;
+  color: rgba(250,248,243,.5); cursor: pointer; transition: all .2s }
+.soc-btn:hover { background: rgba(250,248,243,.15); color: var(--ivory) }
+.footer-col-h { font-size: 11px; text-transform: uppercase; letter-spacing: .18em;
+  color: var(--ivory); margin-bottom: 18px; font-weight: 500 }
+.footer-links { list-style: none }
+.footer-links li { margin-bottom: 11px }
+.footer-links a, .footer-links span { font-size: 13.5px; color: rgba(250,248,243,.5);
+  font-weight: 300; cursor: pointer; transition: color .2s; display: block }
+.footer-links a:hover, .footer-links span:hover { color: var(--ivory) }
+.footer-btm { border-top: 1px solid rgba(250,248,243,.07); padding-top: 26px;
+  display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px }
+.footer-copy { font-size: 12.5px; font-weight: 300; color: rgba(250,248,243,.3) }
+.footer-leg { display: flex; gap: 22px }
+.footer-leg a, .footer-leg span { font-size: 12.5px; color: rgba(250,248,243,.3);
+  cursor: pointer; transition: color .2s }
+.footer-leg a:hover, .footer-leg span:hover { color: var(--ivory) }
+
+/* ═══════════════════════════════════════════════════
+   AUTH PAGES
+   ═══════════════════════════════════════════════════ */
+.auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  padding: calc(var(--nav-h) + 40px) 24px 60px; background: var(--ivory);
+  background-image:
+    radial-gradient(ellipse 70% 55% at 72% 32%, rgba(206,185,138,.2), transparent),
+    radial-gradient(ellipse 50% 65% at 15% 80%, rgba(221,185,172,.16), transparent) }
+.auth-card { background: white; border-radius: 24px; padding: 50px 44px; width: 100%; max-width: 440px;
+  box-shadow: 0 28px 72px rgba(38,32,25,.1) }
+.auth-logo { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 500;
+  color: var(--charcoal); text-align: center; margin-bottom: 6px; cursor: pointer }
+.auth-logo span { color: var(--gold) }
+.auth-tagline { text-align: center; font-size: 13.5px; color: var(--taupe);
+  font-weight: 300; margin-bottom: 32px; font-style: italic }
+.auth-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 400;
+  color: var(--charcoal); margin-bottom: 6px }
+.auth-hint { font-size: 13.5px; color: var(--char-40); font-weight: 300; margin-bottom: 26px }
+.auth-forgot { display: block; text-align: right; font-size: 12.5px; color: var(--taupe);
+  margin-top: -8px; margin-bottom: 14px; cursor: pointer; transition: color .2s }
+.auth-forgot:hover { color: var(--gold) }
+.auth-switch { text-align: center; font-size: 13.5px; color: var(--char-40);
+  font-weight: 300; margin-top: 16px }
+.auth-switch a { color: var(--gold); cursor: pointer }
+
+/* ═══════════════════════════════════════════════════
+   DASHBOARD
+   ═══════════════════════════════════════════════════ */
+.dash-wrap { display: flex; height: 100vh; overflow: hidden }
+
+/* SIDEBAR */
+.dash-side { width: var(--sidebar); background: var(--charcoal); display: flex;
+  flex-direction: column; flex-shrink: 0; overflow-y: auto }
+.dash-side-logo { padding: 24px 20px 20px; border-bottom: 1px solid rgba(250,248,243,.08) }
+.dash-side-logo-text { font-family: 'Cormorant Garamond', serif; font-size: 24px;
+  color: var(--ivory); font-weight: 500; cursor: pointer; letter-spacing: .05em }
+.dash-side-logo-text span { color: var(--gold) }
+.dash-inv-picker { padding: 14px 16px; border-bottom: 1px solid rgba(250,248,243,.07) }
+.dash-inv-sel { width: 100%; background: rgba(250,248,243,.07);
+  border: 1px solid rgba(250,248,243,.12); border-radius: 8px; padding: 8px 10px;
+  color: var(--ivory); font-family: 'Jost', sans-serif; font-size: 13px; outline: none;
+  cursor: pointer; appearance: none }
+.dash-inv-sel option { background: var(--charcoal); color: var(--ivory) }
+.dash-nav { padding: 16px 12px; flex: 1 }
+.dash-nav-label { font-size: 9.5px; letter-spacing: .22em; text-transform: uppercase;
+  color: rgba(250,248,243,.22); padding: 0 8px; margin-bottom: 8px; margin-top: 14px; display: block }
+.dash-nav-item { display: flex; align-items: center; gap: 9px; padding: 9px 10px;
+  border-radius: 9px; font-size: 13.5px; color: rgba(250,248,243,.55); cursor: pointer;
+  transition: all .2s; margin-bottom: 2px; user-select: none }
+.dash-nav-item:hover, .dash-nav-item.active {
+  background: rgba(250,248,243,.09); color: var(--ivory) }
+.dash-nav-item.active { color: var(--champagne) }
+.dash-nav-ico { font-size: 14px; width: 20px; text-align: center; flex-shrink: 0 }
+.dash-side-bottom { padding: 16px; border-top: 1px solid rgba(250,248,243,.07) }
+.dash-user-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px }
+.dash-user-av { width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blush), var(--sand));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif; font-size: 16px; color: var(--char-40); flex-shrink: 0 }
+.dash-user-name { font-size: 13px; color: var(--ivory); font-weight: 400 }
+.dash-user-plan { font-size: 10.5px; color: rgba(250,248,243,.38); text-transform: uppercase;
+  letter-spacing: .08em }
+.dash-logout-btn { width: 100%; background: rgba(250,248,243,.06);
+  border: 1px solid rgba(250,248,243,.1); color: rgba(250,248,243,.5); border-radius: 8px;
+  padding: 8px; font-family: 'Jost', sans-serif; font-size: 12.5px; cursor: pointer;
+  transition: all .2s; letter-spacing: .03em }
+.dash-logout-btn:hover { background: rgba(250,248,243,.12); color: var(--ivory) }
+
+/* MAIN CONTENT */
+.dash-main { flex: 1; overflow-y: auto; background: var(--ivory); display: flex; flex-direction: column }
+.dash-topbar { background: white; border-bottom: 1px solid rgba(38,32,25,.07); padding: 18px 28px;
+  display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  position: sticky; top: 0; z-index: 10 }
+.dash-page-title { font-family: 'Cormorant Garamond', serif; font-size: 24px;
+  font-weight: 400; color: var(--charcoal) }
+.dash-page-sub { font-size: 13px; color: var(--char-40); margin-top: 1px; font-weight: 300 }
+.dash-content { padding: 28px; flex: 1 }
+
+/* STAT CARDS */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px }
+.stat-card { background: white; border-radius: 16px; padding: 20px; border: 1px solid rgba(38,32,25,.06);
+  transition: box-shadow .25s }
+.stat-card:hover { box-shadow: 0 8px 26px rgba(38,32,25,.07) }
+.stat-ico-w { width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; font-size: 17px; margin-bottom: 12px }
+.stat-n { font-family: 'Cormorant Garamond', serif; font-size: 34px; font-weight: 400;
+  color: var(--charcoal); line-height: 1; margin-bottom: 3px }
+.stat-l { font-size: 11.5px; color: var(--taupe); text-transform: uppercase; letter-spacing: .11em }
+
+/* CARD BOX */
+.card-box { background: white; border-radius: 16px; overflow: hidden;
+  border: 1px solid rgba(38,32,25,.06); margin-bottom: 20px }
+.card-box-hdr { padding: 18px 22px; border-bottom: 1px solid rgba(38,32,25,.06);
+  display: flex; align-items: center; justify-content: space-between }
+.card-box-ttl { font-size: 15px; font-weight: 500; color: var(--charcoal); display: flex; align-items: center; gap: 8px }
+
+/* TABLE */
+.tbl-wrap { overflow-x: auto }
+table { width: 100%; border-collapse: collapse }
+th { padding: 11px 18px; text-align: left; font-size: 11px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--taupe); background: rgba(38,32,25,.02);
+  border-bottom: 1px solid rgba(38,32,25,.06) }
+td { padding: 13px 18px; font-size: 13.5px; color: var(--char-40);
+  border-bottom: 1px solid rgba(38,32,25,.04) }
+tr:last-child td { border-bottom: none }
+tr:hover td { background: rgba(38,32,25,.016) }
+.pill { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px;
+  border-radius: 20px; font-size: 11.5px; font-weight: 500 }
+.pill-green  { background: #F0FDF4; color: #16A34A }
+.pill-red    { background: #FEF2F2; color: #DC2626 }
+.pill-yellow { background: #FEFCE8; color: #CA8A04 }
+.pill-gray   { background: #F9FAFB; color: #6B7280 }
+.empty-state { padding: 52px; text-align: center }
+.empty-ico { font-size: 40px; margin-bottom: 14px }
+.empty-ttl { font-size: 16px; font-weight: 500; color: var(--charcoal); margin-bottom: 6px }
+.empty-sub { font-size: 14px; color: var(--taupe); font-weight: 300; margin-bottom: 20px }
+
+/* SECTION CARD */
+.sc { background: white; border-radius: 16px; padding: 24px; border: 1px solid rgba(38,32,25,.06); margin-bottom: 20px }
+.sc-title { font-size: 15px; font-weight: 500; color: var(--charcoal); margin-bottom: 18px;
+  display: flex; align-items: center; gap: 8px }
+
+/* INV LINK */
+.inv-link-box { background: var(--ivory); border-radius: 9px; padding: 13px 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap }
+.inv-link-url { font-size: 13.5px; color: var(--char-40); word-break: break-all; flex: 1 }
+
+/* GALLERY GRID */
+.gal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px }
+.gal-item { border-radius: 9px; overflow: hidden; aspect-ratio: 1; position: relative; background: var(--cream) }
+.gal-img { width: 100%; height: 100%; object-fit: cover }
+.gal-del { position: absolute; top: 6px; right: 6px; background: rgba(220,38,38,.85);
+  color: white; border: none; border-radius: 6px; padding: 4px 8px; font-size: 11px;
+  cursor: pointer; opacity: 0; transition: opacity .2s; font-family: 'Jost', sans-serif }
+.gal-item:hover .gal-del { opacity: 1 }
+.upload-zone { border: 2px dashed rgba(38,32,25,.16); border-radius: 13px; padding: 40px;
+  text-align: center; cursor: pointer; transition: all .2s; background: rgba(38,32,25,.01) }
+.upload-zone:hover { border-color: var(--gold); background: rgba(168,124,62,.04) }
+.upload-ico { font-size: 30px; margin-bottom: 10px }
+.upload-txt { font-size: 14px; color: var(--char-40); margin-bottom: 5px }
+.upload-hint { font-size: 12px; color: var(--taupe) }
+
+/* QR */
+.qr-wrap { display: flex; flex-direction: column; align-items: center; padding: 36px }
+.qr-url { font-size: 13px; color: var(--char-40); margin: 14px 0 22px;
+  word-break: break-all; text-align: center; max-width: 280px }
+
+/* FONT SELECTOR */
+.font-tabs-row { display: flex; border-bottom: 1px solid rgba(38,32,25,.07) }
+.font-tab-btn { flex: 1; padding: 12px 8px; font-size: 13px; font-weight: 400;
+  color: var(--taupe); cursor: pointer; text-align: center; border: none; background: none;
+  font-family: 'Jost', sans-serif; border-bottom: 2px solid transparent; transition: all .2s }
+.font-tab-btn.on { color: var(--gold); border-bottom-color: var(--gold) }
+.font-cat-label { font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--taupe); margin-bottom: 9px; margin-top: 16px; display: block; font-weight: 500 }
+.font-item { border: 1.5px solid rgba(38,32,25,.08); border-radius: 10px; padding: 12px 14px;
+  cursor: pointer; transition: all .2s; display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 6px; background: none;
+  width: 100%; text-align: left; font-family: 'Jost', sans-serif }
+.font-item:hover { border-color: var(--gold); background: rgba(168,124,62,.04) }
+.font-item.on { border-color: var(--gold); background: rgba(168,124,62,.09) }
+.font-preview-txt { font-size: 22px; color: var(--charcoal) }
+.font-meta-name { font-size: 12px; font-weight: 500; color: var(--char-40) }
+.font-meta-cat  { font-size: 11px; color: var(--taupe) }
+.preset-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 18px 0 }
+.preset-btn { border: 1.5px solid rgba(38,32,25,.1); border-radius: 12px; padding: 14px;
+  cursor: pointer; transition: all .2s; background: none; text-align: left;
+  width: 100%; font-family: 'Jost', sans-serif }
+.preset-btn:hover { border-color: var(--gold) }
+.preset-btn.on { border-color: var(--gold); background: rgba(168,124,62,.09) }
+.preset-preview { font-size: 20px; color: var(--charcoal); margin-bottom: 5px }
+.preset-name { font-size: 12.5px; font-weight: 500; color: var(--charcoal); margin-bottom: 2px }
+.preset-desc { font-size: 11px; color: var(--taupe) }
+.live-prev { background: linear-gradient(145deg, var(--cream), var(--blush));
+  border-radius: 14px; padding: 30px 24px; text-align: center; margin-bottom: 20px }
+.prev-names { font-size: 38px; color: var(--charcoal); line-height: 1.2; margin-bottom: 9px }
+.prev-detail { font-size: 13.5px; color: var(--char-40); letter-spacing: .1em; text-transform: uppercase }
+.prev-body-txt { font-size: 14px; color: var(--char-40); margin-top: 10px; font-style: italic; font-weight: 300 }
+
+/* ANALYTICS BAR */
+.analytic-bar { height: 14px; border-radius: 7px; overflow: hidden;
+  background: var(--cream); margin: 16px 0; display: flex }
+.analytic-bar div { height: 100%; transition: width .5s ease }
+
+/* DANGER BTN */
+.btn-danger { background: #FEF2F2; border: 1.5px solid #FCA5A5; color: #DC2626;
+  border-radius: 8px; padding: 7px 15px; font-size: 12.5px; cursor: pointer;
+  transition: all .2s; font-family: 'Jost', sans-serif }
+.btn-danger:hover { background: #FEE2E2 }
+
+/* PAGE LOADING */
+.pg-loading { display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 300px; gap: 16px }
+
+/* LEGAL / CONTENT PAGES */
+.pg-hero { min-height: 50vh; background: var(--charcoal); display: flex; align-items: center;
+  padding: calc(var(--nav-h) + 56px) 0 76px; position: relative; overflow: hidden }
+.pg-hero::before { content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 55% 70% at 50% 50%, rgba(168,124,62,.1), transparent) }
+.pg-hero-title { font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(46px, 6vw, 76px); font-weight: 300; color: var(--ivory); line-height: 1.1 }
+.pg-hero-title em { font-style: italic; color: var(--champagne) }
+.pg-hero-sub { font-size: 17px; color: rgba(250,248,243,.5); font-weight: 300;
+  margin-top: 16px; max-width: 480px }
+.prose-wrap { max-width: 820px; margin: 0 auto }
+.prose-wrap h2 { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 400;
+  color: var(--charcoal); margin: 42px 0 14px }
+.prose-wrap h2:first-child { margin-top: 0 }
+.prose-wrap h3 { font-size: 17px; font-weight: 500; color: var(--charcoal); margin: 24px 0 8px }
+.prose-wrap p { font-size: 15px; color: var(--char-40); line-height: 1.8; font-weight: 300; margin-bottom: 14px }
+.prose-wrap ul { padding-left: 20px; margin-bottom: 14px }
+.prose-wrap li { font-size: 15px; color: var(--char-40); line-height: 1.8; font-weight: 300; margin-bottom: 6px }
+.legal-box { background: var(--cream); border-radius: 14px; padding: 24px 28px;
+  margin: 24px 0; border-left: 3px solid var(--gold) }
+.contact-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 40px }
+.contact-info-card { background: white; border-radius: 14px; padding: 24px;
+  border: 1px solid rgba(38,32,25,.07); text-align: center }
+.contact-info-ico { font-size: 28px; margin-bottom: 10px }
+.contact-info-ttl { font-size: 15px; font-weight: 500; color: var(--charcoal); margin-bottom: 5px }
+.contact-info-txt { font-size: 13.5px; color: var(--char-40); font-weight: 300 }
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════ */
+@media(max-width: 960px) {
+  .hero-grid { grid-template-columns: 1fr; gap: 52px; text-align: center; padding: 64px 0 80px }
+  .hero-btns { justify-content: center }
+  .hero-stats { justify-content: center }
+  .hero-visual { order: -1 }
+  .feat-grid { grid-template-columns: 1fr }
+  .how-grid { grid-template-columns: 1fr 1fr }
+  .how-line { display: none }
+  .cat-grid { grid-template-columns: 1fr }
+  .cat-card:first-child { grid-column: span 1 }
+  .demo-grid { grid-template-columns: 1fr }
+  .tpl-grid { grid-template-columns: 1fr 1fr }
+  .testi-grid { grid-template-columns: 1fr }
+  .pricing-grid { grid-template-columns: 1fr }
+  .price-card.feat { transform: none }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px }
+  .contact-info-grid { grid-template-columns: 1fr }
+}
+@media(max-width: 768px) {
+  .dash-side { width: 60px }
+  .dash-side-logo .dash-side-logo-text,
+  .dash-inv-picker, .dash-nav-label,
+  .dash-nav-item span, .dash-user-name, .dash-user-plan,
+  .dash-logout-btn { display: none }
+  .dash-nav-item { justify-content: center }
+  .dash-nav-ico { width: auto }
+  .stats-row { grid-template-columns: 1fr 1fr }
+  .gal-grid { grid-template-columns: 1fr 1fr }
+  .preset-grid { grid-template-columns: 1fr }
+}
+@media(max-width: 600px) {
+  section { padding: 68px 0 }
+  .how-grid, .tpl-grid { grid-template-columns: 1fr }
+  .stats-row { grid-template-columns: 1fr 1fr }
+  .footer-grid, .footer-btm { flex-direction: column; text-align: center }
+  .footer-grid { grid-template-columns: 1fr }
+}
+</style>
+</head>
+<body>
+
+<!-- ── TOASTS ── -->
+<div id="toast-wrap"></div>
+
+<!-- ── NAVIGATION ── -->
+<nav id="nav">
+  <div class="nav-inner">
+    <div class="nav-logo" id="nav-logo">Festlich<span>.</span></div>
+    <div class="nav-links" id="nav-links">
+      <span class="nav-link" data-page="home" data-de="Startseite" data-en="Home">Startseite</span>
+      <span class="nav-link" data-page="templates" data-de="Vorlagen" data-en="Templates">Vorlagen</span>
+      <span class="nav-link" data-page="about" data-de="Über uns" data-en="About">Über uns</span>
+      <span class="nav-link" data-page="contact" data-de="Kontakt" data-en="Contact">Kontakt</span>
+    </div>
+    <div class="nav-right">
+      <div class="lang-sw">
+        <button class="lang-btn on" id="btn-de">DE</button>
+        <button class="lang-btn" id="btn-en">EN</button>
+      </div>
+      <button class="btn btn-sm btn-outline" id="nav-auth-btn"></button>
+      <button class="btn btn-sm btn-gold" id="nav-cta-btn"></button>
+    </div>
+    <div class="nav-burger" id="nav-burger">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- ── MOBILE MENU ── -->
+<div id="mob-menu">
+  <button class="mob-close" id="mob-close">✕</button>
+  <span class="mob-link" data-page="home" data-de="Startseite" data-en="Home">Startseite</span>
+  <span class="mob-link" data-page="templates" data-de="Vorlagen" data-en="Templates">Vorlagen</span>
+  <span class="mob-link" data-page="about" data-de="Über uns" data-en="About">Über uns</span>
+  <span class="mob-link" data-page="contact" data-de="Kontakt" data-en="Contact">Kontakt</span>
+  <span class="mob-link" data-page="login" data-de="Anmelden" data-en="Sign in">Anmelden</span>
+</div>
+
+<!-- ── APP ROOT ── -->
+<div id="app"></div>
+
+<!-- ── MODALS ── -->
+<!-- Guest modal -->
+<div id="modal-guest" class="modal-bg hidden">
+  <div class="modal">
+    <div class="modal-title" id="guest-modal-title"></div>
+    <div class="modal-sub" id="guest-modal-sub"></div>
+    <div id="guest-modal-alert"></div>
+    <input type="hidden" id="g-edit-id">
+    <div class="f-row">
+      <div class="f-group"><label class="f-label" id="glbl-name"></label><input id="g-name" class="f-input" type="text"></div>
+      <div class="f-group"><label class="f-label" id="glbl-email"></label><input id="g-email" class="f-input" type="email"></div>
+    </div>
+    <div class="f-row">
+      <div class="f-group"><label class="f-label" id="glbl-phone"></label><input id="g-phone" class="f-input" type="tel"></div>
+      <div class="f-group"><label class="f-label" id="glbl-table"></label><input id="g-table" class="f-input" type="text"></div>
+    </div>
+    <div class="f-group"><label class="f-label" id="glbl-notes"></label><textarea id="g-notes" class="f-textarea" style="min-height:60px"></textarea></div>
+    <div class="f-group" style="display:flex;align-items:center;gap:10px">
+      <label class="toggle"><input type="checkbox" id="g-vip"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+      <span id="glbl-vip" style="font-size:14px;color:var(--charcoal)"></span>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-md" id="guest-cancel-btn"></button>
+      <button class="btn btn-gold btn-md" id="guest-save-btn"></button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm delete modal -->
+<div id="modal-confirm" class="modal-bg hidden">
+  <div class="modal" style="max-width:380px">
+    <div class="modal-title" id="confirm-title"></div>
+    <div class="modal-sub" id="confirm-msg"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline btn-md" id="confirm-cancel-btn"></button>
+      <button class="btn btn-md" id="confirm-ok-btn" style="background:#DC2626;color:white"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   FESTLICH — COMPLETE WEBSITE JAVASCRIPT ENGINE
+   Connected to Supabase: odtvcglpxojsysxtmbtq
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── SUPABASE INIT (public anon key — safe for frontend) ── */
+const SUPA_URL = 'https://odtvcglpxojsyxstmbtq.supabase.co'
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kdHZjZ2xweG9qc3l4c3RtYnRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMTg2MTAsImV4cCI6MjA5MDc5NDYxMH0.HjODTfOS4OAM2z4T3naX2xHzwikgD-r_H1v-wtgd7GM'
+const APP_BASE = window.location.origin
+
+const { createClient } = window.supabase
+const sb = createClient(SUPA_URL, SUPA_KEY)
+
+/* ── GLOBAL STATE ── */
+const ST = {
+  lang: 'de',
+  page: 'home',
+  user: null,
+  invitations: [],
+  currentInvId: null,
+  guests: [],
+  rsvps: [],
+  gallery: [],
+  pendingDel: null,
+  fontH: 'Great Vibes',
+  fontB: 'Lato',
+  fontPreset: 'elegant',
+  afterAuth: null,   // action to run after login/register
+}
+
+/* ── TRANSLATIONS ── */
+const TX = {
+  de: {
+    heroHL: 'Teile deinen<br>besonderen Tag<br>mit <em>Stil</em>',
+    heroSub: 'Festlich erschafft digitale Einladungen von unvergesslicher Eleganz — für Hochzeiten, Verlobungen und alle besonderen Feiern.',
+    heroCta: 'Einladung erstellen →',
+    heroDemo: 'Live-Demo ansehen',
+    invStatLabel: 'Einladungen', satLabel: 'Zufriedenheit', tplLabel: 'Vorlagen',
+    featTitle: 'Ein vollständiges Einladungs-<em>erlebnis</em>',
+    featSub: 'Alles, was deine Gäste brauchen — von der Wegbeschreibung bis zur Rückmeldung — wunderschön an einem Ort.',
+    howTitle: 'Von der Idee zur Einladung <em>in Minuten</em>',
+    pricingTitle: 'Ein Preis, ein <em>wunderschöner</em> Tag',
+    pricingSub: 'Keine versteckten Gebühren, keine Kosten pro Gast. Einmal zahlen, mit allen teilen.',
+    ctaTitle: 'Eure Liebesgeschichte verdient<br>einen <em>wunderschönen Anfang</em>',
+    ctaSub: 'Erstelle deine digitale Einladung heute. Kostenlos starten, dauert weniger als fünf Minuten.',
+    ctaBtn: 'Einladung erstellen →',
+    footerTagline: 'Premium digitale Einladungen für Hochzeiten und besondere Feiern. Schön, persönlich, mühelos.',
+    navSignIn: 'Anmelden', navDash: 'Dashboard', navCreate: 'Einladung erstellen',
+    signIn: 'Anmelden', signOut: 'Abmelden', register: 'Registrieren',
+    dashboard: 'Dashboard', createInv: 'Neue Einladung',
+    saving: 'Wird gespeichert…', saved: 'Gespeichert ✓',
+    noInvTitle: 'Noch keine Einladung', noInvDesc: 'Erstelle deine erste digitale Einladung — kostenlos und in Minuten.',
+    overviewLabel: 'Übersicht', guestsLabel: 'Gästeliste', rsvpsLabel: 'RSVPs',
+    editorLabel: 'Einladung', galleryLabel: 'Galerie', designLabel: 'Design',
+    qrLabel: 'QR-Code', analyticsLabel: 'Statistik',
+    uploadBtn: 'Bild hochladen', noImgs: 'Noch keine Bilder',
+    addGuest: '+ Gast hinzufügen', exportCSV: 'CSV exportieren',
+    publish: 'Veröffentlichen', unpublish: 'Entwurf', published: 'Veröffentlicht ✓', draft: 'Entwurf',
+    copyLink: 'Link kopieren', linkCopied: 'Link kopiert!',
+    downloadQR: 'QR-Code herunterladen',
+    saveFonts: 'Schriften speichern',
+    confirmDelTitle: 'Löschen bestätigen',
+    confirmDelMsg: 'Wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
+    impressum: 'Impressum', datenschutz: 'Datenschutz',
+    aufrufe: 'Aufrufe', zusagen: 'Zusagen', absagen: 'Absagen', offen: 'Offen',
+    gast: 'Gast', status: 'Status', personen: 'Personen', menue: 'Menü',
+    emailLabel: 'E-Mail-Adresse', passwordLabel: 'Passwort', nameLabel: 'Vollständiger Name',
+    forgotPw: 'Passwort vergessen?', noAccount: 'Noch kein Konto?',
+    hasAccount: 'Bereits registriert?', createAccount: 'Konto erstellen',
+    loginTitle: 'Willkommen zurück', loginHint: 'Melde dich in deinem Festlich-Konto an.',
+    regTitle: 'Konto erstellen', regHint: 'Starte kostenlos — keine Kreditkarte nötig.',
+    forgotTitle: 'Passwort zurücksetzen',
+    forgotHint: 'Gib deine E-Mail ein. Wir senden dir einen Reset-Link.',
+    sendReset: 'Reset-Link senden',
+    backToLogin: '← Zurück zur Anmeldung',
+    inviteTitle: 'Einladung bearbeiten',
+    cancel: 'Abbrechen', save: 'Speichern', delete: 'Löschen',
+    guestAdd: 'Gast hinzufügen', guestEdit: 'Gast bearbeiten',
+    guestAddSub: 'Füge einen Gast zur Einladung hinzu.',
+    guestEditSub: 'Gast-Details bearbeiten.',
+    vipGuest: 'VIP-Gast',
+    guestName: 'Name *', guestEmail: 'E-Mail', guestPhone: 'Telefon',
+    guestTable: 'Tischnummer', guestNotes: 'Notizen',
+    yes: 'Zusage', no: 'Absage', pending: 'Ausstehend',
+    meat: 'Fleisch', fish: 'Fisch', vegetarian: 'Vegetarisch', vegan: 'Vegan',
+    dietary: 'Spezialmenü', none: '–',
+    invLinkSection: 'Einladungslink',
+    openLink: 'Öffnen →',
+    editInvTitle: 'Grundinformationen',
+    welcomeTitle: 'Willkommenstext',
+    venueTitle: 'Veranstaltungsort',
+    rsvpTitle: 'RSVP-Einstellungen',
+    extrasTitle: 'Weitere Details',
+    eventTitle: 'Titel der Einladung',
+    eventType: 'Art der Veranstaltung',
+    name1: 'Name 1 (z.B. Braut)', name2: 'Name 2 (z.B. Bräutigam)',
+    tagline: 'Tagline / Untertitel',
+    eventDate: 'Datum', eventTime: 'Uhrzeit Zeremonie',
+    welcomeDE: 'Persönliche Nachricht (Deutsch)',
+    welcomeEN: 'Personal message (English)',
+    venueName: 'Name des Veranstaltungsorts',
+    venueCity: 'Stadt', venueAddr: 'Adresse', venueMap: 'Google Maps Link',
+    rsvpOn: 'RSVP aktivieren', rsvpOnDesc: 'Gäste können zu- oder absagen',
+    mealOn: 'Menüwahl', mealOnDesc: 'Fleisch, Vegetarisch, Vegan erfassen',
+    rsvpDeadline: 'RSVP-Frist', maxGuests: 'Max. Personen pro RSVP',
+    dresscode: 'Dresscode', specialNotes: 'Besondere Hinweise', registry: 'Geschenke / Registry',
+    livePreview: 'Live-Vorschau',
+    fontCombinations: 'Kombinationen', fontHeading: 'Überschrift', fontBody: 'Fließtext',
+    colorScheme: 'Farbschema', accentColor: 'Akzentfarbe', bgColor: 'Hintergrundfarbe',
+    currentHeading: 'Überschrift', currentBody: 'Fließtext',
+    elegantScript: 'Elegante Schrift', modernScript: 'Moderne Schrift',
+    classicSerif: 'Klassische Serife', minimalSans: 'Minimale Sans-Serif',
+    wedding: 'Hochzeit', engagement: 'Verlobung', birthday: 'Geburtstag',
+    reception: 'Empfang', celebration: 'Feier', other: 'Sonstiges',
+  },
+  en: {
+    heroHL: 'Share your<br>special day<br>with <em>style</em>',
+    heroSub: 'Festlich creates digital invitations of unforgettable elegance — for weddings, engagements, and every special celebration.',
+    heroCta: 'Create invitation →',
+    heroDemo: 'View live demo',
+    invStatLabel: 'Invitations', satLabel: 'Satisfaction', tplLabel: 'Templates',
+    featTitle: 'A complete invitation <em>experience</em>',
+    featSub: 'Everything your guests need — from directions to RSVPs — beautifully presented in one place.',
+    howTitle: 'From idea to invitation <em>in minutes</em>',
+    pricingTitle: 'One price, one <em>beautiful</em> day',
+    pricingSub: 'No hidden fees, no per-guest charges. Pay once, share with everyone.',
+    ctaTitle: 'Your love story deserves<br>a <em>beautiful beginning</em>',
+    ctaSub: 'Create your digital invitation today. Free to start, takes less than five minutes.',
+    ctaBtn: 'Create your invitation →',
+    footerTagline: 'Premium digital invitations for weddings and special celebrations. Beautiful, personal, effortless.',
+    navSignIn: 'Sign in', navDash: 'Dashboard', navCreate: 'Create invitation',
+    signIn: 'Sign in', signOut: 'Sign out', register: 'Register',
+    dashboard: 'Dashboard', createInv: 'New invitation',
+    saving: 'Saving…', saved: 'Saved ✓',
+    noInvTitle: 'No invitations yet', noInvDesc: 'Create your first digital invitation — free and takes minutes.',
+    overviewLabel: 'Overview', guestsLabel: 'Guests', rsvpsLabel: 'RSVPs',
+    editorLabel: 'Invitation', galleryLabel: 'Gallery', designLabel: 'Design',
+    qrLabel: 'QR Code', analyticsLabel: 'Analytics',
+    uploadBtn: 'Upload image', noImgs: 'No images yet',
+    addGuest: '+ Add guest', exportCSV: 'Export CSV',
+    publish: 'Publish', unpublish: 'Unpublish', published: 'Published ✓', draft: 'Draft',
+    copyLink: 'Copy link', linkCopied: 'Link copied!',
+    downloadQR: 'Download QR code',
+    saveFonts: 'Save fonts',
+    confirmDelTitle: 'Confirm deletion',
+    confirmDelMsg: 'Really delete? This cannot be undone.',
+    impressum: 'Legal Notice', datenschutz: 'Privacy Policy',
+    aufrufe: 'Views', zusagen: 'Attending', absagen: 'Declined', offen: 'Pending',
+    gast: 'Guest', status: 'Status', personen: 'Guests', menue: 'Meal',
+    emailLabel: 'Email address', passwordLabel: 'Password', nameLabel: 'Full name',
+    forgotPw: 'Forgot password?', noAccount: 'No account yet?',
+    hasAccount: 'Already registered?', createAccount: 'Create account',
+    loginTitle: 'Welcome back', loginHint: 'Sign in to your Festlich account.',
+    regTitle: 'Create account', regHint: 'Start for free — no credit card needed.',
+    forgotTitle: 'Reset password',
+    forgotHint: 'Enter your email. We\'ll send you a reset link.',
+    sendReset: 'Send reset link',
+    backToLogin: '← Back to sign in',
+    inviteTitle: 'Edit invitation',
+    cancel: 'Cancel', save: 'Save', delete: 'Delete',
+    guestAdd: 'Add guest', guestEdit: 'Edit guest',
+    guestAddSub: 'Add a guest to your invitation.',
+    guestEditSub: 'Edit guest details.',
+    vipGuest: 'VIP guest',
+    guestName: 'Name *', guestEmail: 'Email', guestPhone: 'Phone',
+    guestTable: 'Table number', guestNotes: 'Notes',
+    yes: 'Attending', no: 'Declined', pending: 'Pending',
+    meat: 'Meat', fish: 'Fish', vegetarian: 'Vegetarian', vegan: 'Vegan',
+    dietary: 'Special diet', none: '–',
+    invLinkSection: 'Invitation link',
+    openLink: 'Open →',
+    editInvTitle: 'Basic information',
+    welcomeTitle: 'Welcome note',
+    venueTitle: 'Venue',
+    rsvpTitle: 'RSVP settings',
+    extrasTitle: 'Further details',
+    eventTitle: 'Invitation title',
+    eventType: 'Event type',
+    name1: 'Name 1 (e.g. Bride)', name2: 'Name 2 (e.g. Groom)',
+    tagline: 'Tagline / subtitle',
+    eventDate: 'Date', eventTime: 'Ceremony time',
+    welcomeDE: 'Personal message (German)',
+    welcomeEN: 'Personal message (English)',
+    venueName: 'Venue name',
+    venueCity: 'City', venueAddr: 'Address', venueMap: 'Google Maps link',
+    rsvpOn: 'Enable RSVP', rsvpOnDesc: 'Guests can accept or decline',
+    mealOn: 'Meal preference', mealOnDesc: 'Collect meat, vegetarian, vegan',
+    rsvpDeadline: 'RSVP deadline', maxGuests: 'Max guests per RSVP',
+    dresscode: 'Dress code', specialNotes: 'Special notes', registry: 'Gifts / Registry',
+    livePreview: 'Live preview',
+    fontCombinations: 'Combinations', fontHeading: 'Heading', fontBody: 'Body text',
+    colorScheme: 'Colour scheme', accentColor: 'Accent colour', bgColor: 'Background',
+    currentHeading: 'Heading', currentBody: 'Body',
+    elegantScript: 'Elegant Script', modernScript: 'Modern Script',
+    classicSerif: 'Classic Serif', minimalSans: 'Minimal Sans',
+    wedding: 'Wedding', engagement: 'Engagement', birthday: 'Birthday',
+    reception: 'Reception', celebration: 'Celebration', other: 'Other',
+  }
+}
+const tx = k => TX[ST.lang][k] || k
+
+/* ── FONT DATA (31 fonts) ── */
+const FONTS = [
+  // Elegant Script
+  {n:'Great Vibes',     f:"'Great Vibes',cursive",     g:'Great+Vibes',          c:'elegantScript', p:'Lena & Florian'},
+  {n:'Allura',          f:"'Allura',cursive",           g:'Allura',               c:'elegantScript', p:'Lena & Florian'},
+  {n:'Sacramento',      f:"'Sacramento',cursive",       g:'Sacramento',           c:'elegantScript', p:'Lena & Florian'},
+  {n:'Parisienne',      f:"'Parisienne',cursive",       g:'Parisienne',           c:'elegantScript', p:'Lena & Florian'},
+  {n:'Alex Brush',      f:"'Alex Brush',cursive",       g:'Alex+Brush',           c:'elegantScript', p:'Lena & Florian'},
+  {n:'Pinyon Script',   f:"'Pinyon Script',cursive",    g:'Pinyon+Script',        c:'elegantScript', p:'Lena & Florian'},
+  {n:'Tangerine',       f:"'Tangerine',cursive",        g:'Tangerine',            c:'elegantScript', p:'Lena & Florian'},
+  {n:'Italianno',       f:"'Italianno',cursive",        g:'Italianno',            c:'elegantScript', p:'Lena & Florian'},
+  {n:'Euphoria Script', f:"'Euphoria Script',cursive",  g:'Euphoria+Script',      c:'elegantScript', p:'Lena & Florian'},
+  {n:'Yellowtail',      f:"'Yellowtail',cursive",       g:'Yellowtail',           c:'elegantScript', p:'Lena & Florian'},
+  // Modern Script
+  {n:'Dancing Script',  f:"'Dancing Script',cursive",   g:'Dancing+Script',       c:'modernScript',  p:'Lena & Florian'},
+  {n:'Satisfy',         f:"'Satisfy',cursive",          g:'Satisfy',              c:'modernScript',  p:'Lena & Florian'},
+  {n:'Courgette',       f:"'Courgette',cursive",        g:'Courgette',            c:'modernScript',  p:'Lena & Florian'},
+  {n:'Clicker Script',  f:"'Clicker Script',cursive",   g:'Clicker+Script',       c:'modernScript',  p:'Lena & Florian'},
+  {n:'Marck Script',    f:"'Marck Script',cursive",     g:'Marck+Script',         c:'modernScript',  p:'Lena & Florian'},
+  {n:'Rouge Script',    f:"'Rouge Script',cursive",     g:'Rouge+Script',         c:'modernScript',  p:'Lena & Florian'},
+  // Classic Serif
+  {n:'Playfair Display',f:"'Playfair Display',serif",   g:'Playfair+Display',     c:'classicSerif',  p:'Lena & Florian'},
+  {n:'Cormorant Garamond',f:"'Cormorant Garamond',serif",g:'Cormorant+Garamond',  c:'classicSerif',  p:'Lena & Florian'},
+  {n:'Cinzel',          f:"'Cinzel',serif",             g:'Cinzel',               c:'classicSerif',  p:'LENA & FLORIAN'},
+  {n:'Lora',            f:"'Lora',serif",               g:'Lora',                 c:'classicSerif',  p:'Lena & Florian'},
+  {n:'Libre Baskerville',f:"'Libre Baskerville',serif", g:'Libre+Baskerville',    c:'classicSerif',  p:'Lena & Florian'},
+  {n:'EB Garamond',     f:"'EB Garamond',serif",        g:'EB+Garamond',          c:'classicSerif',  p:'Lena & Florian'},
+  {n:'Crimson Text',    f:"'Crimson Text',serif",       g:'Crimson+Text',         c:'classicSerif',  p:'Lena & Florian'},
+  {n:'GFS Didot',       f:"'GFS Didot',serif",          g:'GFS+Didot',            c:'classicSerif',  p:'Lena & Florian'},
+  // Minimal Sans
+  {n:'Josefin Sans',    f:"'Josefin Sans',sans-serif",  g:'Josefin+Sans',         c:'minimalSans',   p:'LENA & FLORIAN'},
+  {n:'Raleway',         f:"'Raleway',sans-serif",       g:'Raleway',              c:'minimalSans',   p:'Lena & Florian'},
+  {n:'Jost',            f:"'Jost',sans-serif",          g:'Jost',                 c:'minimalSans',   p:'Lena & Florian'},
+  {n:'Montserrat',      f:"'Montserrat',sans-serif",    g:'Montserrat',           c:'minimalSans',   p:'Lena & Florian'},
+  {n:'Lato',            f:"'Lato',sans-serif",          g:'Lato',                 c:'minimalSans',   p:'Lena & Florian'},
+  {n:'Nunito',          f:"'Nunito',sans-serif",        g:'Nunito',               c:'minimalSans',   p:'Lena & Florian'},
+  {n:'Source Sans 3',   f:"'Source Sans 3',sans-serif", g:'Source+Sans+3',        c:'minimalSans',   p:'Lena & Florian'},
+]
+const FONT_PRESETS = [
+  {id:'elegant',   nameDE:'Elegante Hochzeit', nameEN:'Elegant Wedding',  h:'Great Vibes',        b:'Lora',           descDE:'Romantisch & zeitlos',    descEN:'Romantic & timeless'},
+  {id:'modern',    nameDE:'Modern Minimal',    nameEN:'Modern Minimal',   h:'Josefin Sans',       b:'Raleway',        descDE:'Klar & zeitgemäß',        descEN:'Clean & contemporary'},
+  {id:'luxury',    nameDE:'Luxus Klassik',     nameEN:'Luxury Classic',   h:'Cormorant Garamond', b:'EB Garamond',    descDE:'Historisch & edel',       descEN:'Historic & refined'},
+  {id:'romantic',  nameDE:'Romantik',          nameEN:'Romance',          h:'Sacramento',         b:'Lato',           descDE:'Verträumt & persönlich',  descEN:'Dreamy & personal'},
+  {id:'editorial', nameDE:'Editorial',         nameEN:'Editorial',        h:'Playfair Display',   b:'Jost',           descDE:'Modern & markant',        descEN:'Modern & distinctive'},
+  {id:'parisian',  nameDE:'Parisien',          nameEN:'Parisian',         h:'Parisienne',         b:'Raleway',        descDE:'Französisch & charmant',  descEN:'French & charming'},
+  {id:'roman',     nameDE:'Römische Klassik',  nameEN:'Roman Classic',    h:'Cinzel',             b:'Crimson Text',   descDE:'Majestätisch & förmlich', descEN:'Majestic & formal'},
+  {id:'dancing',   nameDE:'Handschrift',       nameEN:'Handwriting',      h:'Dancing Script',     b:'Montserrat',     descDE:'Verspielt & lesbar',      descEN:'Playful & legible'},
+]
+const loadedFonts = new Set(['Cormorant Garamond','Jost'])
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITIES
+   ═══════════════════════════════════════════════════════════════ */
+const $ = id => document.getElementById(id)
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+const inv = () => ST.invitations.find(i => i.id === ST.currentInvId)
+
+function toast(msg, type='info') {
+  const d = document.createElement('div')
+  d.className = `toast ${type==='error'?'err':type==='success'?'ok':''}`
+  d.innerHTML = `<span>${type==='success'?'✓':type==='error'?'✗':'ℹ'}</span>${msg}`
+  $('toast-wrap').appendChild(d)
+  setTimeout(() => d.remove(), 4200)
+}
+function closeModal(id) { $(id) && $(id).classList.add('hidden') }
+function openModal(id)  { $(id) && $(id).classList.remove('hidden') }
+function setLoading(id, on) {
+  const b = $(id); if(!b) return
+  b.disabled = on
+  if(on) { b._orig = b.innerHTML; b.innerHTML = '<span class="spin"></span>' }
+  else    b.innerHTML = b._orig || b.innerHTML
+}
+function fmtDate(s) {
+  if(!s) return '–'
+  return new Date(s).toLocaleDateString(ST.lang==='de'?'de-DE':'en-GB',{day:'numeric',month:'long',year:'numeric'})
+}
+function getInvUrl(slug) { return `${APP_BASE}/e/${slug}` }
+
+/* ── FONT LOADING ── */
+function loadFont(name) {
+  if(loadedFonts.has(name)) return
+  const f = FONTS.find(x => x.n === name); if(!f) return
+  const lid = 'gf-' + f.g
+  if(document.getElementById(lid)) { loadedFonts.add(name); return }
+  const l = document.createElement('link')
+  l.id = lid; l.rel = 'stylesheet'
+  l.href = `https://fonts.googleapis.com/css2?family=${f.g}:ital,wght@0,400;0,700;1,400&display=swap`
+  document.head.appendChild(l)
+  loadedFonts.add(name)
+}
+
+/* ── REVEAL ANIMATIONS ── */
+function bindReveals() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible') })
+  }, { threshold: .1 })
+  document.querySelectorAll('.reveal').forEach(e => obs.observe(e))
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   LANGUAGE
+   ═══════════════════════════════════════════════════════════════ */
+function setLang(lang) {
+  ST.lang = lang
+  document.documentElement.lang = lang
+  $('btn-de').classList.toggle('on', lang==='de')
+  $('btn-en').classList.toggle('on', lang==='en')
+  updateNavBtns()
+  // re-render if on a public page that uses translations
+  if(['home','templates','about','contact','impressum','datenschutz'].includes(ST.page)) {
+    renderPage(ST.page)
+  }
+}
+$('btn-de').onclick = () => setLang('de')
+$('btn-en').onclick = () => setLang('en')
+
+/* ═══════════════════════════════════════════════════════════════
+   NAVIGATION
+   ═══════════════════════════════════════════════════════════════ */
+window.addEventListener('scroll', () => {
+  $('nav').classList.toggle('scrolled', window.scrollY > 40)
+})
+$('nav-logo').onclick = () => navigate('home')
+$('nav-burger').onclick = () => $('mob-menu').classList.toggle('open')
+$('mob-close').onclick  = () => $('mob-menu').classList.remove('open')
+
+document.querySelectorAll('.nav-link, .mob-link').forEach(el => {
+  el.onclick = () => {
+    const page = el.dataset.page
+    $('mob-menu').classList.remove('open')
+    navigate(page)
+  }
+})
+
+function updateNavBtns() {
+  const authBtn = $('nav-auth-btn')
+  const ctaBtn  = $('nav-cta-btn')
+  if(ST.user) {
+    authBtn.textContent = tx('navDash')
+    authBtn.onclick = () => navigate('dashboard')
+    ctaBtn.innerHTML = `<span>+</span> ${ST.lang==='de'?'Einladung':'Invitation'}`
+    ctaBtn.onclick = handleCreateInvitation
+  } else {
+    authBtn.textContent = tx('navSignIn')
+    authBtn.onclick = () => navigate('login')
+    ctaBtn.textContent  = tx('navCreate')
+    ctaBtn.onclick = handleCreateInvitation
+  }
+}
+
+function navigate(page, params={}) {
+  const publicPages = ['home','templates','about','contact','impressum','datenschutz']
+  const authPages   = ['login','register','forgot']
+  const protectedPages = ['dashboard']
+
+  // Protected route: redirect to login
+  if(protectedPages.includes(page) && !ST.user) {
+    ST.afterAuth = page
+    navigate('login'); return
+  }
+
+  ST.page = page
+  window.scrollTo({ top: 0, behavior: 'instant' })
+  renderPage(page, params)
+  updateNavBtns()
+}
+
+function renderPage(page, params={}) {
+  const app = $('app')
+  app.innerHTML = ''
+  switch(page) {
+    case 'home':       renderHome(); break
+    case 'templates':  renderTemplates(); break
+    case 'about':      renderAbout(); break
+    case 'contact':    renderContact(); break
+    case 'impressum':  renderImpressum(); break
+    case 'datenschutz':renderDatenschutz(); break
+    case 'login':      renderLogin(); break
+    case 'register':   renderRegister(); break
+    case 'forgot':     renderForgot(); break
+    case 'dashboard':  renderDashboard(); break
+    default:           renderHome()
+  }
+  setTimeout(bindReveals, 60)
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   AUTH
+   ═══════════════════════════════════════════════════════════════ */
+async function handleLogin(e) {
+  e && e.preventDefault()
+  const email = $('login-email')?.value.trim()
+  const pw    = $('login-pw')?.value
+  if(!email || !pw) {
+    showAuthAlert('login-alert', ST.lang==='de'?'Bitte alle Felder ausfüllen.':'Please fill in all fields.')
+    return
+  }
+  setLoading('login-btn', true)
+  const { error } = await sb.auth.signInWithPassword({ email, password: pw })
+  setLoading('login-btn', false)
+  if(error) {
+    let msg = error.message
+    if(msg.includes('Invalid login') || msg.includes('invalid_credentials')) {
+      msg = ST.lang==='de' ? 'E-Mail oder Passwort falsch.' : 'Invalid email or password.'
+    } else if(msg.includes('Email not confirmed')) {
+      msg = ST.lang==='de'
+        ? 'E-Mail noch nicht bestätigt. Bitte prüfe dein Postfach.'
+        : 'Email not confirmed. Please check your inbox.'
+    } else if(msg.includes('Too many requests')) {
+      msg = ST.lang==='de' ? 'Zu viele Versuche. Bitte warte kurz.' : 'Too many attempts. Please wait a moment.'
+    }
+    showAuthAlert('login-alert', msg)
+    return
+  }
+  toast(ST.lang==='de'?'Erfolgreich angemeldet!':'Signed in successfully!', 'success')
+  if(ST.afterAuth === 'create_invitation') {
+    ST.afterAuth = null; await createInvAndNavigate()
+  } else {
+    ST.afterAuth = null; navigate('dashboard')
+  }
+}
+async function handleRegister(e) {
+  e && e.preventDefault()
+  const name  = $('reg-name').value.trim()
+  const email = $('reg-email').value.trim()
+  const pw    = $('reg-pw').value
+  if(!name||!email||!pw) { showAuthAlert('reg-alert','Bitte alle Felder ausfüllen.'); return }
+  if(pw.length < 8)       { showAuthAlert('reg-alert', ST.lang==='de'?'Passwort muss min. 8 Zeichen haben.':'Password must be at least 8 characters.'); return }
+  setLoading('reg-btn', true)
+  const { error } = await sb.auth.signUp({ email, password: pw, options: { data: { full_name: name } } })
+  setLoading('reg-btn', false)
+  if(error) { showAuthAlert('reg-alert', error.message); return }
+  showAuthAlert('reg-alert', ST.lang==='de'?'Bitte bestätige deine E-Mail, dann kannst du dich anmelden.':'Please confirm your email, then sign in.', 'success')
+}
+async function handleForgot(e) {
+  e && e.preventDefault()
+  const email = $('forgot-email').value.trim()
+  if(!email) { showAuthAlert('forgot-alert', ST.lang==='de'?'Bitte E-Mail eingeben.':'Please enter your email.'); return }
+  setLoading('forgot-btn', true)
+  const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: APP_BASE+'/reset' })
+  setLoading('forgot-btn', false)
+  if(error) { showAuthAlert('forgot-alert', error.message); return }
+  showAuthAlert('forgot-alert', ST.lang==='de'?'Reset-Link gesendet! Prüfe dein Postfach.':'Reset link sent! Check your inbox.', 'success')
+}
+async function handleLogout() {
+  await sb.auth.signOut()
+  ST.user = null; ST.invitations = []; ST.currentInvId = null
+  toast(ST.lang==='de'?'Erfolgreich abgemeldet.':'Signed out.', 'info')
+  navigate('home')
+}
+function showAuthAlert(id, msg, type='error') {
+  const el = $(id); if(!el) return
+  el.className = `alert alert-${type}`
+  el.textContent = msg
+  el.classList.remove('hidden')
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   INVITATION CRUD — mit vollständiger Fehlerbehandlung
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Fehlertext benutzerfreundlich übersetzen */
+function dbErrMsg(error) {
+  const msg = error?.message || ''
+  const code = error?.code   || ''
+  // Tabelle fehlt
+  if(msg.includes('relation') && msg.includes('does not exist') ||
+     msg.includes('schema cache') || msg.includes('table') && msg.includes('not found')) {
+    return ST.lang==='de'
+      ? 'Datenbanktabelle nicht gefunden. Bitte das SQL-Schema in Supabase ausführen.'
+      : 'Database table not found. Please run the SQL schema in Supabase first.'
+  }
+  // RLS / Berechtigung
+  if(msg.includes('row-level security') || msg.includes('permission') || code === '42501') {
+    return ST.lang==='de'
+      ? 'Keine Berechtigung. Bitte erneut anmelden.'
+      : 'Permission denied. Please sign in again.'
+  }
+  // JWT abgelaufen
+  if(msg.includes('JWT') || msg.includes('token') || code === 'PGRST301') {
+    return ST.lang==='de'
+      ? 'Sitzung abgelaufen. Bitte erneut anmelden.'
+      : 'Session expired. Please sign in again.'
+  }
+  // Verbindungsfehler
+  if(msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('network')) {
+    return ST.lang==='de'
+      ? 'Verbindungsfehler. Bitte Internetverbindung prüfen.'
+      : 'Connection error. Please check your internet connection.'
+  }
+  // Duplizierter Wert
+  if(code === '23505') {
+    return ST.lang==='de'
+      ? 'Dieser Eintrag existiert bereits.'
+      : 'This entry already exists.'
+  }
+  // Fallback: originale Meldung
+  return ST.lang==='de'
+    ? `Fehler: ${msg}`
+    : `Error: ${msg}`
+}
+
+async function handleCreateInvitation() {
+  if(!ST.user) {
+    ST.afterAuth = 'create_invitation'
+    navigate('login'); return
+  }
+  await createInvAndNavigate()
+}
+
+async function createInvAndNavigate() {
+  // Zeige Ladezustand auf CTA-Button falls vorhanden
+  const ctaBtn = $('nav-cta-btn')
+  if(ctaBtn) { ctaBtn.disabled = true; ctaBtn._orig = ctaBtn.innerHTML; ctaBtn.innerHTML = '<span class="spin"></span>' }
+
+  const insertData = {
+    owner_id:   ST.user.id,
+    title:      ST.lang==='de' ? 'Neue Einladung' : 'New Invitation',
+    event_type: 'wedding',
+  }
+
+  const { data, error } = await sb
+    .from('invitations')
+    .insert(insertData)
+    .select()
+    .single()
+
+  // Button zurücksetzen
+  if(ctaBtn) { ctaBtn.disabled = false; ctaBtn.innerHTML = ctaBtn._orig || ctaBtn.innerHTML }
+
+  if(error) {
+    const friendlyMsg = dbErrMsg(error)
+    toast(friendlyMsg, 'error')
+    console.error('[Festlich] createInvAndNavigate error:', error)
+
+    // Spezifischer Hinweis wenn Tabelle fehlt
+    if(error.message?.includes('relation') || error.message?.includes('schema cache')) {
+      setTimeout(() => {
+        toast(
+          ST.lang==='de'
+            ? '→ Bitte die Datei "festlich-schema.sql" in Supabase ausführen.'
+            : '→ Please run "festlich-schema.sql" in your Supabase SQL editor.',
+          'error'
+        )
+      }, 2500)
+    }
+    return
+  }
+
+  if(!data || !data.id) {
+    toast(
+      ST.lang==='de'
+        ? 'Einladung konnte nicht erstellt werden. Keine Daten zurückgegeben.'
+        : 'Could not create invitation. No data returned.',
+      'error'
+    )
+    return
+  }
+
+  ST.invitations.unshift(data)
+  ST.currentInvId = data.id
+  toast(
+    ST.lang==='de' ? 'Einladung erstellt! ✓' : 'Invitation created! ✓',
+    'success'
+  )
+  navigate('dashboard')
+  setTimeout(() => switchTab('editor'), 350)
+}
+
+async function loadInvitations() {
+  if(!ST.user) return
+
+  const { data, error } = await sb
+    .from('invitations')
+    .select('*')
+    .eq('owner_id', ST.user.id)
+    .order('created_at', { ascending: false })
+
+  if(error) {
+    console.error('[Festlich] loadInvitations error:', error)
+    // Stille Fehlerbehandlung — leere Liste
+    ST.invitations = []
+    return
+  }
+
+  ST.invitations = data || []
+  if(!ST.currentInvId && ST.invitations.length) {
+    ST.currentInvId = ST.invitations[0].id
+  }
+}
+
+async function saveInvitation(fields) {
+  if(!ST.currentInvId) return false
+  if(!ST.user) return false
+
+  const { error } = await sb
+    .from('invitations')
+    .update({ ...fields, updated_at: new Date().toISOString() })
+    .eq('id', ST.currentInvId)
+    .eq('owner_id', ST.user.id)
+
+  if(error) {
+    toast(dbErrMsg(error), 'error')
+    console.error('[Festlich] saveInvitation error:', error)
+    return false
+  }
+
+  // Lokalen Cache aktualisieren
+  const idx = ST.invitations.findIndex(i => i.id === ST.currentInvId)
+  if(idx > -1) ST.invitations[idx] = { ...ST.invitations[idx], ...fields }
+  return true
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HOME PAGE
+   ═══════════════════════════════════════════════════════════════ */
+function renderHome() {
+  const L = TX[ST.lang]
+  const app = $('app')
+  app.innerHTML = `
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-mesh"></div><div class="hero-grain"></div>
+  <div class="container">
+    <div class="hero-grid">
+      <div class="reveal">
+        <div class="eyebrow">✦ ${ST.lang==='de'?'Premium Digitale Einladungen':'Premium Digital Invitations'}</div>
+        <h1 class="hero-hl serif" style="margin-top:14px">${L.heroHL}</h1>
+        <p class="hero-sub">${L.heroSub}</p>
+        <div class="hero-btns">
+          <button class="btn btn-xl btn-dark" onclick="handleCreateInvitation()">${L.heroCta}</button>
+          <button class="btn btn-xl btn-outline" onclick="document.getElementById('demo-anchor').scrollIntoView({behavior:'smooth'})">${L.heroDemo}</button>
+        </div>
+        <div class="hero-stats">
+          <div><div class="hs-n serif">52K+</div><div class="hs-l">${L.invStatLabel}</div></div>
+          <div><div class="hs-n serif">97%</div><div class="hs-l">${L.satLabel}</div></div>
+          <div><div class="hs-n serif">140+</div><div class="hs-l">${L.tplLabel}</div></div>
+        </div>
+      </div>
+      <div class="hero-visual reveal" style="transition-delay:.18s">
+        <div class="chip chip-1">
+          <div class="chip-dot" style="background:#22C55E"></div>
+          <span style="font-weight:500;color:var(--charcoal)">${ST.lang==='de'?'18 neue Zusagen heute':'18 new RSVPs today'}</span>
+        </div>
+        <div class="chip chip-2">
+          <span style="font-size:18px">📍</span>
+          <div><div style="font-size:12px;font-weight:500;color:var(--charcoal)">Schloss Elmau</div>
+            <div style="font-size:11px;color:var(--taupe)">${ST.lang==='de'?'Route anzeigen':'Get directions'}</div></div>
+        </div>
+        <div class="inv-mock">
+          <div class="inv-mock-cover">
+            <div class="inv-mock-text">
+              <div class="inv-mock-couple serif">Lena &amp; Florian</div>
+              <div class="inv-mock-date">${ST.lang==='de'?'21. JUNI 2025 · HOCHZEIT':'21 JUNE 2025 · WEDDING'}</div>
+            </div>
+          </div>
+          <div class="inv-mock-body">
+            <div class="inv-mock-row"><div class="inv-mock-ico">🕐</div><div><div class="inv-mock-lbl">${ST.lang==='de'?'Zeremonie':'Ceremony'}</div><div class="inv-mock-val">${ST.lang==='de'?'14:00 — Schlosskirche':'2 PM — Castle Chapel'}</div></div></div>
+            <div class="inv-mock-row"><div class="inv-mock-ico">📍</div><div><div class="inv-mock-lbl">${ST.lang==='de'?'Ort':'Venue'}</div><div class="inv-mock-val">Schloss Elmau, Bayern</div></div></div>
+            <div class="inv-mock-row"><div class="inv-mock-ico">👗</div><div><div class="inv-mock-lbl">${ST.lang==='de'?'Dresscode':'Dress code'}</div><div class="inv-mock-val">${ST.lang==='de'?'Festlich elegant':'Black tie preferred'}</div></div></div>
+          </div>
+          <div class="inv-mock-foot"><span class="inv-mock-foot-txt">${ST.lang==='de'?'RSVP bis 1. Mai':'RSVP by May 1st'}</span><span class="inv-mock-badge">54 ✓</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-sec">
+  <div class="container">
+    <div class="sec-h reveal">
+      <div class="eyebrow">${ST.lang==='de'?'Alles was du brauchst':'Everything you need'}</div>
+      <div class="rule"></div>
+      <h2 class="sec-title serif">${L.featTitle}</h2>
+      <p class="sec-sub">${L.featSub}</p>
+    </div>
+    <div class="feat-grid">
+      ${[
+        ['✨', ST.lang==='de'?'Elegante Vorlagen':'Elegant Templates', ST.lang==='de'?'140+ sorgfältig gestaltete Designs für Hochzeiten, Geburtstage und mehr. Vollständig anpassbar.':'140+ carefully crafted designs for weddings, birthdays and more. Fully customisable.'],
+        ['💌', ST.lang==='de'?'RSVP-Verwaltung':'RSVP Management', ST.lang==='de'?'Gäste antworten mit einem Tipp. Behalte Zusagen, Mahlzeitwünsche und Begleitpersonen im Blick.':'Guests respond in one tap. Track attendance, meal preferences and plus-ones.'],
+        ['🗺️', ST.lang==='de'?'Ort & Navigation':'Venue & Navigation', ST.lang==='de'?'Ortskarten mit integrierten Kartenlinks. Ein Tipp zur Navigation.':'Venue cards with integrated map links. One tap to navigation.'],
+        ['🖼️', ST.lang==='de'?'Fotogalerie':'Photo Gallery', ST.lang==='de'?'Teile deine Verlobungsfotos in einer kuratierten, mobiloptimierten Galerie.':'Share your engagement photos in a curated, mobile-optimised gallery.'],
+        ['⏱️', ST.lang==='de'?'Live-Countdown':'Live Countdown', ST.lang==='de'?'Echtzeit-Countdown bis zu eurem besonderen Moment.':'Real-time countdown to your special moment.'],
+        ['📱', ST.lang==='de'?'QR-Code-Sharing':'QR Code Sharing', ST.lang==='de'?'Druckbereiter QR-Code für deine Save-the-Dates.':'Print-ready QR code for your save-the-dates.'],
+      ].map(([ico,t,d]) => `
+      <div class="feat-card reveal">
+        <div class="feat-ico">${ico}</div>
+        <div class="feat-title">${t}</div>
+        <div class="feat-desc">${d}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section>
+  <div class="container">
+    <div class="sec-h reveal">
+      <div class="eyebrow">${ST.lang==='de'?'Einfach von Anfang an':'Simple from the start'}</div>
+      <div class="rule"></div>
+      <h2 class="sec-title serif">${L.howTitle}</h2>
+    </div>
+    <div class="how-grid">
+      <div class="how-line"></div>
+      ${[
+        [ST.lang==='de'?'Vorlage wählen':'Choose template', ST.lang==='de'?'Stöbere durch kuratierte Designs nach Anlass und Stil.':'Browse curated designs by occasion and style.'],
+        [ST.lang==='de'?'Personalisieren':'Personalise', ST.lang==='de'?'Füge Namen, Datum, Ort und alle Details hinzu.':'Add your names, date, venue and all the details.'],
+        [ST.lang==='de'?'Sofort teilen':'Share instantly', ST.lang==='de'?'Link kopieren oder QR-Code drucken — sofort live.':'Copy link or print QR code — live immediately.'],
+        [ST.lang==='de'?'RSVPs verwalten':'Manage RSVPs', ST.lang==='de'?'Gästeliste jederzeit exportieren.':'Export your guest list anytime.'],
+      ].map(([t,d], i) => `
+      <div class="how-step reveal" style="transition-delay:${i*.1}s">
+        <div class="how-num serif">${i+1}</div>
+        <div class="how-title">${t}</div>
+        <div class="how-desc">${d}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<div class="cat-sec">
+  <div class="container">
+    <div class="sec-h reveal">
+      <div class="eyebrow" style="color:var(--champagne)">${ST.lang==='de'?'Jede Feier':'Every celebration'}</div>
+      <div class="rule"></div>
+      <h2 class="sec-title serif">${ST.lang==='de'?'Gemacht für jeden <em style="color:var(--champagne)">besonderen Moment</em>':'Made for every <em style="color:var(--champagne)">special moment</em>'}</h2>
+    </div>
+  </div>
+  <div class="cat-grid">
+    ${[
+      ['linear-gradient(145deg,#7A5C48,#BE8070)', ST.lang==='de'?'Hochzeiten':'Weddings', '💍', ST.lang==='de'?'52 Vorlagen':'52 templates'],
+      ['linear-gradient(145deg,#5A4A6A,#9880B0)', ST.lang==='de'?'Verlobungen':'Engagements', '💑', ST.lang==='de'?'28 Vorlagen':'28 templates'],
+      ['linear-gradient(145deg,#4A6A5A,#80B098)', ST.lang==='de'?'Empfänge':'Receptions', '🥂', ST.lang==='de'?'20 Vorlagen':'20 templates'],
+      ['linear-gradient(145deg,#6A5A48,#B09880)', ST.lang==='de'?'Geburtstage':'Birthdays', '🎂', ST.lang==='de'?'34 Vorlagen':'34 templates'],
+      ['linear-gradient(145deg,#4A5A6A,#8098B0)', ST.lang==='de'?'Feiern':'Celebrations', '🎊', ST.lang==='de'?'26 Vorlagen':'26 templates'],
+    ].map(([bg,name,ico,count]) => `
+    <div class="cat-card">
+      <div class="cat-bg" style="background:${bg}">${ico}</div>
+      <div class="cat-veil"></div>
+      <div class="cat-info">
+        <div class="cat-name serif">${name}</div>
+        <div class="cat-count">${count}</div>
+      </div>
+    </div>`).join('')}
+  </div>
+</div>
+
+<!-- DEMO PREVIEW -->
+<div id="demo-anchor"></div>
+<section class="demo-sec">
+  <div class="container">
+    <div class="demo-grid">
+      <div class="reveal">
+        <div class="eyebrow">${ST.lang==='de'?'Live-Vorschau':'Live preview'}</div>
+        <h2 class="sec-title serif" style="text-align:left;margin:14px 0 18px">${ST.lang==='de'?'Was deine Gäste <em>erleben</em>':'What your guests <em>experience</em>'}</h2>
+        <p class="sec-sub" style="margin:0;text-align:left">${ST.lang==='de'?'Dies ist eine echte Festlich-Einladung. Countdown, Ablauf, RSVP — vollständig bearbeitbar.':'This is a real Festlich invitation. Countdown, schedule, RSVP — fully editable.'}</p>
+        <div style="margin-top:32px;display:flex;flex-direction:column;gap:14px">
+          ${[
+            ['⏱', ST.lang==='de'?'Live-Countdown':'Live countdown', ST.lang==='de'?'Zählt bis zur genauen Uhrzeit der Zeremonie':'Counts down to your exact ceremony time'],
+            ['📝', ST.lang==='de'?'Sofortige RSVP':'Instant RSVP', ST.lang==='de'?'Gäste antworten in Sekunden':'Guests respond in seconds'],
+            ['🗺️', ST.lang==='de'?'Ein-Tipp-Navigation':'One-tap navigation', ST.lang==='de'?'Öffnet Google Maps oder Apple Maps':'Opens Google Maps or Apple Maps'],
+          ].map(([ico,t,d]) => `
+          <div style="display:flex;gap:12px;align-items:center">
+            <div style="width:36px;height:36px;background:var(--cream);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${ico}</div>
+            <div><div style="font-size:14px;font-weight:500;color:var(--charcoal)">${t}</div><div style="font-size:13px;color:var(--char-40);font-weight:300">${d}</div></div>
+          </div>`).join('')}
+        </div>
+        <div style="margin-top:32px"><button class="btn btn-dark btn-md" onclick="handleCreateInvitation()">${L.heroCta}</button></div>
+      </div>
+      <div class="demo-card reveal" style="transition-delay:.18s">
+        <div class="demo-cover">
+          <div style="font-size:10px;letter-spacing:.3em;opacity:.45;text-transform:uppercase;margin-bottom:18px">— ${ST.lang==='de'?'Einladung zu —':'Invitation to —'}</div>
+          <div class="demo-couple serif">Isabelle<br><span class="demo-and">&amp;</span><br>Alexander</div>
+          <div class="demo-date-lbl">${ST.lang==='de'?'Samstag · 20. September 2025':'Saturday · 20 September 2025'}</div>
+          <div class="countdown">
+            <div class="cd-box"><div class="cd-n serif" id="cd-d">–</div><div class="cd-l">${ST.lang==='de'?'Tage':'Days'}</div></div>
+            <div class="cd-box"><div class="cd-n serif" id="cd-h">–</div><div class="cd-l">${ST.lang==='de'?'Std.':'Hrs'}</div></div>
+            <div class="cd-box"><div class="cd-n serif" id="cd-m">–</div><div class="cd-l">${ST.lang==='de'?'Min.':'Min'}</div></div>
+            <div class="cd-box"><div class="cd-n serif" id="cd-s">–</div><div class="cd-l">${ST.lang==='de'?'Sek.':'Sec'}</div></div>
+          </div>
+        </div>
+        <div class="demo-body">
+          <div class="demo-stitle serif">${ST.lang==='de'?'Ablauf':'Schedule'}</div>
+          ${[
+            ['13:30', ST.lang==='de'?'Empfang & Sekt':'Welcome & Champagne', ST.lang==='de'?'Schlossgarten':'Castle Garden'],
+            ['14:00', ST.lang==='de'?'Trauungszeremonie':'Wedding Ceremony', ST.lang==='de'?'Schlosskirche':'Castle Chapel'],
+            ['19:00', ST.lang==='de'?'Dinner & Tanz':'Dinner & Dancing', ST.lang==='de'?'Großer Festsaal':'Grand Ballroom'],
+          ].map(([time,evt,venue], i) => `
+          <div class="sched-row" ${i===2?'style="border:none;margin:0;padding-bottom:0"':''}>
+            <div class="sched-time">${time}</div>
+            <div><div class="sched-evt">${evt}</div><div class="sched-venue">${venue}</div></div>
+          </div>`).join('')}
+          <div style="height:1px;background:rgba(38,32,25,.07);margin:22px 0"></div>
+          <div class="demo-stitle serif">${ST.lang==='de'?'Rückmeldung':'RSVP'}</div>
+          <div class="mini-rsvp">
+            <div class="mini-rsvp-row">
+              <input class="mini-in" type="text" placeholder="${ST.lang==='de'?'Dein Name':'Your name'}">
+              <input class="mini-in" type="email" placeholder="${ST.lang==='de'?'E-Mail':'Email'}">
+            </div>
+            <select class="mini-sel" style="margin-bottom:9px">
+              <option>${ST.lang==='de'?'Ich freue mich zu kommen ✓':'I\'ll be there with joy ✓'}</option>
+              <option>${ST.lang==='de'?'Leider kann ich nicht kommen':'Regretfully unable to attend'}</option>
+            </select>
+            <button class="mini-btn" onclick="this.textContent='${ST.lang==='de'?'Danke! ✓':'Thank you! ✓'}'">
+              ${ST.lang==='de'?'Rückmeldung bestätigen →':'Confirm attendance →'}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEMPLATES PREVIEW -->
+<section>
+  <div class="container">
+    <div class="sec-h reveal">
+      <div class="eyebrow">140+ ${ST.lang==='de'?'Designs':'Designs'}</div>
+      <div class="rule"></div>
+      <h2 class="sec-title serif">${ST.lang==='de'?'Finde deine perfekte <em>Vorlage</em>':'Find your perfect <em>template</em>'}</h2>
+    </div>
+    <div class="tpl-grid">
+      ${[
+        ['linear-gradient(145deg,#F2E8D8,#E2C4B8)','🌸',ST.lang==='de'?'Rosenblüte':'Blossom',ST.lang==='de'?'Hochzeit · Blush':'Wedding · Blush'],
+        ['linear-gradient(145deg,#262019,#46403A)','🖤',ST.lang==='de'?'Mitternacht':'Midnight',ST.lang==='de'?'Hochzeit · Dunkel':'Wedding · Dark'],
+        ['linear-gradient(145deg,#E8F4F0,#B8D8CC)','🌿','Botanik / Botanical',ST.lang==='de'?'Hochzeit · Grün':'Wedding · Green'],
+        ['linear-gradient(145deg,#EDE0C8,#B8956A)','✨',ST.lang==='de'?'Champagner':'Champagne',ST.lang==='de'?'Empfang · Gold':'Reception · Gold'],
+      ].map(([bg,ico,name,type]) => `
+      <div class="tpl-card">
+        <div class="tpl-thumb" style="background:${bg}">
+          <div class="tpl-overlay">${ST.lang==='de'?'Vorlage verwenden →':'Use template →'}</div>
+          ${ico}
+        </div>
+        <div class="tpl-info">
+          <div class="tpl-name">${name}</div>
+          <div class="tpl-type">${type}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div style="text-align:center;margin-top:44px">
+      <button class="btn btn-outline btn-md" onclick="navigate('templates')">${ST.lang==='de'?'Alle 140+ Vorlagen ansehen →':'Browse all 140+ templates →'}</button>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-sec">
+  <div class="container">
+    <div class="sec-h reveal">
+      <div class="eyebrow">${ST.lang==='de'?'Von echten Paaren':'From real couples'}</div>
+      <div class="rule"></div>
+      <h2 class="sec-title serif">${ST.lang==='de'?'Geliebt von denen, die <em>gefeiert</em> haben':'Loved by those who <em>celebrated</em>'}</h2>
+    </div>
+    <div class="testi-grid">
+      ${[
+        ['L','Lena & Florian',ST.lang==='de'?'Hochzeit · München, 2024':'Wedding · Munich, 2024',ST.lang==='de'?'Unsere Gäste in 12 Ländern konnten so einfach zusagen — alle vom Handy, in Sekunden. Selbst meine Oma hat es geschafft!':'Our guests in 12 countries could RSVP so easily — all from their phone in seconds. Even my grandmother managed it!'],
+        ['J','Jana & Markus',ST.lang==='de'?'Hochzeit · Hamburg, 2024':'Wedding · Hamburg, 2024',ST.lang==='de'?'Das Design war so wunderschön, dass Gäste unsere Einladung lobten, bevor sie den Veranstaltungsort gesehen hatten.':'The design was so beautiful that guests complimented our invitation before they\'d even seen the venue.'],
+        ['S','Sara & David',ST.lang==='de'?'Hochzeit · Berlin, 2025':'Wedding · Berlin, 2025',ST.lang==='de'?'Das RSVP-Dashboard hat uns Stunden gespart. Statt Familienmitglieder nachzuhaken, schauten wir einfach aufs Handy.':'The RSVP dashboard saved us hours. Instead of chasing family members, we just checked our phone. Worth every cent!'],
+      ].map(([av,name,evt,txt]) => `
+      <div class="testi-card reveal">
+        <div class="testi-q serif">"</div>
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-txt">${txt}</div>
+        <div class="testi-auth">
+          <div class="testi-av serif">${av}</div>
+          <div><div class="testi-name">${name}</div><div class="testi-evt">${evt}</div></div>
+        </div>
+      </div>`).join('')}
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section>
+  <div class="container">
+    <div class="sec-h reveal">
+      <div class="eyebrow">${ST.lang==='de'?'Klare Preise':'Simple pricing'}</div>
+      <div class="rule"></div>
+      <h2 class="sec-title serif">${L.pricingTitle}</h2>
+      <p class="sec-sub">${L.pricingSub}</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="price-card reveal">
+        <div class="plan-tier">${ST.lang==='de'?'Kostenlos':'Free'}</div>
+        <div class="plan-price serif">0 €</div>
+        <div class="plan-period">${ST.lang==='de'?'Für immer gratis · keine Kreditkarte':'Forever free · no credit card'}</div>
+        <div class="plan-div"></div>
+        <ul class="plan-feats">
+          ${[ST.lang==='de'?'1 aktive Einladung':'1 active invitation',ST.lang==='de'?'Bis zu 30 Gäste':'Up to 30 guests','RSVP',ST.lang==='de'?'5 Galeriefotos':'5 gallery photos'].map(f=>`<li class="plan-feat"><span class="plan-ck">✓</span>${f}</li>`).join('')}
+        </ul>
+        <button class="btn btn-outline" style="width:100%;padding:13px;border-radius:50px" onclick="navigate('register')">${ST.lang==='de'?'Kostenlos starten':'Start free'}</button>
+      </div>
+      <div class="price-card feat reveal" style="transition-delay:.1s">
+        <div class="popular-badge">${ST.lang==='de'?'Beliebteste Wahl':'Most popular'}</div>
+        <div class="plan-tier">${ST.lang==='de'?'Premium':'Premium'}</div>
+        <div class="plan-price serif" style="color:var(--ivory)">29 €</div>
+        <div class="plan-period">${ST.lang==='de'?'einmalige Zahlung':'one-time payment'}</div>
+        <div class="plan-div"></div>
+        <ul class="plan-feats">
+          ${[ST.lang==='de'?'3 Einladungen':'3 invitations',ST.lang==='de'?'Unbegrenzte Gäste':'Unlimited guests',ST.lang==='de'?'Alle Vorlagen':'All templates',ST.lang==='de'?'50 Galeriefotos':'50 gallery photos','QR-Code',ST.lang==='de'?'Kein Festlich-Branding':'No Festlich branding','CSV-Export'].map(f=>`<li class="plan-feat"><span class="plan-ck">✓</span>${f}</li>`).join('')}
+        </ul>
+        <button class="btn btn-gold" style="width:100%;padding:13px;border-radius:50px" onclick="navigate('register')">${ST.lang==='de'?'Premium wählen →':'Choose Premium →'}</button>
+      </div>
+      <div class="price-card reveal" style="transition-delay:.2s">
+        <div class="plan-tier">${ST.lang==='de'?'Luxus':'Luxury'}</div>
+        <div class="plan-price serif">79 €</div>
+        <div class="plan-period">${ST.lang==='de'?'einmalige Zahlung':'one-time payment'}</div>
+        <div class="plan-div"></div>
+        <ul class="plan-feats">
+          ${[ST.lang==='de'?'Unbegrenzte Einladungen':'Unlimited invitations',ST.lang==='de'?'Unbegrenzte Gäste':'Unlimited guests',ST.lang==='de'?'Personalisierte Gastlinks':'Personalised guest links',ST.lang==='de'?'Erweiterte Statistik':'Advanced analytics',ST.lang==='de'?'Prioritätssupport':'Priority support',ST.lang==='de'?'Video-Hintergründe':'Video backgrounds'].map(f=>`<li class="plan-feat"><span class="plan-ck">✓</span>${f}</li>`).join('')}
+        </ul>
+        <button class="btn btn-outline" style="width:100%;padding:13px;border-radius:50px" onclick="navigate('register')">${ST.lang==='de'?'Luxus wählen →':'Choose Luxury →'}</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-sec">
+  <div class="container">
+    <div class="sec-h reveal">
+      <div class="eyebrow">${ST.lang==='de'?'Häufige Fragen':'FAQ'}</div>
+      <div class="rule"></div>
+      <h2 class="sec-title serif">${ST.lang==='de'?'Alles, was du <em>wissen möchtest</em>':'Everything you <em>wanted to know</em>'}</h2>
+    </div>
+    <div class="faq-wrap">
+      ${[
+        [ST.lang==='de'?'Wie lange bleibt meine Einladung online?':'How long does my invitation stay live?',
+         ST.lang==='de'?'Deine Einladung bleibt so lange aktiv, wie dein Konto besteht. Alle bezahlten Pläne beinhalten unbegrenzten Zugang — du zahlst einmal.':'Your invitation stays live as long as your account is active. All paid plans include lifetime access — pay once.'],
+        [ST.lang==='de'?'Können Gäste von jedem Gerät aus antworten?':'Can guests RSVP from any device?',
+         ST.lang==='de'?'Absolut. Festlich ist mobile-first entwickelt. Kein App-Download nötig — direkt im Browser.':'Absolutely. Festlich is built mobile-first. No app download needed — works directly in any browser.'],
+        [ST.lang==='de'?'Kann ich die Einladung nach dem Teilen bearbeiten?':'Can I edit the invitation after sharing?',
+         ST.lang==='de'?'Ja, jederzeit. Änderungen erscheinen sofort auf der Live-Einladung — der Link bleibt derselbe.':'Yes, at any time. Changes appear instantly on the live invitation — the link stays the same.'],
+        [ST.lang==='de'?'Ist Festlich auch auf Deutsch verfügbar?':'Is Festlich available in German?',
+         ST.lang==='de'?'Ja! Festlich ist vollständig zweisprachig — Deutsch und Englisch. Die Sprache wird automatisch erkannt.':'Yes! Festlich is fully bilingual — German and English. Language is detected automatically.'],
+        [ST.lang==='de'?'Gibt es eine Rückgabegarantie?':'Is there a refund policy?',
+         ST.lang==='de'?'Wir bieten eine vollständige Rückerstattung innerhalb von 14 Tagen, keine Fragen gestellt.':'We offer a full refund within 14 days, no questions asked.'],
+      ].map(([q,a]) => `
+      <div class="faq-item">
+        <div class="faq-q" onclick="this.parentElement.classList.toggle('open')"><span>${q}</span><span class="faq-ico">+</span></div>
+        <div class="faq-a">${a}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <div class="container" style="position:relative;z-index:2">
+    <h2 class="cta-title serif reveal">${L.ctaTitle}</h2>
+    <p class="cta-sub reveal">${L.ctaSub}</p>
+    <div class="cta-btns">
+      <button class="btn btn-xl btn-gold" onclick="handleCreateInvitation()">${L.ctaBtn}</button>
+      <button class="btn btn-xl btn-ghost-light" onclick="navigate('login')">${L.signIn}</button>
+    </div>
+  </div>
+</div>
+
+${renderFooterHTML()}
+`
+  startCountdown()
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   TEMPLATES PAGE
+   ═══════════════════════════════════════════════════════════════ */
+function renderTemplates() {
+  const L = TX[ST.lang]
+  $('app').innerHTML = `
+<div class="pg-hero">
+  <div class="container" style="position:relative;z-index:1">
+    <div class="eyebrow" style="color:var(--champagne)">Festlich ${ST.lang==='de'?'Vorlagen':'Templates'}</div>
+    <h1 class="pg-hero-title serif">${ST.lang==='de'?'<em>Elegante</em> Designs<br>für jeden Anlass':'<em>Elegant</em> designs<br>for every occasion'}</h1>
+    <p class="pg-hero-sub">${ST.lang==='de'?'140+ handgefertigte Vorlagen für Hochzeiten, Verlobungen, Geburtstage und mehr.':'140+ handcrafted templates for weddings, engagements, birthdays and more.'}</p>
+  </div>
+</div>
+<section>
+  <div class="container">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px">
+      ${[ST.lang==='de'?'Alle':'All',ST.lang==='de'?'Hochzeiten':'Weddings',ST.lang==='de'?'Verlobungen':'Engagements',ST.lang==='de'?'Geburtstage':'Birthdays',ST.lang==='de'?'Empfänge':'Receptions'].map((f,i)=>`<button class="btn btn-sm ${i===0?'btn-dark':'btn-ghost'}">${f}</button>`).join('')}
+    </div>
+    <div class="tpl-grid">
+      ${[
+        ['linear-gradient(145deg,#F2E8D8,#E2C4B8)','🌸',ST.lang==='de'?'Rosenblüte':'Blossom',ST.lang==='de'?'Hochzeit':'Wedding',ST.lang==='de'?'Blush & Rose':'Blush & Rose',true],
+        ['linear-gradient(145deg,#262019,#46403A)','🖤',ST.lang==='de'?'Mitternacht':'Midnight',ST.lang==='de'?'Hochzeit':'Wedding',ST.lang==='de'?'Dunkel & Elegant':'Dark & Elegant',true],
+        ['linear-gradient(145deg,#E8F4F0,#B8D8CC)','🌿',ST.lang==='de'?'Botanik':'Botanical',ST.lang==='de'?'Hochzeit':'Wedding',ST.lang==='de'?'Grün & Natürlich':'Green & Natural',false],
+        ['linear-gradient(145deg,#EDE0C8,#B8956A)','✨',ST.lang==='de'?'Champagner':'Champagne',ST.lang==='de'?'Empfang':'Reception',ST.lang==='de'?'Gold & Ivory':'Gold & Ivory',false],
+        ['linear-gradient(145deg,#F8E8F0,#D0A0B8)','🌷',ST.lang==='de'?'Pfingstrose':'Peony',ST.lang==='de'?'Hochzeit':'Wedding',ST.lang==='de'?'Rosa & Weich':'Pink & Soft',true],
+        ['linear-gradient(145deg,#E8E0D0,#A09070)','🕊️',ST.lang==='de'?'Taubengrau':'Dove Grey',ST.lang==='de'?'Hochzeit':'Wedding',ST.lang==='de'?'Grau & Minimalistisch':'Grey & Minimalist',false],
+        ['linear-gradient(145deg,#F0F4E8,#A0B878)','🌿',ST.lang==='de'?'Gartenparty':'Garden Party',ST.lang==='de'?'Empfang':'Reception',ST.lang==='de'?'Frisch & Grün':'Fresh & Green',false],
+        ['linear-gradient(145deg,#F4E8E0,#C07050)','🍂',ST.lang==='de'?'Herbstfest':'Autumn Feast',ST.lang==='de'?'Geburtstag':'Birthday',ST.lang==='de'?'Warm & Golden':'Warm & Golden',true],
+      ].map(([bg,ico,name,type,palette,premium]) => `
+      <div class="tpl-card">
+        <div class="tpl-thumb" style="background:${bg}">
+          <div class="tpl-overlay">${ST.lang==='de'?'Vorlage verwenden →':'Use template →'}</div>
+          ${ico}
+          ${premium?`<div style="position:absolute;top:10px;right:10px;background:rgba(168,124,62,.9);color:white;font-size:10px;padding:3px 8px;border-radius:10px;letter-spacing:.08em">PREMIUM</div>`:''}
+        </div>
+        <div class="tpl-info">
+          <div class="tpl-name">${name}</div>
+          <div class="tpl-type">${type} · ${palette}</div>
+        </div>
+      </div>`).join('')}
+    </div>
+    <div style="text-align:center;margin-top:52px">
+      <p style="font-size:15px;color:var(--char-40);font-weight:300;margin-bottom:20px">${ST.lang==='de'?'Weitere Vorlagen werden laufend hinzugefügt.':'More templates are added continuously.'}</p>
+      <button class="btn btn-gold btn-lg" onclick="handleCreateInvitation()">${L.heroCta}</button>
+    </div>
+  </div>
+</section>
+${renderFooterHTML()}`
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   ABOUT PAGE
+   ═══════════════════════════════════════════════════════════════ */
+function renderAbout() {
+  $('app').innerHTML = `
+<div class="pg-hero">
+  <div class="container" style="position:relative;z-index:1">
+    <div class="eyebrow" style="color:var(--champagne)">Festlich</div>
+    <h1 class="pg-hero-title serif">${ST.lang==='de'?'<em>Unsere</em> Geschichte':'<em>Our</em> Story'}</h1>
+    <p class="pg-hero-sub">${ST.lang==='de'?'Gegründet mit einer einfachen Überzeugung: Jede Feier verdient eine Einladung, die so schön ist wie der Moment selbst.':'Founded with a simple belief: every celebration deserves an invitation as beautiful as the moment itself.'}</p>
+  </div>
+</div>
+<section>
+  <div class="container"><div class="prose-wrap">
+    <h2>${ST.lang==='de'?'Warum Festlich?':'Why Festlich?'}</h2>
+    <p>${ST.lang==='de'?'Festlich entstand aus einer persönlichen Erfahrung: Als wir für unsere eigene Hochzeit die perfekte Einladung suchten, stellten wir fest, dass digitale Alternativen entweder zu technisch, zu unpersönlich oder schlicht zu unschön waren. Wir wollten etwas Besseres.':'Festlich was born from a personal experience: when planning our own wedding, we found that digital alternatives were either too technical, too impersonal, or simply not beautiful enough. We wanted something better.'}</p>
+    <p>${ST.lang==='de'?'Wir glaubten, dass eine digitale Einladung genauso elegant und emotional sein kann wie ein gedrucktes Kunstwerk — und gleichzeitig die Möglichkeiten nutzt, die nur das Internet bieten kann: Live-Countdown, sofortige RSVP-Verwaltung, Fotogalerien und eingebettete Karten.':'We believed that a digital invitation could be just as elegant and emotional as a printed artwork — while harnessing what only the internet can offer: live countdown, instant RSVP management, photo galleries and embedded maps.'}</p>
+    <h2>${ST.lang==='de'?'Unsere Werte':'Our Values'}</h2>
+    <p><strong>${ST.lang==='de'?'Eleganz.':'Elegance.'}</strong> ${ST.lang==='de'?'Jedes Detail ist mit Sorgfalt gestaltet. Von der Typografie bis zur Animationsgeschwindigkeit — nichts ist dem Zufall überlassen.':'Every detail is designed with care. From typography to animation timing — nothing is left to chance.'}</p>
+    <p><strong>${ST.lang==='de'?'Persönlichkeit.':'Personality.'}</strong> ${ST.lang==='de'?'Keine zwei Einladungen sollen gleich aussehen. Unsere Vorlagen sind Ausgangspunkte, keine Beschränkungen.':'No two invitations should look the same. Our templates are starting points, not constraints.'}</p>
+    <p><strong>${ST.lang==='de'?'Einfachheit.':'Simplicity.'}</strong> ${ST.lang==='de'?'Die mächtigsten Werkzeuge sollten die einfachsten zu bedienen sein. Kein Design-Wissen erforderlich.':'The most powerful tools should be the easiest to use. No design knowledge required.'}</p>
+    <h2>${ST.lang==='de'?'Unsere Mission':'Our Mission'}</h2>
+    <p>${ST.lang==='de'?'Wir bei Festlich glauben, dass die Art, wie du deine Gäste einlädst, den Ton für den gesamten Tag setzt. Eine wunderschöne Einladung ist nicht nur ein Terminhinweis — sie ist die erste Erfahrung, die deine Gäste von eurem besonderen Tag machen.':'At Festlich, we believe the way you invite your guests sets the tone for the entire day. A beautiful invitation is not just a date reminder — it is the first experience your guests have of your special day.'}</p>
+    <div class="legal-box"><p style="font-size:15px;font-style:italic;color:var(--char-40)">"${ST.lang==='de'?'Jede große Feier beginnt mit einer Einladung. Lasst uns dafür sorgen, dass diese Einladung unvergesslich ist.':'Every great celebration begins with an invitation. Let us make sure that invitation is unforgettable.'}"</p></div>
+  </div></div>
+</section>
+${renderFooterHTML()}`
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTACT PAGE
+   ═══════════════════════════════════════════════════════════════ */
+function renderContact() {
+  $('app').innerHTML = `
+<div class="pg-hero">
+  <div class="container" style="position:relative;z-index:1">
+    <div class="eyebrow" style="color:var(--champagne)">${ST.lang==='de'?'Kontakt':'Contact'}</div>
+    <h1 class="pg-hero-title serif">${ST.lang==='de'?'Wir freuen uns<br><em>von dir zu hören</em>':'We\'d love<br><em>to hear from you</em>'}</h1>
+  </div>
+</div>
+<section>
+  <div class="container">
+    <div class="contact-info-grid" style="max-width:660px;margin:0 auto 40px">
+      <div class="contact-info-card"><div class="contact-info-ico">✉️</div><div class="contact-info-ttl">${ST.lang==='de'?'E-Mail':'Email'}</div><div class="contact-info-txt">hallo@festlich.de</div></div>
+      <div class="contact-info-card"><div class="contact-info-ico">💬</div><div class="contact-info-ttl">${ST.lang==='de'?'Antwortzeit':'Response time'}</div><div class="contact-info-txt">${ST.lang==='de'?'Innerhalb von 24 Stunden':'Within 24 hours'}</div></div>
+    </div>
+    <div style="max-width:620px;margin:0 auto">
+      <div class="sc">
+        <div class="sc-title">${ST.lang==='de'?'Nachricht senden':'Send a message'}</div>
+        <div id="contact-alert"></div>
+        <div class="f-row">
+          <div class="f-group"><label class="f-label">${ST.lang==='de'?'Name':'Name'}</label><input class="f-input" type="text" id="c-name" placeholder="${ST.lang==='de'?'Max Mustermann':'Jane Smith'}"></div>
+          <div class="f-group"><label class="f-label">${ST.lang==='de'?'E-Mail':'Email'}</label><input class="f-input" type="email" id="c-email" placeholder="${ST.lang==='de'?'max@email.de':'jane@email.com'}"></div>
+        </div>
+        <div class="f-group"><label class="f-label">${ST.lang==='de'?'Betreff':'Subject'}</label><input class="f-input" type="text" id="c-subject"></div>
+        <div class="f-group"><label class="f-label">${ST.lang==='de'?'Nachricht':'Message'}</label><textarea class="f-textarea" id="c-msg" style="min-height:120px"></textarea></div>
+        <button class="btn btn-dark btn-md" onclick="handleContact()">${ST.lang==='de'?'Nachricht senden →':'Send message →'}</button>
+      </div>
+    </div>
+  </div>
+</section>
+${renderFooterHTML()}`
+}
+function handleContact() {
+  const name  = $('c-name')?.value.trim()
+  const email = $('c-email')?.value.trim()
+  const msg   = $('c-msg')?.value.trim()
+  if(!name||!email||!msg) {
+    $('contact-alert').innerHTML = `<div class="alert alert-error">${ST.lang==='de'?'Bitte alle Pflichtfelder ausfüllen.':'Please fill in all required fields.'}</div>`
+    return
+  }
+  $('contact-alert').innerHTML = `<div class="alert alert-success">${ST.lang==='de'?'Danke! Wir melden uns innerhalb von 24 Stunden.':'Thank you! We\'ll get back to you within 24 hours.'}</div>`
+  ;['c-name','c-email','c-subject','c-msg'].forEach(id => { if($(id)) $(id).value = '' })
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   IMPRESSUM
+   ═══════════════════════════════════════════════════════════════ */
+function renderImpressum() {
+  $('app').innerHTML = `
+<div class="pg-hero">
+  <div class="container" style="position:relative;z-index:1">
+    <h1 class="pg-hero-title serif">${ST.lang==='de'?'<em>Impressum</em>':'<em>Legal Notice</em>'}</h1>
+  </div>
+</div>
+<section>
+  <div class="container"><div class="prose-wrap">
+    <h2>${ST.lang==='de'?'Angaben gemäß § 5 TMG':'Information pursuant to § 5 TMG'}</h2>
+    <p><strong>Festlich GmbH</strong><br>Musterstraße 12<br>10115 Berlin<br>Deutschland</p>
+    <div class="legal-box">
+      <p><strong>${ST.lang==='de'?'Geschäftsführer:':'Managing Director:'}</strong> Max Mustermann</p>
+      <p><strong>${ST.lang==='de'?'Registergericht:':'Commercial Register:'}</strong> Amtsgericht Berlin Charlottenburg</p>
+      <p><strong>${ST.lang==='de'?'Registernummer:':'Registration Number:'}</strong> HRB 123456 B</p>
+      <p><strong>${ST.lang==='de'?'Umsatzsteuer-ID:':'VAT ID:'}</strong> DE 123 456 789</p>
+    </div>
+    <h2>${ST.lang==='de'?'Kontakt':'Contact'}</h2>
+    <p>${ST.lang==='de'?'Telefon: +49 (0) 30 123 456 789':'Phone: +49 (0) 30 123 456 789'}<br>E-Mail: hallo@festlich.de<br>Website: www.festlich.de</p>
+    <h2>${ST.lang==='de'?'Verantwortlich für den Inhalt':'Responsible for content'}</h2>
+    <p>Max Mustermann<br>Musterstraße 12<br>10115 Berlin</p>
+    <h2>${ST.lang==='de'?'Haftungsausschluss':'Disclaimer'}</h2>
+    <h3>${ST.lang==='de'?'Haftung für Inhalte':'Liability for content'}</h3>
+    <p>${ST.lang==='de'?'Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.':'The content of our pages was created with the greatest care. However, we cannot guarantee the accuracy, completeness and timeliness of the content.'}</p>
+    <h3>${ST.lang==='de'?'Urheberrecht':'Copyright'}</h3>
+    <p>${ST.lang==='de'?'Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung.':'The content and works created by the site operators on these pages are subject to German copyright law. Reproduction, processing, distribution and any kind of exploitation outside the limits of copyright law require written consent.'}</p>
+    <h2>${ST.lang==='de'?'Streitschlichtung':'Dispute resolution'}</h2>
+    <p>${ST.lang==='de'?'Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung bereit: https://ec.europa.eu/consumers/odr/':'The European Commission provides a platform for online dispute resolution: https://ec.europa.eu/consumers/odr/'}</p>
+  </div></div>
+</section>
+${renderFooterHTML()}`
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DATENSCHUTZ
+   ═══════════════════════════════════════════════════════════════ */
+function renderDatenschutz() {
+  $('app').innerHTML = `
+<div class="pg-hero">
+  <div class="container" style="position:relative;z-index:1">
+    <h1 class="pg-hero-title serif">${ST.lang==='de'?'<em>Datenschutz</em>':'<em>Privacy Policy</em>'}</h1>
+    <p class="pg-hero-sub">${ST.lang==='de'?'Stand: Januar 2025':'Last updated: January 2025'}</p>
+  </div>
+</div>
+<section>
+  <div class="container"><div class="prose-wrap">
+    <h2>1. ${ST.lang==='de'?'Datenschutz auf einen Blick':'Privacy at a glance'}</h2>
+    <p>${ST.lang==='de'?'Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen Daten passiert, wenn Sie diese Website besuchen.':'The following notes give a simple overview of what happens to your personal data when you visit this website.'}</p>
+    <div class="legal-box"><p><strong>${ST.lang==='de'?'Verantwortliche Stelle:':'Data controller:'}</strong><br>Festlich GmbH, Musterstraße 12, 10115 Berlin<br>E-Mail: datenschutz@festlich.de</p></div>
+    <h2>2. ${ST.lang==='de'?'Welche Daten wir erheben':'What data we collect'}</h2>
+    <ul>
+      <li>${ST.lang==='de'?'E-Mail-Adresse (für Konto-Erstellung und Login)':'Email address (for account creation and login)'}</li>
+      <li>${ST.lang==='de'?'Name (optional, für Einladungen)':'Name (optional, for invitations)'}</li>
+      <li>${ST.lang==='de'?'Einladungsdaten (Texte, Fotos, Gästelisten)':'Invitation data (text, photos, guest lists)'}</li>
+      <li>${ST.lang==='de'?'Nutzungsdaten (Aufruf-Zähler)':'Usage data (view counters)'}</li>
+    </ul>
+    <h2>3. ${ST.lang==='de'?'Wie wir Daten verwenden':'How we use data'}</h2>
+    <p>${ST.lang==='de'?'Wir verwenden Ihre Daten ausschließlich zur Bereitstellung unseres Dienstes. Wir verkaufen keine persönlichen Daten an Dritte.':'We use your data exclusively to provide our service. We do not sell personal data to third parties.'}</p>
+    <h2>4. ${ST.lang==='de'?'Ihre Rechte':'Your rights'}</h2>
+    <p>${ST.lang==='de'?'Sie haben jederzeit das Recht auf unentgeltliche Auskunft über Ihre gespeicherten personenbezogenen Daten, deren Herkunft und Empfänger, den Zweck der Datenverarbeitung sowie ein Recht auf Berichtigung oder Löschung dieser Daten.':'You have the right at any time to free information about your stored personal data, its origin and recipients, the purpose of data processing, and a right to correct or delete this data.'}</p>
+    <h2>5. Supabase</h2>
+    <p>${ST.lang==='de'?'Wir nutzen Supabase als Backend-Infrastruktur. Supabase verarbeitet Daten gemäß DSGVO. Server befinden sich in der EU. Weitere Informationen: https://supabase.com/privacy':'We use Supabase as backend infrastructure. Supabase processes data in accordance with GDPR. Servers are located in the EU. More information: https://supabase.com/privacy'}</p>
+    <h2>6. ${ST.lang==='de'?'Kontakt für Datenschutz':'Privacy contact'}</h2>
+    <p>datenschutz@festlich.de</p>
+  </div></div>
+</section>
+${renderFooterHTML()}`
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FOOTER HTML (shared)
+   ═══════════════════════════════════════════════════════════════ */
+function renderFooterHTML() {
+  const L = TX[ST.lang]
+  return `
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <span class="footer-logo" onclick="navigate('home')">Festlich<span>.</span></span>
+        <p class="footer-tagline">${L.footerTagline}</p>
+        <div class="footer-soc">
+          <div class="soc-btn">𝕀</div><div class="soc-btn">𝕻</div><div class="soc-btn">𝕋</div>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col-h">${ST.lang==='de'?'Website':'Website'}</div>
+        <ul class="footer-links">
+          <li><span onclick="navigate('home')">${ST.lang==='de'?'Startseite':'Home'}</span></li>
+          <li><span onclick="navigate('templates')">${ST.lang==='de'?'Vorlagen':'Templates'}</span></li>
+          <li><span onclick="navigate('about')">${ST.lang==='de'?'Über uns':'About'}</span></li>
+          <li><span onclick="navigate('contact')">${ST.lang==='de'?'Kontakt':'Contact'}</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-h">${ST.lang==='de'?'Anlässe':'Events'}</div>
+        <ul class="footer-links">
+          <li><span>${ST.lang==='de'?'Hochzeiten':'Weddings'}</span></li>
+          <li><span>${ST.lang==='de'?'Verlobungen':'Engagements'}</span></li>
+          <li><span>${ST.lang==='de'?'Geburtstage':'Birthdays'}</span></li>
+          <li><span>${ST.lang==='de'?'Empfänge':'Receptions'}</span></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-h">${ST.lang==='de'?'Rechtliches':'Legal'}</div>
+        <ul class="footer-links">
+          <li><span onclick="navigate('impressum')">${L.impressum}</span></li>
+          <li><span onclick="navigate('datenschutz')">${L.datenschutz}</span></li>
+          <li><span onclick="navigate('contact')">${ST.lang==='de'?'Kontakt':'Contact'}</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-btm">
+      <div class="footer-copy">© ${new Date().getFullYear()} Festlich. ${ST.lang==='de'?'Alle Rechte vorbehalten.':'All rights reserved.'}</div>
+      <div class="footer-leg">
+        <span onclick="navigate('impressum')">${L.impressum}</span>
+        <span onclick="navigate('datenschutz')">${L.datenschutz}</span>
+      </div>
+    </div>
+  </div>
+</footer>`
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   AUTH PAGES
+   ═══════════════════════════════════════════════════════════════ */
+function renderLogin() {
+  const L = TX[ST.lang]
+  $('app').innerHTML = `
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo" onclick="navigate('home')">Festlich<span>.</span></div>
+    <p class="auth-tagline">${ST.lang==='de'?'Digitale Einladungen, die berühren':'Digital invitations that touch hearts'}</p>
+    <div id="login-alert" class="hidden"></div>
+    <h2 class="auth-title">${L.loginTitle}</h2>
+    <p class="auth-hint">${L.loginHint}</p>
+    <div class="f-group"><label class="f-label">${L.emailLabel}</label>
+      <input id="login-email" class="f-input" type="email" placeholder="${ST.lang==='de'?'deine@email.de':'your@email.com'}" autocomplete="email"></div>
+    <div class="f-group"><label class="f-label">${L.passwordLabel}</label>
+      <input id="login-pw" class="f-input" type="password" placeholder="••••••••" autocomplete="current-password"
+        onkeydown="if(event.key==='Enter') handleLogin()">
+      <span class="auth-forgot" onclick="navigate('forgot')">${L.forgotPw}</span>
+    </div>
+    <button id="login-btn" class="btn btn-dark btn-md" style="width:100%;margin-bottom:14px" onclick="handleLogin()">
+      ${L.signIn}
+    </button>
+    <p class="auth-switch">${L.noAccount} <a onclick="navigate('register')">${L.createAccount}</a></p>
+  </div>
+</div>`
+}
+
+function renderRegister() {
+  const L = TX[ST.lang]
+  $('app').innerHTML = `
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo" onclick="navigate('home')">Festlich<span>.</span></div>
+    <p class="auth-tagline">${ST.lang==='de'?'Kostenlos starten':'Start for free'}</p>
+    <div id="reg-alert" class="hidden"></div>
+    <h2 class="auth-title">${L.regTitle}</h2>
+    <p class="auth-hint">${L.regHint}</p>
+    <div class="f-group"><label class="f-label">${L.nameLabel}</label>
+      <input id="reg-name" class="f-input" type="text" placeholder="${ST.lang==='de'?'Max Mustermann':'Jane Smith'}" autocomplete="name"></div>
+    <div class="f-group"><label class="f-label">${L.emailLabel}</label>
+      <input id="reg-email" class="f-input" type="email" placeholder="${ST.lang==='de'?'deine@email.de':'your@email.com'}" autocomplete="email"></div>
+    <div class="f-group"><label class="f-label">${ST.lang==='de'?'Passwort (min. 8 Zeichen)':'Password (min. 8 chars)'}</label>
+      <input id="reg-pw" class="f-input" type="password" placeholder="${ST.lang==='de'?'Starkes Passwort':'Strong password'}" autocomplete="new-password"
+        onkeydown="if(event.key==='Enter') handleRegister()"></div>
+    <button id="reg-btn" class="btn btn-dark btn-md" style="width:100%;margin-bottom:14px" onclick="handleRegister()">
+      ${ST.lang==='de'?'Kostenlos registrieren →':'Create free account →'}
+    </button>
+    <p class="auth-switch">${L.hasAccount} <a onclick="navigate('login')">${L.signIn}</a></p>
+  </div>
+</div>`
+}
+
+function renderForgot() {
+  const L = TX[ST.lang]
+  $('app').innerHTML = `
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="auth-logo" onclick="navigate('home')">Festlich<span>.</span></div>
+    <div id="forgot-alert" class="hidden"></div>
+    <h2 class="auth-title">${L.forgotTitle}</h2>
+    <p class="auth-hint">${L.forgotHint}</p>
+    <div class="f-group"><label class="f-label">${L.emailLabel}</label>
+      <input id="forgot-email" class="f-input" type="email" placeholder="${ST.lang==='de'?'deine@email.de':'your@email.com'}"></div>
+    <button id="forgot-btn" class="btn btn-dark btn-md" style="width:100%;margin-bottom:14px" onclick="handleForgot()">
+      ${L.sendReset}
+    </button>
+    <p class="auth-switch"><a onclick="navigate('login')">${L.backToLogin}</a></p>
+  </div>
+</div>`
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DASHBOARD
+   ═══════════════════════════════════════════════════════════════ */
+let dashTab = 'overview'
+
+async function renderDashboard() {
+  if(!ST.user) { navigate('login'); return }
+  const L = TX[ST.lang]
+  await loadInvitations()
+  const userName = ST.user.user_metadata?.full_name || ST.user.email?.split('@')[0] || 'Nutzer'
+
+  $('app').innerHTML = `
+<div class="dash-wrap">
+  <!-- SIDEBAR -->
+  <aside class="dash-side">
+    <div class="dash-side-logo">
+      <div class="dash-side-logo-text" onclick="navigate('home')">Festlich<span>.</span></div>
+    </div>
+    <div class="dash-inv-picker">
+      <select class="dash-inv-sel" id="inv-sel" onchange="onInvChange(this.value)">
+        ${ST.invitations.length === 0
+          ? `<option value="">${ST.lang==='de'?'Keine Einladungen':'No invitations'}</option>`
+          : ST.invitations.map(i => `<option value="${i.id}" ${i.id===ST.currentInvId?'selected':''}>${esc(i.title)}</option>`).join('')}
+      </select>
+    </div>
+    <nav class="dash-nav">
+      <span class="dash-nav-label">Dashboard</span>
+      ${[
+        ['overview','📊',L.overviewLabel],
+        ['guests','👥',L.guestsLabel],
+        ['rsvps','💌',L.rsvpsLabel],
+      ].map(([id,ico,lbl]) => `
+      <div class="dash-nav-item ${dashTab===id?'active':''}" onclick="switchTab('${id}')" id="nav-${id}">
+        <span class="dash-nav-ico">${ico}</span><span>${lbl}</span>
+      </div>`).join('')}
+      <span class="dash-nav-label">${ST.lang==='de'?'Einladung':'Invitation'}</span>
+      ${[
+        ['editor','✏️',L.editorLabel],
+        ['gallery','🖼️',L.galleryLabel],
+        ['design','🔤',L.designLabel],
+        ['qr','📱',L.qrLabel],
+        ['analytics','📈',L.analyticsLabel],
+      ].map(([id,ico,lbl]) => `
+      <div class="dash-nav-item ${dashTab===id?'active':''}" onclick="switchTab('${id}')" id="nav-${id}">
+        <span class="dash-nav-ico">${ico}</span><span>${lbl}</span>
+      </div>`).join('')}
+    </nav>
+    <div class="dash-side-bottom">
+      <div class="dash-user-row">
+        <div class="dash-user-av">${userName[0].toUpperCase()}</div>
+        <div>
+          <div class="dash-user-name">${esc(userName)}</div>
+          <div class="dash-user-plan">${ST.lang==='de'?'Kostenlos':'Free'}</div>
+        </div>
+      </div>
+      <button class="dash-logout-btn" onclick="handleLogout()">${L.signOut}</button>
+    </div>
+  </aside>
+  <!-- MAIN -->
+  <div class="dash-main" id="dash-main">
+    <div class="pg-loading"><div class="spin spin-dark" style="width:24px;height:24px"></div></div>
+  </div>
+</div>`
+
+  await loadTab(dashTab)
+}
+
+async function switchTab(tab) {
+  dashTab = tab
+  document.querySelectorAll('.dash-nav-item').forEach(el => {
+    const id = el.id?.replace('nav-', '')
+    el.classList.toggle('active', id === tab)
+  })
+  await loadTab(tab)
+}
+
+async function onInvChange(id) {
+  ST.currentInvId = id
+  await loadTab(dashTab)
+}
+
+async function loadTab(tab) {
+  const main = $('dash-main')
+  if(!main) return
+  main.innerHTML = '<div class="pg-loading"><div class="spin spin-dark" style="width:24px;height:24px"></div></div>'
+  const i = inv()
+  const L = TX[ST.lang]
+
+  switch(tab) {
+    case 'overview':   await renderOverview(main, i, L); break
+    case 'guests':     await renderGuests(main, i, L); break
+    case 'rsvps':      await renderRSVPs(main, i, L); break
+    case 'editor':     await renderEditor(main, i, L); break
+    case 'gallery':    await renderGallery(main, i, L); break
+    case 'design':     renderDesign(main, i, L); break
+    case 'qr':         renderQR(main, i, L); break
+    case 'analytics':  await renderAnalytics(main, i, L); break
+  }
+}
+
+/* ── TOPBAR HELPER ── */
+function topbar(subtitle, titleHtml, rightHtml='') {
+  return `
+<div class="dash-topbar">
+  <div>
+    <div class="dash-page-title serif">${titleHtml}</div>
+    ${subtitle?`<div class="dash-page-sub">${esc(subtitle)}</div>`:''}
+  </div>
+  <div style="display:flex;gap:10px;align-items:center">${rightHtml}</div>
+</div>`
+}
+
+/* ── OVERVIEW ── */
+async function renderOverview(main, i, L) {
+  if(!i) {
+    main.innerHTML = topbar('', L.overviewLabel,
+      `<button class="btn btn-gold btn-sm" onclick="handleCreateInvitation()">+ ${L.createInv}</button>`) +
+    `<div class="dash-content">
+      <div class="card-box"><div class="empty-state">
+        <div class="empty-ico">💌</div>
+        <div class="empty-ttl">${L.noInvTitle}</div>
+        <div class="empty-sub">${L.noInvDesc}</div>
+        <button class="btn btn-gold btn-md" onclick="handleCreateInvitation()">${L.heroCta}</button>
+      </div></div>
+    </div>`
+    return
+  }
+  const [rsvpRes, invRes] = await Promise.all([
+    sb.from('rsvps').select('attending,guest_count').eq('invitation_id', ST.currentInvId),
+    sb.from('invitations').select('view_count').eq('id', ST.currentInvId).single()
+  ])
+  const rsvps = rsvpRes.data || []
+  const attending = rsvps.filter(r => r.attending===true).length
+  const declined  = rsvps.filter(r => r.attending===false).length
+  const views = invRes.data?.view_count || 0
+
+  const { data: guests } = await sb.from('guests').select('id').eq('invitation_id', ST.currentInvId)
+  const { data: rsvpG  } = await sb.from('rsvps').select('guest_id').eq('invitation_id', ST.currentInvId)
+  const rsvpGuestIds = new Set((rsvpG||[]).map(r=>r.guest_id).filter(Boolean))
+  const pending = (guests||[]).filter(g => !rsvpGuestIds.has(g.id)).length
+
+  const { data: recentRsvps } = await sb.from('rsvps')
+    .select('*').eq('invitation_id', ST.currentInvId)
+    .order('submitted_at', { ascending: false }).limit(5)
+
+  const mealLbl = { meat:L.meat, fish:L.fish, vegetarian:L.vegetarian, vegan:L.vegan, dietary:L.dietary, none:L.none }
+  const pubUrl = getInvUrl(i.slug)
+
+  main.innerHTML = topbar(esc(i.title), L.overviewLabel,
+    `<a href="${pubUrl}" target="_blank" class="btn btn-outline btn-sm">${ST.lang==='de'?'Einladung öffnen →':'Open invitation →'}</a>
+     <button class="btn btn-gold btn-sm" onclick="handleCreateInvitation()">+ ${L.createInv}</button>`) +
+  `<div class="dash-content">
+    <div class="stats-row">
+      ${[['👁️','#EFF6FF',views,L.aufrufe],['✓','#F0FDF4',attending,L.zusagen],['✗','#FEF2F2',declined,L.absagen],['?','#FEFCE8',pending,L.offen]].map(([ico,bg,n,lbl]) => `
+      <div class="stat-card">
+        <div class="stat-ico-w" style="background:${bg}">${ico}</div>
+        <div class="stat-n serif">${n}</div>
+        <div class="stat-l">${lbl}</div>
+      </div>`).join('')}
+    </div>
+    <div class="card-box">
+      <div class="card-box-hdr">
+        <div class="card-box-ttl">💌 ${ST.lang==='de'?'Aktuelle RSVPs':'Recent RSVPs'}</div>
+        <button class="btn btn-ghost btn-sm" onclick="switchTab('rsvps')">${ST.lang==='de'?'Alle ansehen':'View all'}</button>
+      </div>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>${L.gast}</th><th>${L.status}</th><th>${L.personen}</th><th>${L.menue}</th></tr></thead>
+        <tbody>${(recentRsvps||[]).length===0
+          ? `<tr><td colspan="4" style="padding:32px;text-align:center;color:var(--taupe)">${ST.lang==='de'?'Noch keine RSVPs':'No RSVPs yet'}</td></tr>`
+          : (recentRsvps||[]).map(r => `
+        <tr>
+          <td><div style="font-weight:500">${esc(r.guest_name)}</div>${r.guest_email?`<div style="font-size:12px;color:var(--taupe)">${esc(r.guest_email)}</div>`:''}</td>
+          <td>${r.attending
+            ? `<span class="pill pill-green">✓ ${L.yes}</span>`
+            : `<span class="pill pill-red">✗ ${L.no}</span>`}</td>
+          <td>${r.guest_count||1}</td>
+          <td>${mealLbl[r.meal_preference]||L.none}</td>
+        </tr>`).join('')}
+        </tbody>
+      </table></div>
+    </div>
+    <div class="card-box">
+      <div class="card-box-hdr"><div class="card-box-ttl">🔗 ${L.invLinkSection}</div>
+        <button class="btn btn-ghost btn-sm" onclick="copyInvLink()">${L.copyLink}</button>
+      </div>
+      <div style="padding:16px 22px">
+        <div class="inv-link-box">
+          <div class="inv-link-url" id="inv-link-url">${pubUrl}</div>
+          <button class="btn btn-outline btn-sm" onclick="copyInvLink()">${L.copyLink}</button>
+          <a href="${pubUrl}" target="_blank" class="btn btn-ghost btn-sm" style="text-decoration:none">${L.openLink}</a>
+        </div>
+      </div>
+    </div>
+  </div>`
+}
+function copyInvLink() {
+  const i = inv(); if(!i) return
+  navigator.clipboard.writeText(getInvUrl(i.slug)).then(() => toast(TX[ST.lang].linkCopied, 'success'))
+}
+
+/* ── GUESTS ── */
+async function renderGuests(main, i, L) {
+  if(!i) { main.innerHTML = topbar('', L.guestsLabel) + '<div class="dash-content"><div class="card-box"><div class="empty-state"><div class="empty-ico">💌</div><div class="empty-ttl">'+L.noInvTitle+'</div><button class="btn btn-gold btn-md" onclick="handleCreateInvitation()">'+L.heroCta+'</button></div></div></div>'; return }
+  const { data } = await sb.from('guests').select('*').eq('invitation_id', ST.currentInvId).order('created_at')
+  ST.guests = data || []
+  main.innerHTML = topbar(esc(i.title), L.guestsLabel,
+    `<button class="btn btn-ghost btn-sm" onclick="exportGuestCSV()">${L.exportCSV}</button>
+     <button class="btn btn-gold btn-sm" onclick="openGuestModal()">${L.addGuest}</button>`) +
+  `<div class="dash-content">
+    <div class="card-box">
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>${ST.lang==='de'?'Name':'Name'}</th><th>E-Mail</th><th>${ST.lang==='de'?'Tisch':'Table'}</th><th>VIP</th><th>${ST.lang==='de'?'Aktionen':'Actions'}</th></tr></thead>
+        <tbody id="guests-tbody">${renderGuestsRows(L)}</tbody>
+      </table></div>
+    </div>
+  </div>`
+}
+function renderGuestsRows(L) {
+  if(!ST.guests.length) return `<tr><td colspan="5"><div class="empty-state"><div class="empty-ico">👥</div><div class="empty-ttl">${ST.lang==='de'?'Noch keine Gäste':'No guests yet'}</div><div class="empty-sub">${ST.lang==='de'?'Füge Gäste zur Liste hinzu.':'Add guests to the list.'}</div></div></td></tr>`
+  return ST.guests.map(g => `
+  <tr>
+    <td><div style="font-weight:500">${esc(g.name)}</div>${g.notes?`<div style="font-size:12px;color:var(--taupe)">${esc(g.notes)}</div>`:''}</td>
+    <td>${esc(g.email||'–')}</td>
+    <td>${esc(g.table_number||'–')}</td>
+    <td>${g.is_vip?`<span class="pill pill-green">VIP</span>`:'–'}</td>
+    <td><div style="display:flex;gap:6px">
+      <button class="btn btn-ghost btn-sm" onclick="openGuestModal('${g.id}')">${ST.lang==='de'?'Bearb.':'Edit'}</button>
+      <button class="btn-danger" onclick="confirmDelete('guest','${g.id}')">${TX[ST.lang].delete}</button>
+    </div></td>
+  </tr>`).join('')
+}
+
+/* ── RSVPS ── */
+async function renderRSVPs(main, i, L) {
+  if(!i) { main.innerHTML = topbar('', 'RSVPs') + '<div class="dash-content"></div>'; return }
+  const { data } = await sb.from('rsvps').select('*').eq('invitation_id', ST.currentInvId).order('submitted_at', { ascending: false })
+  ST.rsvps = data || []
+  const mealLbl = { meat:L.meat, fish:L.fish, vegetarian:L.vegetarian, vegan:L.vegan, dietary:L.dietary, none:L.none }
+  main.innerHTML = topbar(esc(i.title), 'RSVPs',
+    `<button class="btn btn-ghost btn-sm" onclick="exportGuestCSV()">${L.exportCSV}</button>`) +
+  `<div class="dash-content">
+    <div class="card-box"><div class="tbl-wrap"><table>
+      <thead><tr><th>${L.gast}</th><th>${L.status}</th><th>${L.personen}</th><th>${L.menue}</th><th>${ST.lang==='de'?'Nachricht':'Message'}</th><th>${ST.lang==='de'?'Datum':'Date'}</th></tr></thead>
+      <tbody>${!ST.rsvps.length
+        ? `<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--taupe)">${ST.lang==='de'?'Noch keine RSVPs':'No RSVPs yet'}</td></tr>`
+        : ST.rsvps.map(r => `
+      <tr>
+        <td><div style="font-weight:500">${esc(r.guest_name)}</div>${r.guest_email?`<div style="font-size:12px;color:var(--taupe)">${esc(r.guest_email)}</div>`:''}</td>
+        <td>${r.attending?`<span class="pill pill-green">✓ ${L.yes}</span>`:`<span class="pill pill-red">✗ ${L.no}</span>`}</td>
+        <td>${r.guest_count||1}</td>
+        <td>${mealLbl[r.meal_preference]||L.none}</td>
+        <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px">${esc(r.message||'–')}</td>
+        <td style="font-size:12px;color:var(--taupe)">${new Date(r.submitted_at).toLocaleDateString(ST.lang==='de'?'de-DE':'en-GB')}</td>
+      </tr>`).join('')}
+      </tbody>
+    </table></div></div>
+  </div>`
+}
+
+/* ── EDITOR ── */
+async function renderEditor(main, i, L) {
+  if(!i) { main.innerHTML = topbar('', L.editorLabel) + '<div class="dash-content"></div>'; return }
+  const pubUrl = getInvUrl(i.slug)
+  const eventTypes = [
+    {v:'wedding',de:'Hochzeit',en:'Wedding'},{v:'engagement',de:'Verlobung',en:'Engagement'},
+    {v:'birthday',de:'Geburtstag',en:'Birthday'},{v:'reception',de:'Empfang',en:'Reception'},
+    {v:'celebration',de:'Feier',en:'Celebration'},{v:'other',de:'Sonstiges',en:'Other'}
+  ]
+  main.innerHTML = topbar(esc(i.title), L.inviteTitle,
+    `<div style="display:flex;align-items:center;gap:8px">
+       <label class="toggle" title="${L.publish}">
+         <input type="checkbox" id="pub-toggle" ${i.is_published?'checked':''} onchange="handlePublish(this.checked)">
+         <div class="toggle-track"></div><div class="toggle-thumb"></div>
+       </label>
+       <span id="pub-lbl" style="font-size:13px;color:var(--char-40)">${i.is_published?L.published:L.draft}</span>
+     </div>
+     <button class="btn btn-gold btn-sm" id="ed-save-btn" onclick="saveEditorData()">${L.save}</button>`) +
+  `<div class="dash-content">
+    <div class="sc"><div class="sc-title">🔗 ${L.invLinkSection}</div>
+      <div class="inv-link-box">
+        <div class="inv-link-url">${pubUrl}</div>
+        <button class="btn btn-outline btn-sm" onclick="copyInvLink()">${L.copyLink}</button>
+        <a href="${pubUrl}" target="_blank" class="btn btn-ghost btn-sm" style="text-decoration:none">${L.openLink}</a>
+      </div>
+    </div>
+    <div class="sc"><div class="sc-title">💍 ${L.editInvTitle}</div>
+      <div class="f-row">
+        <div class="f-group"><label class="f-label">${L.eventTitle}</label><input id="ed-title" class="f-input" value="${esc(i.title||'')}"></div>
+        <div class="f-group"><label class="f-label">${L.eventType}</label>
+          <select id="ed-type" class="f-select">
+            ${eventTypes.map(t=>`<option value="${t.v}" ${i.event_type===t.v?'selected':''}>${ST.lang==='de'?t.de:t.en}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="f-row">
+        <div class="f-group"><label class="f-label">${L.name1}</label><input id="ed-n1" class="f-input" value="${esc(i.host_name_1||'')}" placeholder="Lena"></div>
+        <div class="f-group"><label class="f-label">${L.name2}</label><input id="ed-n2" class="f-input" value="${esc(i.host_name_2||'')}" placeholder="Florian"></div>
+      </div>
+      <div class="f-group"><label class="f-label">${L.tagline}</label><input id="ed-tagline" class="f-input" value="${esc(i.tagline||'')}"></div>
+      <div class="f-row">
+        <div class="f-group"><label class="f-label">${L.eventDate}</label><input id="ed-date" class="f-input" type="date" value="${i.event_date||''}"></div>
+        <div class="f-group"><label class="f-label">${L.eventTime}</label><input id="ed-time" class="f-input" type="time" value="${i.ceremony_time||''}"></div>
+      </div>
+    </div>
+    <div class="sc"><div class="sc-title">💌 ${L.welcomeTitle}</div>
+      <div class="f-group"><label class="f-label">${L.welcomeDE}</label><textarea id="ed-welcome" class="f-textarea">${esc(i.welcome_note||'')}</textarea></div>
+      <div class="f-group"><label class="f-label">${L.welcomeEN}</label><textarea id="ed-welcome-en" class="f-textarea">${esc(i.welcome_note_en||'')}</textarea></div>
+    </div>
+    <div class="sc"><div class="sc-title">📍 ${L.venueTitle}</div>
+      <div class="f-row">
+        <div class="f-group"><label class="f-label">${L.venueName}</label><input id="ed-venue" class="f-input" value="${esc(i.venue_name||'')}"></div>
+        <div class="f-group"><label class="f-label">${L.venueCity}</label><input id="ed-city" class="f-input" value="${esc(i.venue_city||'')}"></div>
+      </div>
+      <div class="f-group"><label class="f-label">${L.venueAddr}</label><input id="ed-addr" class="f-input" value="${esc(i.venue_address||'')}"></div>
+      <div class="f-group"><label class="f-label">${L.venueMap}</label><input id="ed-mapurl" class="f-input" type="url" value="${esc(i.venue_map_url||'')}" placeholder="https://maps.google.com/..."></div>
+    </div>
+    <div class="sc"><div class="sc-title">📋 ${L.rsvpTitle}</div>
+      <div class="toggle-wrap"><div><div class="toggle-info-title">${L.rsvpOn}</div><div class="toggle-info-desc">${L.rsvpOnDesc}</div></div>
+        <label class="toggle"><input type="checkbox" id="ed-rsvp" ${i.rsvp_enabled!==false?'checked':''}><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+      <div class="toggle-wrap"><div><div class="toggle-info-title">${L.mealOn}</div><div class="toggle-info-desc">${L.mealOnDesc}</div></div>
+        <label class="toggle"><input type="checkbox" id="ed-meal" ${i.collect_meal_pref!==false?'checked':''}><div class="toggle-track"></div><div class="toggle-thumb"></div></label></div>
+      <div class="f-row" style="margin-top:14px">
+        <div class="f-group"><label class="f-label">${L.rsvpDeadline}</label><input id="ed-deadline" class="f-input" type="date" value="${i.rsvp_deadline||''}"></div>
+        <div class="f-group"><label class="f-label">${L.maxGuests}</label>
+          <select id="ed-maxg" class="f-select">${[1,2,3,4,5,8,10].map(n=>`<option value="${n}" ${(i.max_guests_per_rsvp||4)==n?'selected':''}>${n}</option>`).join('')}</select>
+        </div>
+      </div>
+    </div>
+    <div class="sc"><div class="sc-title">✨ ${L.extrasTitle}</div>
+      <div class="f-group"><label class="f-label">${L.dresscode}</label><input id="ed-dress" class="f-input" value="${esc(i.dress_code||'')}" placeholder="${ST.lang==='de'?'Festlich elegant':'Black tie preferred'}"></div>
+      <div class="f-group"><label class="f-label">${L.specialNotes}</label><textarea id="ed-notes" class="f-textarea">${esc(i.special_notes||'')}</textarea></div>
+      <div class="f-group"><label class="f-label">${L.registry}</label><textarea id="ed-registry" class="f-textarea">${esc(i.registry_message||'')}</textarea></div>
+    </div>
+    <div style="height:24px"></div>
+  </div>`
+}
+
+async function saveEditorData() {
+  if(!ST.currentInvId) return
+  setLoading('ed-save-btn', true)
+  const fields = {
+    title:               $('ed-title')?.value.trim(),
+    event_type:          $('ed-type')?.value,
+    host_name_1:         $('ed-n1')?.value.trim(),
+    host_name_2:         $('ed-n2')?.value.trim(),
+    tagline:             $('ed-tagline')?.value.trim(),
+    welcome_note:        $('ed-welcome')?.value.trim(),
+    welcome_note_en:     $('ed-welcome-en')?.value.trim(),
+    event_date:          $('ed-date')?.value || null,
+    ceremony_time:       $('ed-time')?.value || null,
+    venue_name:          $('ed-venue')?.value.trim(),
+    venue_city:          $('ed-city')?.value.trim(),
+    venue_address:       $('ed-addr')?.value.trim(),
+    venue_map_url:       $('ed-mapurl')?.value.trim(),
+    rsvp_enabled:        $('ed-rsvp')?.checked,
+    collect_meal_pref:   $('ed-meal')?.checked,
+    rsvp_deadline:       $('ed-deadline')?.value || null,
+    max_guests_per_rsvp: parseInt($('ed-maxg')?.value)||4,
+    dress_code:          $('ed-dress')?.value.trim(),
+    special_notes:       $('ed-notes')?.value.trim(),
+    registry_message:    $('ed-registry')?.value.trim(),
+  }
+  if(!fields.title) { toast(ST.lang==='de'?'Titel darf nicht leer sein':'Title cannot be empty', 'error'); setLoading('ed-save-btn',false); return }
+  const ok = await saveInvitation(fields)
+  setLoading('ed-save-btn', false)
+  if(ok) {
+    toast(TX[ST.lang].saved, 'success')
+    // Update select text
+    const opt = $('inv-sel')?.querySelector(`option[value="${ST.currentInvId}"]`)
+    if(opt) opt.textContent = fields.title
+  }
+}
+
+async function handlePublish(val) {
+  const ok = await saveInvitation({ is_published: val })
+  if(ok) {
+    const lbl = $('pub-lbl')
+    if(lbl) lbl.textContent = val ? TX[ST.lang].published : TX[ST.lang].draft
+    toast(val?(ST.lang==='de'?'Einladung veröffentlicht!':'Invitation published!'):(ST.lang==='de'?'Als Entwurf gespeichert.':'Saved as draft.'), 'success')
+  }
+}
+
+/* ── GALLERY ── */
+async function renderGallery(main, i, L) {
+  if(!i) { main.innerHTML = topbar('', L.galleryLabel) + '<div class="dash-content"></div>'; return }
+  const { data } = await sb.from('gallery_items').select('*').eq('invitation_id', ST.currentInvId).order('sort_order')
+  ST.gallery = data || []
+  main.innerHTML = topbar(esc(i.title), L.galleryLabel) + `
+  <div class="dash-content">
+    <div class="sc"><div class="sc-title">📤 ${L.uploadBtn}</div>
+      <div class="upload-zone" onclick="document.getElementById('gal-input').click()">
+        <div class="upload-ico">📷</div>
+        <div class="upload-txt">${ST.lang==='de'?'Bilder hier ablegen oder klicken':'Drop images here or click'}</div>
+        <div class="upload-hint">JPG, PNG, WebP · ${ST.lang==='de'?'bis zu 10 MB':'up to 10 MB'}</div>
+        <input type="file" id="gal-input" style="display:none" accept="image/*" multiple onchange="handleGalUpload(this)">
+      </div>
+      <div id="gal-progress" class="hidden" style="margin-top:14px">
+        <div style="background:var(--cream);border-radius:6px;height:5px;overflow:hidden">
+          <div id="gal-bar" style="width:0%;height:100%;background:var(--gold);transition:width .3s"></div>
+        </div>
+        <div id="gal-status" style="font-size:12px;color:var(--taupe);margin-top:6px">${ST.lang==='de'?'Wird hochgeladen…':'Uploading…'}</div>
+      </div>
+    </div>
+    <div class="sc"><div class="sc-title">🖼️ ${ST.lang==='de'?'Hochgeladene Bilder':'Uploaded images'}</div>
+      <div class="gal-grid" id="gal-grid">${renderGalGrid()}</div>
+    </div>
+  </div>`
+}
+function renderGalGrid() {
+  if(!ST.gallery.length) return `<div style="grid-column:span 3;text-align:center;padding:40px;color:var(--taupe)"><div style="font-size:36px;margin-bottom:12px">🖼️</div><div>${TX[ST.lang].noImgs}</div></div>`
+  return ST.gallery.map(g => `
+  <div class="gal-item">
+    <img class="gal-img" src="${g.url}" alt="${esc(g.caption||'')}">
+    <button class="gal-del" onclick="deleteGalItem('${g.id}','${g.storage_path}')">${TX[ST.lang].delete}</button>
+  </div>`).join('')
+}
+async function handleGalUpload(input) {
+  if(!ST.currentInvId || !input.files.length) return
+  const files = Array.from(input.files)
+  $('gal-progress').classList.remove('hidden')
+  for(let i=0; i<files.length; i++) {
+    const f = files[i]
+    $('gal-bar').style.width = `${Math.round(i/files.length*100)}%`
+    $('gal-status').textContent = `${f.name} (${i+1}/${files.length})`
+    const path = `${ST.user.id}/${ST.currentInvId}/${Date.now()}-${f.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`
+    const { error: upErr } = await sb.storage.from('invitation-gallery').upload(path, f, { cacheControl:'3600', upsert:false })
+    if(upErr) { toast('Upload: '+upErr.message, 'error'); continue }
+    const { data: { publicUrl } } = sb.storage.from('invitation-gallery').getPublicUrl(path)
+    await sb.from('gallery_items').insert({ invitation_id: ST.currentInvId, storage_path: path, url: publicUrl, size_bytes: f.size, sort_order: ST.gallery.length+i })
+  }
+  $('gal-bar').style.width = '100%'
+  $('gal-status').textContent = ST.lang==='de'?'Fertig!':'Done!'
+  setTimeout(() => $('gal-progress')?.classList.add('hidden'), 1500)
+  input.value = ''
+  const { data } = await sb.from('gallery_items').select('*').eq('invitation_id', ST.currentInvId).order('sort_order')
+  ST.gallery = data || []
+  const grid = $('gal-grid')
+  if(grid) grid.innerHTML = renderGalGrid()
+  toast(`${files.length} ${ST.lang==='de'?'Bild(er) hochgeladen':'image(s) uploaded'}`, 'success')
+}
+async function deleteGalItem(id, path) {
+  const { error } = await sb.from('gallery_items').delete().eq('id', id)
+  if(error) { toast(error.message, 'error'); return }
+  await sb.storage.from('invitation-gallery').remove([path])
+  ST.gallery = ST.gallery.filter(g => g.id !== id)
+  const grid = $('gal-grid')
+  if(grid) grid.innerHTML = renderGalGrid()
+  toast(ST.lang==='de'?'Bild gelöscht':'Image deleted', 'success')
+}
+
+/* ── DESIGN (FONT SYSTEM) ── */
+function renderDesign(main, i, L) {
+  if(!i) { main.innerHTML = topbar('', L.designLabel) + '<div class="dash-content"></div>'; return }
+  ST.fontH = i.font_heading || 'Great Vibes'
+  ST.fontB = i.font_body    || 'Lato'
+  ST.fontPreset = i.font_preset || 'elegant'
+  loadFont(ST.fontH); loadFont(ST.fontB)
+  FONT_PRESETS.forEach(p => { loadFont(p.h); loadFont(p.b) })
+
+  const n1 = i.host_name_1||'Lena', n2 = i.host_name_2||'Florian'
+  const hFamily = FONTS.find(f=>f.n===ST.fontH)?.f || ST.fontH
+  const bFamily = FONTS.find(f=>f.n===ST.fontB)?.f || ST.fontB
+  const cats = ['elegantScript','modernScript','classicSerif','minimalSans']
+  const catLabels = { elegantScript: L.elegantScript, modernScript: L.modernScript, classicSerif: L.classicSerif, minimalSans: L.minimalSans }
+
+  main.innerHTML = topbar(esc(i.title), L.designLabel,
+    `<button class="btn btn-gold btn-sm" id="font-save-btn" onclick="saveFontData()">${L.saveFonts}</button>`) +
+  `<div class="dash-content">
+    <div class="sc"><div class="sc-title">👁️ ${L.livePreview}</div>
+      <div class="live-prev">
+        <div class="prev-names" id="prev-names" style="font-family:${hFamily}">${esc(n1)} &amp; ${esc(n2)}</div>
+        <div class="prev-detail" id="prev-detail" style="font-family:${bFamily}">${ST.lang==='de'?'21. JUNI 2025 · HOCHZEIT':'21 JUNE 2025 · WEDDING'}</div>
+        <div class="prev-body-txt" id="prev-body" style="font-family:${bFamily}">${ST.lang==='de'?'Mit großer Freude laden wir euch ein, unseren besonderen Tag zu feiern.':'With great joy, we invite you to celebrate our special day with us.'}</div>
+        <div style="margin-top:12px;font-size:11.5px;color:var(--taupe)">
+          ${L.currentHeading}: <strong id="curr-h">${ST.fontH}</strong> · ${L.currentBody}: <strong id="curr-b">${ST.fontB}</strong>
+        </div>
+      </div>
+    </div>
+    <div class="sc"><div class="sc-title">🔤 ${ST.lang==='de'?'Schriftart wählen':'Choose fonts'}</div>
+      <div style="border:1px solid rgba(38,32,25,.08);border-radius:12px;overflow:hidden">
+        <div class="font-tabs-row">
+          <button class="font-tab-btn on" id="ftab-presets" onclick="switchFontTab('presets')">${L.fontCombinations}</button>
+          <button class="font-tab-btn" id="ftab-heading"  onclick="switchFontTab('heading')">${L.fontHeading}</button>
+          <button class="font-tab-btn" id="ftab-body"     onclick="switchFontTab('body')">${L.fontBody}</button>
+        </div>
+        <div id="fpanel-presets" style="padding:4px 14px 14px">
+          <div class="preset-grid">${FONT_PRESETS.map(p => `
+          <button class="preset-btn ${p.id===ST.fontPreset?'on':''}" onclick="selectPreset('${p.id}')">
+            <div class="preset-preview" style="font-family:${FONTS.find(f=>f.n===p.h)?.f||p.h}">${p.h.toUpperCase().includes('SANS')||p.h==='Cinzel'||p.h==='Josefin Sans'?p.nameDE||p.nameEN:p.nameDE}</div>
+            <div class="preset-name">${ST.lang==='de'?p.nameDE:p.nameEN}</div>
+            <div class="preset-desc">${ST.lang==='de'?p.descDE:p.descEN}</div>
+          </button>`).join('')}</div>
+        </div>
+        <div id="fpanel-heading" style="padding:4px 14px 14px;display:none">
+          ${cats.map(cat => {
+            const catFonts = FONTS.filter(f => f.c===cat)
+            return `<span class="font-cat-label">${catLabels[cat]}</span>
+            <div>${catFonts.map(f => `
+            <button class="font-item ${ST.fontH===f.n?'on':''}" id="fh-${f.n.replace(/\s+/g,'-')}"
+              onmouseenter="loadFont('${f.n}')"
+              onclick="selectFont('${f.n}','h')">
+              <div class="font-preview-txt" style="font-family:${f.f}">${f.p}</div>
+              <div><div class="font-meta-name">${f.n}</div><div class="font-meta-cat">${cat}</div></div>
+            </button>`).join('')}</div>`
+          }).join('')}
+        </div>
+        <div id="fpanel-body" style="padding:4px 14px 14px;display:none">
+          ${cats.map(cat => {
+            const catFonts = FONTS.filter(f => f.c===cat)
+            return `<span class="font-cat-label">${catLabels[cat]}</span>
+            <div>${catFonts.map(f => `
+            <button class="font-item ${ST.fontB===f.n?'on':''}" id="fb-${f.n.replace(/\s+/g,'-')}"
+              onmouseenter="loadFont('${f.n}')"
+              onclick="selectFont('${f.n}','b')">
+              <div class="font-preview-txt" style="font-family:${f.f}">${f.p}</div>
+              <div><div class="font-meta-name">${f.n}</div><div class="font-meta-cat">${cat}</div></div>
+            </button>`).join('')}</div>`
+          }).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="sc"><div class="sc-title">🎨 ${L.colorScheme}</div>
+      <div class="f-row">
+        <div class="f-group"><label class="f-label">${L.accentColor}</label>
+          <div style="display:flex;gap:10px;align-items:center">
+            <input type="color" id="col-accent" value="${i.theme_primary_color||'#A87C3E'}" onchange="syncColHex('accent',this.value)" style="width:46px;height:38px;border:none;border-radius:8px;cursor:pointer;padding:2px">
+            <input class="f-input" id="col-accent-hex" value="${i.theme_primary_color||'#A87C3E'}" style="margin:0;flex:1" oninput="syncColPicker('accent',this.value)">
+          </div>
+        </div>
+        <div class="f-group"><label class="f-label">${L.bgColor}</label>
+          <div style="display:flex;gap:10px;align-items:center">
+            <input type="color" id="col-bg" value="${i.theme_bg_color||'#FAF8F3'}" onchange="syncColHex('bg',this.value)" style="width:46px;height:38px;border:none;border-radius:8px;cursor:pointer;padding:2px">
+            <input class="f-input" id="col-bg-hex" value="${i.theme_bg_color||'#FAF8F3'}" style="margin:0;flex:1" oninput="syncColPicker('bg',this.value)">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`
+}
+function switchFontTab(tab) {
+  ['presets','heading','body'].forEach(t => {
+    const btn = $(`ftab-${t}`), panel = $(`fpanel-${t}`)
+    if(btn) btn.classList.toggle('on', t===tab)
+    if(panel) panel.style.display = t===tab?'block':'none'
+  })
+}
+function selectPreset(id) {
+  const p = FONT_PRESETS.find(x => x.id===id); if(!p) return
+  ST.fontPreset = id
+  loadFont(p.h); loadFont(p.b)
+  ST.fontH = p.h; ST.fontB = p.b
+  document.querySelectorAll('.preset-btn').forEach(el => {
+    el.classList.toggle('on', el.getAttribute('onclick')===`selectPreset('${id}')`)
+  })
+  updateFontPreview()
+}
+function selectFont(name, type) {
+  loadFont(name)
+  if(type==='h') ST.fontH = name; else ST.fontB = name
+  document.querySelectorAll(`.font-item`).forEach(el => {
+    const pfx = type==='h'?'fh-':'fb-'
+    if(el.id.startsWith(pfx)) el.classList.toggle('on', el.id===pfx+name.replace(/\s+/g,'-'))
+  })
+  updateFontPreview()
+}
+function updateFontPreview() {
+  const hf = FONTS.find(f=>f.n===ST.fontH), bf = FONTS.find(f=>f.n===ST.fontB)
+  const pn = $('prev-names'), pd = $('prev-detail'), pb = $('prev-body')
+  const ch = $('curr-h'), cb = $('curr-b')
+  if(pn && hf) pn.style.fontFamily = hf.f
+  if(pd && bf) pd.style.fontFamily = bf.f
+  if(pb && bf) pb.style.fontFamily = bf.f
+  if(ch) ch.textContent = ST.fontH
+  if(cb) cb.textContent = ST.fontB
+}
+async function saveFontData() {
+  if(!ST.currentInvId) return
+  setLoading('font-save-btn', true)
+  const ok = await saveInvitation({
+    font_heading: ST.fontH, font_body: ST.fontB, font_preset: ST.fontPreset,
+    theme_primary_color: $('col-accent')?.value,
+    theme_bg_color:      $('col-bg')?.value,
+  })
+  setLoading('font-save-btn', false)
+  if(ok) toast(TX[ST.lang].saved, 'success')
+}
+function syncColHex(which, val) { const el = $(`col-${which}-hex`); if(el) el.value = val }
+function syncColPicker(which, val) { if(!/^#[0-9A-Fa-f]{6}$/.test(val)) return; const el = $(`col-${which}`); if(el) el.value = val }
+
+/* ── QR ── */
+function renderQR(main, i, L) {
+  if(!i) { main.innerHTML = topbar('', L.qrLabel) + '<div class="dash-content"></div>'; return }
+  const url = getInvUrl(i.slug)
+  main.innerHTML = topbar(esc(i.title), L.qrLabel) + `
+  <div class="dash-content">
+    <div class="sc" style="max-width:420px;margin:0 auto">
+      <div class="sc-title" style="justify-content:center">📱 ${ST.lang==='de'?'QR-Code für deine Einladung':'QR Code for your invitation'}</div>
+      <div class="qr-wrap">
+        <div id="qr-canvas"></div>
+        <div class="qr-url">${url}</div>
+        <button class="btn btn-gold btn-md" onclick="downloadQR()">${L.downloadQR}</button>
+      </div>
+    </div>
+  </div>`
+  setTimeout(() => {
+    const c = $('qr-canvas')
+    if(c && typeof QRCode !== 'undefined') {
+      new QRCode(c, { text: url, width: 200, height: 200,
+        colorDark: '#262019', colorLight: '#FEFCF9', correctLevel: QRCode.CorrectLevel.M })
+    }
+  }, 60)
+}
+function downloadQR() {
+  const canvas = document.querySelector('#qr-canvas canvas')
+  if(!canvas) { toast(ST.lang==='de'?'QR nicht verfügbar':'QR not available', 'error'); return }
+  const a = document.createElement('a')
+  a.href = canvas.toDataURL('image/png'); a.download = 'festlich-qr.png'; a.click()
+  toast(ST.lang==='de'?'QR-Code heruntergeladen!':'QR Code downloaded!', 'success')
+}
+
+/* ── ANALYTICS ── */
+async function renderAnalytics(main, i, L) {
+  if(!i) { main.innerHTML = topbar('', L.analyticsLabel) + '<div class="dash-content"></div>'; return }
+  const [rsvpRes, invRes] = await Promise.all([
+    sb.from('rsvps').select('attending,guest_count').eq('invitation_id', ST.currentInvId),
+    sb.from('invitations').select('view_count').eq('id', ST.currentInvId).single()
+  ])
+  const rsvps = rsvpRes.data || []
+  const attending = rsvps.filter(r => r.attending===true)
+  const declined  = rsvps.filter(r => r.attending===false)
+  const views = invRes.data?.view_count || 0
+  const totalGuests = attending.reduce((s,r) => s+(r.guest_count||1), 0)
+  const total = rsvps.length || 1
+
+  main.innerHTML = topbar(esc(i.title), L.analyticsLabel) + `
+  <div class="dash-content">
+    <div class="stats-row">
+      ${[['👁️','#EFF6FF',views,L.aufrufe],['✓','#F0FDF4',attending.length,L.zusagen],['✗','#FEF2F2',declined.length,L.absagen],['👫','#FDF4FF',totalGuests,ST.lang==='de'?'Gäste gesamt':'Total guests']].map(([ico,bg,n,lbl]) => `
+      <div class="stat-card">
+        <div class="stat-ico-w" style="background:${bg}">${ico}</div>
+        <div class="stat-n serif">${n}</div>
+        <div class="stat-l">${lbl}</div>
+      </div>`).join('')}
+    </div>
+    <div class="sc"><div class="sc-title">📊 ${ST.lang==='de'?'RSVP-Übersicht':'RSVP overview'}</div>
+      <div class="analytic-bar">
+        <div style="background:#22C55E;width:${attending.length/total*100}%"></div>
+        <div style="background:#EF4444;width:${declined.length/total*100}%"></div>
+      </div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        ${[['#22C55E',L.zusagen,attending.length],['#EF4444',L.absagen,declined.length]].map(([c,lbl,n]) => `
+        <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:50%;background:${c}"></div><span style="font-size:13px;color:var(--char-40)">${lbl}: ${n}</span></div>`).join('')}
+      </div>
+    </div>
+  </div>`
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   GUEST MODAL
+   ═══════════════════════════════════════════════════════════════ */
+function openGuestModal(guestId=null) {
+  const L = TX[ST.lang]
+  const editing = !!guestId
+  const g = editing ? ST.guests.find(x=>x.id===guestId) : null
+  // Set modal texts
+  $('guest-modal-title').textContent = editing ? L.guestEdit : L.guestAdd
+  $('guest-modal-sub').textContent   = editing ? L.guestEditSub : L.guestAddSub
+  $('glbl-name').textContent  = L.guestName
+  $('glbl-email').textContent = L.guestEmail
+  $('glbl-phone').textContent = L.guestPhone
+  $('glbl-table').textContent = L.guestTable
+  $('glbl-notes').textContent = L.guestNotes
+  $('glbl-vip').textContent   = L.vipGuest
+  $('guest-cancel-btn').textContent = L.cancel
+  $('guest-save-btn').textContent   = L.save
+  $('guest-cancel-btn').onclick = () => closeModal('modal-guest')
+  $('guest-save-btn').onclick   = () => saveGuest(guestId)
+  // Fill fields
+  $('g-edit-id').value = guestId || ''
+  $('g-name').value    = g?.name||''
+  $('g-email').value   = g?.email||''
+  $('g-phone').value   = g?.phone||''
+  $('g-table').value   = g?.table_number||''
+  $('g-notes').value   = g?.notes||''
+  $('g-vip').checked   = g?.is_vip||false
+  $('guest-modal-alert').innerHTML = ''
+  openModal('modal-guest')
+}
+async function saveGuest(editId) {
+  const name = $('g-name')?.value.trim()
+  if(!name) { $('guest-modal-alert').innerHTML = `<div class="alert alert-error">${ST.lang==='de'?'Name ist erforderlich.':'Name is required.'}</div>`; return }
+  const data = { name, email: $('g-email').value.trim(), phone: $('g-phone').value.trim(),
+    table_number: $('g-table').value.trim(), notes: $('g-notes').value.trim(),
+    is_vip: $('g-vip').checked }
+  setLoading('guest-save-btn', true)
+  let error
+  if(editId) {
+    const r = await sb.from('guests').update(data).eq('id', editId).eq('invitation_id', ST.currentInvId)
+    error = r.error
+  } else {
+    const r = await sb.from('guests').insert({ ...data, invitation_id: ST.currentInvId })
+    error = r.error
+  }
+  setLoading('guest-save-btn', false)
+  if(error) { $('guest-modal-alert').innerHTML = `<div class="alert alert-error">${dbErrMsg(error)}</div>`; return }
+  toast(editId?(ST.lang==='de'?'Gast aktualisiert':'Guest updated'):(ST.lang==='de'?'Gast hinzugefügt':'Guest added'), 'success')
+  closeModal('modal-guest')
+  // Refresh
+  const { data: guests } = await sb.from('guests').select('*').eq('invitation_id', ST.currentInvId).order('created_at')
+  ST.guests = guests||[]
+  const tbody = $('guests-tbody')
+  if(tbody) tbody.innerHTML = renderGuestsRows(TX[ST.lang])
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONFIRM DELETE MODAL
+   ═══════════════════════════════════════════════════════════════ */
+function confirmDelete(type, id) {
+  const L = TX[ST.lang]
+  ST.pendingDel = { type, id }
+  $('confirm-title').textContent  = L.confirmDelTitle
+  $('confirm-msg').textContent    = L.confirmDelMsg
+  $('confirm-cancel-btn').textContent = L.cancel
+  $('confirm-ok-btn').textContent     = L.delete
+  $('confirm-cancel-btn').onclick = () => closeModal('modal-confirm')
+  $('confirm-ok-btn').onclick     = executeDelete
+  openModal('modal-confirm')
+}
+async function executeDelete() {
+  if(!ST.pendingDel) return
+  const { type, id } = ST.pendingDel
+  ST.pendingDel = null
+  closeModal('modal-confirm')
+  if(type === 'guest') {
+    await sb.from('rsvps').delete().eq('guest_id', id)
+    const { error } = await sb.from('guests').delete().eq('id', id)
+    if(error) { toast(error.message, 'error'); return }
+    ST.guests = ST.guests.filter(g => g.id !== id)
+    const tbody = $('guests-tbody')
+    if(tbody) tbody.innerHTML = renderGuestsRows(TX[ST.lang])
+    toast(ST.lang==='de'?'Gast gelöscht':'Guest deleted', 'success')
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   EXPORT CSV
+   ═══════════════════════════════════════════════════════════════ */
+async function exportGuestCSV() {
+  if(!ST.currentInvId) return
+  const [gRes, rRes] = await Promise.all([
+    sb.from('guests').select('*').eq('invitation_id', ST.currentInvId),
+    sb.from('rsvps').select('*').eq('invitation_id', ST.currentInvId)
+  ])
+  const guests = gRes.data||[], rsvps = rRes.data||[]
+  const rMap = {}; rsvps.forEach(r => { if(r.guest_id) rMap[r.guest_id]=r })
+  const L = TX[ST.lang]
+  const mealLbl = { meat:L.meat, fish:L.fish, vegetarian:L.vegetarian, vegan:L.vegan, dietary:L.dietary, none:L.none }
+  const header = [ST.lang==='de'?'Name':'Name','E-Mail',ST.lang==='de'?'Telefon':'Phone',ST.lang==='de'?'Tisch':'Table','VIP',ST.lang==='de'?'Status':'Status',ST.lang==='de'?'Personen':'Guests',ST.lang==='de'?'Menü':'Meal']
+  const rows = guests.map(g => {
+    const r = rMap[g.id]
+    return [g.name,g.email,g.phone,g.table_number,g.is_vip?'Ja':'Nein',
+      r?(r.attending?L.yes:L.no):L.pending, r?.guest_count||'–', mealLbl[r?.meal_preference]||L.none]
+  })
+  const csv = [header,...rows].map(r => r.map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n')
+  const blob = new Blob(['\uFEFF'+csv], { type:'text/csv;charset=utf-8' })
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='gaesteliste.csv'; a.click()
+  toast(ST.lang==='de'?'CSV exportiert!':'CSV exported!', 'success')
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   COUNTDOWN
+   ═══════════════════════════════════════════════════════════════ */
+function startCountdown() {
+  function tick() {
+    const target = new Date('2025-09-20T16:00:00'), now = new Date(), diff = Math.max(0, target-now)
+    const d=Math.floor(diff/86400000), h=Math.floor((diff%86400000)/3600000),
+          m=Math.floor((diff%3600000)/60000), s=Math.floor((diff%60000)/1000)
+    ;['cd-d','cd-h','cd-m','cd-s'].forEach((id,i)=>{
+      const el=$(id); if(el) el.textContent=String([d,h,m,s][i]).padStart(2,'0')
+    })
+  }
+  tick(); setInterval(tick, 1000)
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   BOOT
+   ═══════════════════════════════════════════════════════════════ */
+;(async () => {
+  // Load default fonts
+  const defaultFontLink = document.createElement('link')
+  defaultFontLink.rel = 'stylesheet'
+  defaultFontLink.href = 'https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lato:wght@300;400&display=swap'
+  document.head.appendChild(defaultFontLink)
+  loadedFonts.add('Great Vibes'); loadedFonts.add('Lato')
+
+  // Get session
+  const { data: { session } } = await sb.auth.getSession()
+  if(session) ST.user = session.user
+
+  // Handle URL hash routing
+  const hash = location.hash.replace('#','')
+  if(['home','templates','about','contact','impressum','datenschutz','login','register','forgot','dashboard'].includes(hash)) {
+    navigate(hash)
+  } else {
+    navigate('home')
+  }
+
+  // Auth state listener
+  sb.auth.onAuthStateChange((event, session) => {
+    if(event==='SIGNED_IN' && session) {
+      ST.user = session.user
+      if(ST.afterAuth==='create_invitation') {
+        ST.afterAuth = null
+        createInvAndNavigate()
+      } else {
+        navigate('dashboard')
+      }
+    } else if(event==='SIGNED_OUT') {
+      ST.user = null
+      updateNavBtns()
+    }
+  })
+})()
+</script>
+</body>
+</html>
