@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Festlich — Einladung</title>
+<meta name="description" content="Digitale Einladung via Festlich">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+:root{
+  --gold:#A87C3E;--gold-lt:#C89855;--ivory:#FAF8F3;--cream:#F3EDE0;
+  --sand:#E5D8C3;--champagne:#CEB98A;--taupe:#AE8E6C;--blush:#DDB9AC;
+  --charcoal:#262019;--char60:#3F3828;--char40:#5C5442;--w:#FEFCF9;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Jost',sans-serif;background:var(--w);color:var(--charcoal);
+  overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.7}
+.serif{font-family:'Cormorant Garamond',serif}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+
+/* ── LOADER ── */
+#loader{position:fixed;inset:0;background:var(--ivory);z-index:999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px}
+.loader-logo{font-family:'Cormorant Garamond',serif;font-size:32px;color:var(--charcoal);letter-spacing:.08em}
+.loader-logo span{color:var(--gold)}
+.loader-bar{width:64px;height:1px;background:var(--sand);position:relative;overflow:hidden}
+.loader-bar::after{content:'';position:absolute;inset:0;background:var(--gold);
+  animation:sweep 1.4s ease-in-out infinite}
+@keyframes sweep{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+
+/* ── 404 ── */
+#not-found{display:none;min-height:100vh;align-items:center;justify-content:center;
+  flex-direction:column;text-align:center;padding:48px;
+  background:linear-gradient(150deg,var(--ivory),var(--cream))}
+.nf-icon{font-size:64px;margin-bottom:24px}
+.nf-title{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:300;
+  color:var(--charcoal);margin-bottom:14px}
+.nf-sub{font-size:16px;color:var(--taupe);font-weight:300;margin-bottom:32px}
+.nf-link{display:inline-flex;align-items:center;gap:8px;background:var(--charcoal);
+  color:var(--ivory);padding:13px 28px;border-radius:100px;font-size:14px;
+  text-decoration:none;transition:all .2s}
+.nf-link:hover{background:var(--char60);transform:translateY(-1px)}
+
+/* ── MAIN INVITATION ── */
+#invitation{display:none}
+
+/* ── HERO ── */
+.inv-hero{position:relative;min-height:100svh;display:flex;
+  align-items:flex-end;overflow:hidden;background:var(--char60)}
+.inv-hero-img{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;transform-origin:center center}
+.inv-hero-grad{position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(38,32,25,.1) 0%,rgba(38,32,25,.72) 100%)}
+.inv-hero-no-img{background:linear-gradient(150deg,#5C4838 0%,#A87060 50%,#D8B8A8 100%)}
+.inv-hero-content{position:relative;z-index:2;text-align:center;
+  padding:60px 28px 80px;width:100%;color:white}
+.inv-hero-eyebrow{font-size:10.5px;letter-spacing:.32em;text-transform:uppercase;
+  opacity:.6;margin-bottom:22px}
+.inv-hero-names{font-family:'Cormorant Garamond',serif;
+  font-size:clamp(54px,10vw,110px);font-weight:300;line-height:1.04;letter-spacing:.02em}
+.inv-hero-and{display:block;font-style:italic;opacity:.7;font-size:.62em;margin:8px 0}
+.inv-hero-tagline{font-size:15px;font-weight:300;opacity:.72;
+  letter-spacing:.08em;margin-top:12px}
+.inv-hero-scroll{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:white;opacity:.5;font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  animation:bounce 2.2s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0)}
+  50%{transform:translateX(-50%) translateY(7px)}}
+.scroll-chevron{width:18px;height:18px;border-right:1.5px solid white;
+  border-bottom:1.5px solid white;transform:rotate(45deg)}
+
+/* ── SHARED SECTION ── */
+.inv-sec{padding:72px 28px;max-width:660px;margin:0 auto;text-align:center}
+.inv-ornament{display:flex;align-items:center;justify-content:center;gap:14px;
+  margin-bottom:44px}
+.inv-orn-line{flex:1;max-width:80px;height:1px;
+  background:linear-gradient(to right,transparent,var(--sand))}
+.inv-orn-line.rev{background:linear-gradient(to left,transparent,var(--sand))}
+.inv-orn-sym{color:var(--gold);font-size:14px;letter-spacing:.2em}
+
+/* ── QUOTE / VERSE ── */
+.inv-quote{background:linear-gradient(150deg,var(--cream),var(--ivory));
+  padding:72px 40px;text-align:center;position:relative;overflow:hidden}
+.inv-quote::before{content:'\201C';position:absolute;top:-30px;left:16px;
+  font-family:'Cormorant Garamond',serif;font-size:200px;font-weight:300;
+  color:var(--sand);line-height:1;opacity:.5;pointer-events:none}
+.inv-quote-label{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:20px}
+.inv-quote-text{font-family:'Cormorant Garamond',serif;
+  font-size:clamp(22px,4vw,36px);font-weight:300;font-style:italic;
+  color:var(--char60);line-height:1.55;margin-bottom:18px;position:relative;z-index:1}
+.inv-quote-source{font-size:13px;color:var(--taupe);font-weight:300;letter-spacing:.06em}
+
+/* ── DATE / CALENDAR ── */
+.inv-date{background:var(--charcoal);padding:72px 28px;text-align:center;color:white}
+.inv-date-month{font-family:'Cormorant Garamond',serif;
+  font-size:clamp(32px,6vw,54px);font-weight:300;font-style:italic;
+  color:var(--champagne);letter-spacing:.08em;margin-bottom:36px}
+.cal-wrap{display:inline-block;max-width:308px;width:100%}
+.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:8px}
+.cal-wd{font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;
+  color:rgba(250,248,243,.35);text-align:center;padding:3px 0}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:300;color:rgba(250,248,243,.6);border-radius:50%;
+  transition:all .2s}
+.cal-cell.empty{opacity:0;pointer-events:none}
+.cal-cell.past{opacity:.22}
+.cal-cell.active{background:var(--gold);color:white;font-weight:500;
+  box-shadow:0 0 22px rgba(168,124,62,.55)}
+/* Countdown */
+.inv-countdown{display:flex;gap:12px;justify-content:center;margin-top:44px;flex-wrap:wrap}
+.cd-box{background:rgba(250,248,243,.07);border:1px solid rgba(250,248,243,.14);
+  border-radius:14px;padding:16px 18px;text-align:center;min-width:70px}
+.cd-num{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:400;
+  color:var(--ivory);line-height:1}
+.cd-lbl{font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  opacity:.45;margin-top:5px;color:white}
+
+/* ── CEREMONY ── */
+.inv-ceremony{background:var(--w);padding:72px 28px;text-align:center}
+.ceremony-icon{width:72px;height:72px;border-radius:50%;
+  background:linear-gradient(135deg,var(--cream),var(--sand));
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 24px;font-size:30px;
+  box-shadow:0 8px 28px rgba(38,32,25,.08)}
+.ceremony-name{font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,4vw,42px);font-weight:400;color:var(--charcoal);margin-bottom:24px}
+.ceremony-venue{font-size:18px;font-weight:500;color:var(--charcoal);margin-bottom:8px}
+.ceremony-time-badge{display:inline-flex;align-items:center;gap:8px;
+  background:var(--cream);border-radius:100px;padding:11px 24px;
+  font-size:16px;font-weight:500;color:var(--charcoal);margin:16px 0;letter-spacing:.03em}
+.ceremony-addr{font-size:15px;color:var(--taupe);font-weight:300;
+  line-height:1.7;max-width:380px;margin:0 auto}
+.ceremony-desc{font-size:14px;color:var(--char40);font-style:italic;
+  margin-top:16px;max-width:420px;margin-left:auto;margin-right:auto}
+.map-btn{display:inline-flex;align-items:center;gap:8px;
+  background:var(--charcoal);color:var(--ivory);border:none;
+  border-radius:100px;padding:14px 30px;font-family:'Jost',sans-serif;
+  font-size:14px;cursor:pointer;text-decoration:none;margin-top:22px;
+  transition:all .22s;letter-spacing:.04em}
+.map-btn:hover{background:var(--char60);transform:translateY(-1px)}
+
+/* ── WELCOME ── */
+.inv-welcome{background:var(--ivory);padding:72px 28px;text-align:center}
+.inv-welcome-text{font-family:'Cormorant Garamond',serif;
+  font-size:clamp(18px,2.5vw,26px);font-weight:300;font-style:italic;
+  color:var(--char60);line-height:1.72;max-width:520px;margin:0 auto}
+
+/* ── TIMELINE ── */
+.inv-timeline{background:var(--cream);padding:72px 28px}
+.tl-title{font-family:'Cormorant Garamond',serif;
+  font-size:clamp(28px,4vw,44px);font-weight:400;color:var(--charcoal);
+  text-align:center;margin-bottom:48px}
+.tl-list{max-width:480px;margin:0 auto;position:relative;padding-left:52px}
+.tl-list::before{content:'';position:absolute;left:21px;top:8px;bottom:8px;
+  width:1px;background:linear-gradient(to bottom,transparent,var(--sand) 10%,var(--sand) 90%,transparent)}
+.tl-item{position:relative;margin-bottom:36px}
+.tl-item:last-child{margin-bottom:0}
+.tl-dot{position:absolute;left:-52px;width:42px;height:42px;border-radius:50%;
+  background:white;border:1.5px solid var(--sand);
+  display:flex;align-items:center;justify-content:center;font-size:17px;z-index:1;
+  box-shadow:0 2px 8px rgba(38,32,25,.06)}
+.tl-time{font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:4px}
+.tl-event{font-size:16px;font-weight:500;color:var(--charcoal);margin-bottom:3px}
+.tl-venue{font-size:13.5px;color:var(--taupe);font-weight:300}
+
+/* ── GALLERY ── */
+.inv-gallery{padding:0}
+.gal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:3px}
+.gal-grid .gal-cell:first-child:not(:only-child){grid-column:span 2}
+.gal-cell{overflow:hidden;position:relative;background:var(--cream);aspect-ratio:4/3}
+.gal-cell:first-child{aspect-ratio:16/9}
+.gal-cell.only-one{aspect-ratio:16/9;grid-column:span 2}
+.gal-img{width:100%;height:100%;object-fit:cover;transition:transform .6s ease}
+.gal-cell:hover .gal-img{transform:scale(1.05)}
+
+/* ── EXTRAS ── */
+.inv-extras{background:var(--ivory);padding:56px 28px;text-align:center}
+.extras-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:18px;max-width:580px;margin:32px auto 0}
+.extra-card{background:white;border-radius:16px;padding:24px 18px;
+  border:1px solid rgba(38,32,25,.07)}
+.extra-ico{font-size:24px;margin-bottom:10px}
+.extra-title{font-size:12.5px;font-weight:500;color:var(--charcoal);margin-bottom:5px;
+  text-transform:uppercase;letter-spacing:.06em}
+.extra-val{font-size:14px;color:var(--taupe);font-weight:300}
+
+/* ── RSVP ── */
+.inv-rsvp{background:var(--charcoal);padding:72px 28px;text-align:center}
+.rsvp-label{font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:16px}
+.rsvp-title{font-family:'Cormorant Garamond',serif;
+  font-size:clamp(32px,5vw,52px);font-weight:300;color:var(--ivory);margin-bottom:8px}
+.rsvp-sub{font-size:15px;color:rgba(250,248,243,.45);font-weight:300;margin-bottom:32px}
+.rsvp-deadline{font-size:12.5px;color:rgba(250,248,243,.35);margin-bottom:22px}
+.rsvp-form{max-width:420px;margin:0 auto}
+.rsvp-in{width:100%;padding:14px 16px;background:rgba(250,248,243,.07);
+  border:1.5px solid rgba(250,248,243,.14);border-radius:10px;color:white;
+  font-family:'Jost',sans-serif;font-size:14px;outline:none;margin-bottom:10px;
+  transition:border-color .2s}
+.rsvp-in::placeholder{color:rgba(250,248,243,.3)}
+.rsvp-in:focus{border-color:var(--gold)}
+.rsvp-sel{width:100%;padding:14px 16px;background:rgba(250,248,243,.07);
+  border:1.5px solid rgba(250,248,243,.14);border-radius:10px;color:white;
+  font-family:'Jost',sans-serif;font-size:14px;outline:none;margin-bottom:10px;cursor:pointer}
+.rsvp-sel option{background:#262019;color:white}
+.rsvp-btn{width:100%;background:linear-gradient(135deg,var(--gold),var(--gold-lt));
+  color:white;border:none;border-radius:10px;padding:16px;
+  font-family:'Jost',sans-serif;font-size:15px;cursor:pointer;
+  transition:all .22s;letter-spacing:.04em;margin-top:4px}
+.rsvp-btn:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(168,124,62,.45)}
+.rsvp-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.rsvp-ok{background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);
+  border-radius:10px;padding:20px;color:#86EFAC;font-size:15px;margin-top:14px;display:none}
+
+/* ── FOOTER ── */
+.inv-footer{background:var(--charcoal);padding:30px 28px;text-align:center}
+.inv-footer-brand{font-family:'Cormorant Garamond',serif;font-size:20px;
+  color:rgba(250,248,243,.35);letter-spacing:.06em}
+.inv-footer-brand span{color:var(--gold)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:480px){
+  .inv-sec{padding:56px 20px}
+  .inv-quote{padding:56px 24px}
+  .inv-countdown{gap:8px}
+  .cd-box{min-width:58px;padding:13px 10px}
+  .cd-num{font-size:30px}
+  .gal-grid{grid-template-columns:1fr}
+  .gal-grid .gal-cell:first-child{grid-column:span 1}
+  .gal-cell{aspect-ratio:4/3!important}
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="loader-logo">Festlich<span>.</span></div>
+  <div class="loader-bar"></div>
+</div>
+
+<div id="not-found" style="display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:48px;background:linear-gradient(150deg,var(--ivory),var(--cream))">
+  <div class="nf-icon">💌</div>
+  <div class="nf-title">Einladung nicht gefunden</div>
+  <div class="nf-sub">Diese Einladung existiert nicht oder wurde noch nicht veröffentlicht.</div>
+  <a href="festlich-builder.html" class="nf-link">← Zurück zu Festlich</a>
+</div>
+
+<div id="invitation"></div>
+
+<script>
+/* ══════════════════════════════════════════════════
+   FESTLICH PUBLIC INVITATION
+   Routing: festlich-invitation.html?slug=XXXX
+   Works on GitHub Pages, Netlify, any static host.
+   ══════════════════════════════════════════════════ */
+const SUPA_URL = 'https://odtvcglpxojsyxstmbtq.supabase.co'
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kdHZjZ2xweG9qc3l4c3RtYnRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMTg2MTAsImV4cCI6MjA5MDc5NDYxMH0.HjODTfOS4OAM2z4T3naX2xHzwikgD-r_H1v-wtgd7GM'
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY, { db:{ schema:'public' } })
+
+/* ── READ SLUG FROM URL ──────────────────────────────────────────
+   Supports all patterns:
+   1. ?slug=abc123          ← primary (GitHub Pages safe)
+   2. #abc123               ← hash fallback
+   3. /e/abc123             ← server path (if available)
+───────────────────────────────────────────────────────────────── */
+function readSlug() {
+  const p = new URLSearchParams(location.search)
+  if (p.get('slug')) return p.get('slug').trim()
+  const h = location.hash.replace('#','').replace(/^\/?(e\/)?/,'').trim()
+  if (h.length > 3) return h
+  const m = location.pathname.match(/\/e\/([^/?#]+)/)
+  if (m) return m[1]
+  return null
+}
+
+/* ── CALENDAR ── */
+function buildCalendar(dateStr) {
+  if (!dateStr) return ''
+  const d = new Date(dateStr + 'T12:00:00')
+  const yr = d.getFullYear(), mo = d.getMonth(), dy = d.getDate()
+  const months = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
+  const wdays  = ['Mo','Di','Mi','Do','Fr','Sa','So']
+  const first = new Date(yr,mo,1).getDay()
+  const offset = first === 0 ? 6 : first - 1
+  const total = new Date(yr,mo+1,0).getDate()
+  const today = new Date(); today.setHours(0,0,0,0)
+  let cells = ''
+  for (let i=0;i<offset;i++) cells += '<div class="cal-cell empty"></div>'
+  for (let dd=1;dd<=total;dd++) {
+    const isPast = new Date(yr,mo,dd) < today
+    const isActive = dd===dy
+    cells += `<div class="cal-cell${isActive?' active':isPast?' past':''}">${dd}</div>`
+  }
+  return `<div class="inv-date-month">${months[mo]} ${yr}</div>
+  <div class="cal-wrap">
+    <div class="cal-weekdays">${wdays.map(w=>`<div class="cal-wd">${w}</div>`).join('')}</div>
+    <div class="cal-grid">${cells}</div>
+  </div>`
+}
+
+/* ── COUNTDOWN ── */
+let cdTimer = null
+function startCountdown(dateStr, timeStr) {
+  const ts = timeStr || '14:00'
+  const target = new Date(`${dateStr}T${ts}:00`)
+  function tick() {
+    const diff = Math.max(0, target - Date.now())
+    const d=Math.floor(diff/86400000),h=Math.floor(diff%86400000/3600000),
+          m=Math.floor(diff%3600000/60000),s=Math.floor(diff%60000/1000)
+    const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=String(v).padStart(2,'0')}
+    set('cdd',d);set('cdh',h);set('cdm',m);set('cds',s)
+  }
+  tick()
+  if(cdTimer) clearInterval(cdTimer)
+  cdTimer = setInterval(tick,1000)
+}
+
+/* ── VENUE ICON ── */
+const venueIcons = {church:'⛪',mosque:'🕌',registry:'🏛️',garden:'🌿',beach:'🌊',custom:'🏡'}
+
+/* ── FORMAT DATE LONG ── */
+function fmtDateLong(s) {
+  if (!s) return ''
+  return new Date(s+'T12:00:00').toLocaleDateString('de-DE',
+    {weekday:'long',day:'numeric',month:'long',year:'numeric'})
+}
+
+/* ── RSVP SUBMIT ── */
+async function submitRSVP(invId) {
+  const name  = document.getElementById('rsvp-name')?.value.trim()
+  const email = document.getElementById('rsvp-email')?.value.trim()
+  const stat  = document.getElementById('rsvp-status')?.value
+  const count = parseInt(document.getElementById('rsvp-count')?.value||'1')
+  const meal  = document.getElementById('rsvp-meal')?.value||'none'
+  const msg   = document.getElementById('rsvp-msg')?.value.trim()
+  if (!name) { alert('Bitte deinen Namen eingeben.'); return }
+  const btn = document.getElementById('rsvp-submit')
+  if (btn) btn.disabled = true
+  const { error } = await sb.from('rsvps').insert({
+    invitation_id:invId, guest_name:name, guest_email:email||'',
+    attending: stat==='yes', guest_count:count, meal_preference:meal, message:msg||''
+  })
+  if (error) {
+    if(btn) btn.disabled = false
+    alert('Fehler beim Speichern. Bitte erneut versuchen.')
+    console.error('[RSVP]', error)
+    return
+  }
+  document.getElementById('rsvp-ok').style.display='block'
+  document.getElementById('rsvp-submit').style.display='none'
+}
+
+/* ── RENDER ── */
+function renderInvitation(inv, gallery) {
+  // Dynamic title
+  document.title = `${inv.host_name_1||''} & ${inv.host_name_2||''} — Festlich`
+
+  // Load custom fonts
+  const hf = inv.font_heading||'Great Vibes', bf = inv.font_body||'Lato'
+  if (!['Cormorant Garamond','Jost'].includes(hf)) {
+    const l = document.createElement('link');l.rel='stylesheet'
+    l.href=`https://fonts.googleapis.com/css2?family=${hf.replace(/ /g,'+')}:ital,wght@0,400;1,400&display=swap`
+    document.head.appendChild(l)
+  }
+  if (!['Cormorant Garamond','Jost'].includes(bf)) {
+    const l = document.createElement('link');l.rel='stylesheet'
+    l.href=`https://fonts.googleapis.com/css2?family=${bf.replace(/ /g,'+')}:wght@300;400&display=swap`
+    document.head.appendChild(l)
+  }
+  const gold = inv.theme_primary_color||'#A87C3E'
+
+  // Custom CSS overrides
+  const sty = document.createElement('style')
+  sty.textContent = `
+    .inv-hero-names,.inv-quote-text,.inv-date-month,.tl-title,.ceremony-name,.rsvp-title{font-family:'${hf}',serif!important}
+    body{font-family:'${bf}',sans-serif!important}
+    :root{--gold:${gold};--gold-lt:${gold}dd}
+  `
+  document.head.appendChild(sty)
+
+  // ── HERO ──
+  const hasImg = !!inv.hero_image_url
+  const heroHTML = `
+  <div class="inv-hero${hasImg?'':' inv-hero-no-img'}">
+    ${hasImg ? `<img class="inv-hero-img" src="${inv.hero_image_url}"
+      style="object-position:${inv.hero_pos_x||50}% ${inv.hero_pos_y||50}%;transform:scale(${inv.hero_scale||1})">
+      <div class="inv-hero-grad"></div>` : ''}
+    <div class="inv-hero-content">
+      <div class="inv-hero-eyebrow">— ${inv.event_type==='wedding'?'Einladung zur Hochzeit':
+        inv.event_type==='engagement'?'Verlobungsfeier':
+        inv.event_type==='birthday'?'Geburtstagseinladung':'Einladung'} —</div>
+      <div class="inv-hero-names">
+        ${inv.host_name_1||'Name 1'}
+        <span class="inv-hero-and">&amp;</span>
+        ${inv.host_name_2||'Name 2'}
+      </div>
+      ${inv.tagline?`<div class="inv-hero-tagline">${inv.tagline}</div>`:''}
+    </div>
+    <div class="inv-hero-scroll"><div class="scroll-chevron"></div></div>
+  </div>`
+
+  // ── QUOTE ──
+  const quoteHTML = (inv.quote_enabled && inv.quote_text) ? `
+  <div class="inv-quote">
+    ${inv.quote_heading?`<div class="inv-quote-label">${inv.quote_heading}</div>`:''}
+    <div class="inv-quote-text">${inv.quote_text}</div>
+    ${inv.quote_source?`<div class="inv-quote-source">— ${inv.quote_source}</div>`:''}
+  </div>` : ''
+
+  // ── DATE / CALENDAR ──
+  const dateHTML = inv.event_date ? `
+  <div class="inv-date">
+    <div class="inv-sec" style="padding:72px 28px;max-width:600px;margin:0 auto">
+      <div class="inv-ornament" style="margin-bottom:36px">
+        <div class="inv-orn-line" style="background:linear-gradient(to right,transparent,rgba(250,248,243,.2))"></div>
+        <div class="inv-orn-sym">✦</div>
+        <div class="inv-orn-line rev" style="background:linear-gradient(to left,transparent,rgba(250,248,243,.2))"></div>
+      </div>
+      ${buildCalendar(inv.event_date)}
+      ${inv.event_date ? `<div class="inv-countdown">
+        <div class="cd-box"><div class="cd-num" id="cdd">–</div><div class="cd-lbl">Tage</div></div>
+        <div class="cd-box"><div class="cd-num" id="cdh">–</div><div class="cd-lbl">Std.</div></div>
+        <div class="cd-box"><div class="cd-num" id="cdm">–</div><div class="cd-lbl">Min.</div></div>
+        <div class="cd-box"><div class="cd-num" id="cds">–</div><div class="cd-lbl">Sek.</div></div>
+      </div>` : ''}
+    </div>
+  </div>` : ''
+
+  // ── CEREMONY ──
+  const hasCeremony = inv.ceremony_venue_name || inv.ceremony_address
+  const ceremonyHTML = hasCeremony ? `
+  <div class="inv-ceremony">
+    <div class="inv-sec">
+      <div class="inv-ornament"><div class="inv-orn-line"></div><div class="inv-orn-sym">✦</div><div class="inv-orn-line rev"></div></div>
+      <div class="ceremony-icon">${venueIcons[inv.ceremony_venue_type]||'📍'}</div>
+      <div class="ceremony-name">${inv.ceremony_title||'Zeremonie'}</div>
+      ${inv.ceremony_venue_name?`<div class="ceremony-venue">${inv.ceremony_venue_name}</div>`:''}
+      ${inv.ceremony_time_str?`<div class="ceremony-time-badge">🕐 ${inv.ceremony_time_str} Uhr</div>`:''}
+      ${inv.ceremony_address?`<div class="ceremony-addr">${inv.ceremony_address.replace(/\n/g,'<br>')}</div>`:''}
+      ${inv.ceremony_description?`<div class="ceremony-desc">${inv.ceremony_description}</div>`:''}
+      ${inv.ceremony_map_url?`<a class="map-btn" href="${inv.ceremony_map_url}" target="_blank" rel="noopener noreferrer">
+        📍 Route anzeigen</a>`:''}
+    </div>
+  </div>` : ''
+
+  // ── WELCOME ──
+  const welcomeHTML = inv.welcome_note ? `
+  <div class="inv-welcome">
+    <div class="inv-sec">
+      <div class="inv-ornament"><div class="inv-orn-line"></div><div class="inv-orn-sym">✦</div><div class="inv-orn-line rev"></div></div>
+      <div class="inv-welcome-text">${inv.welcome_note.replace(/\n/g,'<br>')}</div>
+    </div>
+  </div>` : ''
+
+  // ── TIMELINE ──
+  const tl = inv.timeline_json || []
+  const tlHTML = (inv.reception_enabled && tl.length > 0) ? `
+  <div class="inv-timeline">
+    <div class="tl-title">${inv.reception_title||'Ablauf des Tages'}</div>
+    <div class="tl-list">
+      ${tl.map(item=>`
+      <div class="tl-item">
+        <div class="tl-dot">${item.icon||'🎉'}</div>
+        <div class="tl-time">${item.time||''}</div>
+        <div class="tl-event">${item.title||''}</div>
+        <div class="tl-venue">${item.venue||''}</div>
+      </div>`).join('')}
+    </div>
+  </div>` : ''
+
+  // ── GALLERY ──
+  const pics = (gallery||[]).filter(g=>g.url)
+  const galHTML = pics.length > 0 ? `
+  <div class="inv-gallery">
+    <div class="gal-grid${pics.length===1?' only':''}">${pics.slice(0,6).map((g,i)=>`
+      <div class="gal-cell${pics.length===1?' only-one':''}">
+        <img class="gal-img" src="${g.url}"
+          style="object-position:${g.position_x||50}% ${g.position_y||50}%;transform:scale(${g.scale||1})"
+          alt="${g.alt_text||'Galeriebild'}">
+      </div>`).join('')}
+    </div>
+  </div>` : ''
+
+  // ── EXTRAS ──
+  const hasExtras = inv.dress_code||inv.special_notes||inv.registry_message
+  const extrasHTML = hasExtras ? `
+  <div class="inv-extras">
+    <div class="inv-sec" style="padding:0;max-width:600px;margin:0 auto">
+      <div class="inv-ornament" style="margin-bottom:28px">
+        <div class="inv-orn-line"></div><div class="inv-orn-sym">✦</div><div class="inv-orn-line rev"></div>
+      </div>
+      <div class="extras-cards">
+        ${inv.dress_code?`<div class="extra-card"><div class="extra-ico">👗</div><div class="extra-title">Dresscode</div><div class="extra-val">${inv.dress_code}</div></div>`:''}
+        ${inv.special_notes?`<div class="extra-card"><div class="extra-ico">💌</div><div class="extra-title">Hinweise</div><div class="extra-val">${inv.special_notes}</div></div>`:''}
+        ${inv.registry_message?`<div class="extra-card"><div class="extra-ico">🎁</div><div class="extra-title">Geschenke</div><div class="extra-val">${inv.registry_message}</div></div>`:''}
+      </div>
+    </div>
+  </div>` : ''
+
+  // ── RSVP ──
+  const mealSel = inv.collect_meal_pref ? `
+    <select class="rsvp-sel" id="rsvp-meal">
+      <option value="meat">🥩 Fleisch</option>
+      <option value="fish">🐟 Fisch</option>
+      <option value="vegetarian">🥗 Vegetarisch</option>
+      <option value="vegan">🌱 Vegan</option>
+    </select>` : ''
+  const rsvpHTML = inv.rsvp_enabled ? `
+  <div class="inv-rsvp">
+    <div class="rsvp-label">✦ Rückmeldung ✦</div>
+    <div class="rsvp-title">Bist du dabei?</div>
+    <div class="rsvp-sub">Wir freuen uns auf deine Antwort</div>
+    ${inv.rsvp_deadline?`<div class="rsvp-deadline">Bitte bis ${fmtDateLong(inv.rsvp_deadline)} antworten</div>`:''}
+    <div class="rsvp-form">
+      <input class="rsvp-in" id="rsvp-name" type="text" placeholder="Dein vollständiger Name" required>
+      <input class="rsvp-in" id="rsvp-email" type="email" placeholder="E-Mail-Adresse (optional)">
+      <select class="rsvp-sel" id="rsvp-status">
+        <option value="yes">✓ Ich freue mich zu kommen</option>
+        <option value="no">✗ Ich kann leider nicht kommen</option>
+      </select>
+      <select class="rsvp-sel" id="rsvp-count">
+        ${Array.from({length:inv.max_guests_per_rsvp||4},(_,i)=>`<option value="${i+1}">${i+1} Person${i>0?'en':''}</option>`).join('')}
+      </select>
+      ${mealSel}
+      <input class="rsvp-in" id="rsvp-msg" type="text" placeholder="Nachricht (optional)">
+      <button class="rsvp-btn" id="rsvp-submit" onclick="submitRSVP('${inv.id}')">Rückmeldung bestätigen →</button>
+      <div class="rsvp-ok" id="rsvp-ok">✓ Vielen Dank! Deine Rückmeldung wurde gespeichert.</div>
+    </div>
+  </div>` : ''
+
+  // ── FOOTER ──
+  const footerHTML = `
+  <div class="inv-footer">
+    <div class="inv-footer-brand">Festlich<span>.</span></div>
+  </div>`
+
+  document.getElementById('invitation').innerHTML =
+    heroHTML + quoteHTML + dateHTML + ceremonyHTML +
+    welcomeHTML + tlHTML + galHTML + extrasHTML + rsvpHTML + footerHTML
+
+  document.getElementById('invitation').style.display = 'block'
+
+  // Start countdown after DOM is ready
+  if (inv.event_date) {
+    const t = inv.ceremony_time ? inv.ceremony_time.slice(0,5) : '14:00'
+    startCountdown(inv.event_date, t)
+  }
+}
+
+/* ── BOOT ── */
+;(async () => {
+  const slug = readSlug()
+  const loader = document.getElementById('loader')
+  const nf = document.getElementById('not-found')
+
+  if (!slug) { loader.style.display='none'; nf.style.display='flex'; return }
+
+  // Fetch by slug
+  const { data: inv, error } = await sb.from('invitations')
+    .select('*').eq('slug', slug).eq('is_published', true).single()
+
+  if (error || !inv) {
+    loader.style.display = 'none'
+    nf.style.display = 'flex'
+    return
+  }
+
+  // Fetch gallery
+  const { data: gallery } = await sb.from('gallery_items')
+    .select('*').eq('invitation_id', inv.id).order('sort_order')
+
+  // Bump view count (fire and forget)
+  sb.from('invitations').update({ view_count: (inv.view_count||0)+1 }).eq('id', inv.id)
+
+  renderInvitation(inv, gallery||[])
+  loader.style.display = 'none'
+})()
+</script>
+</body>
+</html>
