@@ -1,0 +1,25 @@
+{
+  "name": "Festlich — Digitale Einladungen",
+  "short_name": "Festlich",
+  "description": "Erstelle wunderschöne digitale Einladungen für Hochzeiten, Verlobungen und besondere Feiern.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF8F3",
+  "theme_color": "#A87C3E",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "de",
+  "icons": [
+    {
+      "src": "/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["lifestyle", "social"]
+}

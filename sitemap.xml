@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://festlich.net/</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://festlich.net/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://festlich.net/?lang=en"/>
+    <image:image>
+      <image:loc>https://festlich.net/og-image.jpg</image:loc>
+      <image:title>Festlich — Premium Digitale Einladungen</image:title>
+      <image:caption>Digitale Hochzeitseinladung mit RSVP und QR-Code</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://festlich.net/festlich-builder.html</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+    <xhtml:link rel="alternate" hreflang="de" href="https://festlich.net/festlich-builder.html"/>
+  </url>
+  <url>
+    <loc>https://festlich.net/festlich-invitation.html</loc>
+    <lastmod>2025-05-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.3</priority>
+  </url>
+</urlset>
