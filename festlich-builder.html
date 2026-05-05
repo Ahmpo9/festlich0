@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Festlich — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+/* ════════════════════════════════════════════════
+   FESTLICH BUILDER — Design System
+   ════════════════════════════════════════════════ */
+:root{
+  --gold:#A87C3E;--gold-lt:#C89855;--ivory:#FAF8F3;--cream:#F3EDE0;
+  --sand:#E5D8C3;--champagne:#CEB98A;--taupe:#AE8E6C;--blush:#DDB9AC;
+  --charcoal:#262019;--ch60:#3F3828;--ch40:#5C5442;--w:#FEFCF9;
+  --sidebar:252px;--nav-h:64px;
+  --r6:6px;--r8:8px;--r12:12px;--r16:16px;--r24:24px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-size:16px}
+body{font-family:'Jost',sans-serif;background:var(--w);color:var(--charcoal);
+  overflow:hidden;-webkit-font-smoothing:antialiased;line-height:1.6}
+.serif{font-family:'Cormorant Garamond',serif}
+img{max-width:100%;display:block}
+button{font-family:'Jost',sans-serif;cursor:pointer}
+input,select,textarea{font-family:'Jost',sans-serif}
+.hidden{display:none!important}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  border-radius:100px;font-family:'Jost',sans-serif;font-weight:400;
+  letter-spacing:.04em;cursor:pointer;transition:all .2s;border:none;
+  text-decoration:none;white-space:nowrap}
+.btn-sm{font-size:12.5px;padding:8px 17px}
+.btn-md{font-size:14px;padding:11px 24px}
+.btn-dark{background:var(--charcoal);color:var(--ivory)}
+.btn-dark:hover{background:var(--ch60);transform:translateY(-1px);box-shadow:0 6px 20px rgba(38,32,25,.25)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:#fff;
+  box-shadow:0 4px 14px rgba(168,124,62,.28)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(168,124,62,.42)}
+.btn-outline{background:transparent;border:1.5px solid rgba(38,32,25,.18);color:var(--charcoal)}
+.btn-outline:hover{border-color:var(--charcoal);background:rgba(38,32,25,.04)}
+.btn-ghost{background:rgba(38,32,25,.06);border:none;color:var(--charcoal)}
+.btn-ghost:hover{background:rgba(38,32,25,.1)}
+.btn-danger{background:#FEF2F2;border:1.5px solid #FCA5A5;color:#DC2626;
+  border-radius:var(--r8);padding:6px 12px;font-size:12px;cursor:pointer;
+  transition:all .2s;font-family:'Jost',sans-serif}
+.btn-danger:hover{background:#FEE2E2}
+.btn[disabled],.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+/* ── FORMS ── */
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:10.5px;font-weight:500;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--charcoal);margin-bottom:5px}
+.fi,.fta,.fsel{width:100%;padding:10px 13px;
+  border:1.5px solid rgba(38,32,25,.12);border-radius:var(--r8);
+  font-family:'Jost',sans-serif;font-size:13.5px;color:var(--charcoal);
+  background:white;outline:none;transition:border-color .18s,box-shadow .18s}
+.fi:focus,.fta:focus,.fsel:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(168,124,62,.1)}
+.fta{resize:vertical;min-height:74px;line-height:1.55}
+.fsel{cursor:pointer;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23AE8E6C' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 11px center}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fcheck{display:flex;align-items:center;gap:9px;padding:9px 0;
+  border-bottom:1px solid rgba(38,32,25,.05)}
+.fcheck:last-of-type{border-bottom:none}
+
+/* ── TOGGLE ── */
+.tog{position:relative;width:38px;height:21px;cursor:pointer;flex-shrink:0}
+.tog input{opacity:0;position:absolute;width:0;height:0}
+.tog-tr{position:absolute;inset:0;background:#CCC;border-radius:11px;transition:background .2s}
+.tog input:checked+.tog-tr{background:var(--gold)}
+.tog-th{position:absolute;top:2px;left:2px;width:17px;height:17px;
+  background:white;border-radius:50%;transition:transform .2s;
+  box-shadow:0 1px 3px rgba(0,0,0,.13)}
+.tog input:checked~.tog-th{transform:translateX(17px)}
+
+/* ── ALERTS / TOASTS ── */
+.alert{padding:11px 14px;border-radius:var(--r8);font-size:13px;margin-bottom:12px}
+.alert-error{background:#FDF0EF;color:#9B2C2C;border:1px solid #F5C0BA}
+.alert-success{background:#EFF7F0;color:#166534;border:1px solid #86EFAC}
+#toasts{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:white;border-radius:12px;padding:12px 16px;
+  box-shadow:0 12px 40px rgba(38,32,25,.15);font-size:13.5px;
+  display:flex;align-items:center;gap:9px;min-width:230px;max-width:320px;
+  border-left:3px solid var(--gold);animation:tin .25s ease}
+.toast.err{border-left-color:#E53E3E}.toast.ok{border-left-color:#38A169}
+@keyframes tin{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+
+/* ── SPINNER ── */
+.spin{display:inline-block;width:14px;height:14px;
+  border:2px solid rgba(255,255,255,.3);border-top-color:white;
+  border-radius:50%;animation:sp .65s linear infinite}
+.spin-dk{border-color:rgba(38,32,25,.18);border-top-color:var(--charcoal)}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ── MODAL ── */
+.moverlay{position:fixed;inset:0;background:rgba(38,32,25,.52);z-index:600;
+  display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:white;border-radius:22px;padding:30px;width:100%;
+  max-width:460px;box-shadow:0 32px 80px rgba(38,32,25,.2);
+  max-height:90vh;overflow-y:auto}
+.modal-ttl{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;
+  color:var(--charcoal);margin-bottom:5px}
+.modal-sub{font-size:13px;color:var(--ch40);font-weight:300;margin-bottom:18px}
+.modal-foot{display:flex;gap:9px;justify-content:flex-end;margin-top:18px}
+
+/* ════════════════════════════════════════════════
+   AUTH PAGES
+   ════════════════════════════════════════════════ */
+.auth-page{position:fixed;inset:0;background:var(--ivory);display:flex;
+  align-items:center;justify-content:center;padding:24px;overflow-y:auto;
+  background-image:radial-gradient(ellipse 65% 50% at 70% 30%,rgba(206,185,138,.2),transparent),
+    radial-gradient(ellipse 45% 60% at 15% 78%,rgba(221,185,172,.15),transparent)}
+.auth-card{background:white;border-radius:22px;padding:44px 38px;width:100%;max-width:420px;
+  box-shadow:0 28px 72px rgba(38,32,25,.1)}
+.auth-logo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;
+  color:var(--charcoal);text-align:center;cursor:pointer;letter-spacing:.06em;margin-bottom:5px}
+.auth-logo span{color:var(--gold)}
+.auth-tag{text-align:center;font-size:13px;color:var(--taupe);font-weight:300;
+  margin-bottom:28px;font-style:italic}
+.auth-ttl{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;
+  color:var(--charcoal);margin-bottom:5px}
+.auth-hint{font-size:13px;color:var(--ch40);font-weight:300;margin-bottom:22px}
+.auth-link{text-align:center;font-size:13px;color:var(--ch40);font-weight:300;margin-top:13px}
+.auth-link a{color:var(--gold);cursor:pointer}
+.auth-forgot{display:block;text-align:right;font-size:12px;color:var(--taupe);
+  margin-top:-6px;margin-bottom:11px;cursor:pointer}
+.auth-forgot:hover{color:var(--gold)}
+#auth-alert{margin-bottom:14px}
+
+/* ════════════════════════════════════════════════
+   DASHBOARD SHELL
+   ════════════════════════════════════════════════ */
+#app{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);background:var(--charcoal);display:flex;
+  flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid rgba(250,248,243,.08);
+  font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--ivory);
+  font-weight:500;cursor:pointer;letter-spacing:.05em}
+.sb-logo span{color:var(--gold)}
+.sb-inv{padding:12px 14px;border-bottom:1px solid rgba(250,248,243,.07)}
+.sb-sel{width:100%;background:rgba(250,248,243,.07);
+  border:1px solid rgba(250,248,243,.12);border-radius:var(--r8);
+  padding:7px 9px;color:var(--ivory);font-family:'Jost',sans-serif;
+  font-size:13px;outline:none;cursor:pointer;appearance:none}
+.sb-sel option{background:var(--charcoal);color:var(--ivory)}
+.sb-nav{padding:14px 10px;flex:1}
+.sb-lbl{font-size:9px;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(250,248,243,.22);padding:0 7px;margin:12px 0 7px;display:block}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:9px;
+  font-size:13px;color:rgba(250,248,243,.55);cursor:pointer;
+  transition:all .18s;margin-bottom:2px;user-select:none}
+.sb-item:hover,.sb-item.on{background:rgba(250,248,243,.09);color:var(--ivory)}
+.sb-item.on{color:var(--champagne)}
+.sb-ico{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.sb-btm{padding:14px;border-top:1px solid rgba(250,248,243,.07)}
+.sb-user{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.sb-av{width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--blush),var(--sand));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--ch40);flex-shrink:0}
+.sb-uname{font-size:12.5px;color:var(--ivory);font-weight:400}
+.sb-uplan{font-size:10px;color:rgba(250,248,243,.35);text-transform:uppercase;letter-spacing:.07em}
+.sb-logout{width:100%;background:rgba(250,248,243,.06);
+  border:1px solid rgba(250,248,243,.1);color:rgba(250,248,243,.45);
+  border-radius:var(--r8);padding:7px;font-family:'Jost',sans-serif;
+  font-size:12px;cursor:pointer;transition:all .2s}
+.sb-logout:hover{background:rgba(250,248,243,.12);color:var(--ivory)}
+
+/* MAIN AREA */
+.main{flex:1;overflow:hidden;background:var(--ivory);display:flex;flex-direction:column}
+.topbar{background:white;border-bottom:1px solid rgba(38,32,25,.07);
+  padding:14px 22px;display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;position:relative;z-index:10}
+.tb-ttl{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--charcoal)}
+.tb-sub{font-size:12px;color:var(--ch40);margin-top:1px;font-weight:300}
+.tb-right{display:flex;gap:8px;align-items:center}
+.content{flex:1;overflow-y:auto;padding:22px}
+
+/* STAT CARDS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:18px}
+.stat-c{background:white;border-radius:14px;padding:17px;border:1px solid rgba(38,32,25,.06)}
+.stat-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;
+  justify-content:center;font-size:16px;margin-bottom:10px}
+.stat-n{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;
+  color:var(--charcoal);line-height:1;margin-bottom:2px}
+.stat-l{font-size:10.5px;color:var(--taupe);text-transform:uppercase;letter-spacing:.1em}
+
+/* CARD BOX */
+.cbox{background:white;border-radius:14px;overflow:hidden;
+  border:1px solid rgba(38,32,25,.06);margin-bottom:16px}
+.cbox-hdr{padding:14px 18px;border-bottom:1px solid rgba(38,32,25,.06);
+  display:flex;align-items:center;justify-content:space-between}
+.cbox-ttl{font-size:14px;font-weight:500;color:var(--charcoal)}
+
+/* TABLE */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 16px;text-align:left;font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--taupe);
+  background:rgba(38,32,25,.02);border-bottom:1px solid rgba(38,32,25,.06)}
+td{padding:12px 16px;font-size:13px;color:var(--ch40);
+  border-bottom:1px solid rgba(38,32,25,.04)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(38,32,25,.015)}
+.pill{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;
+  border-radius:20px;font-size:11px;font-weight:500}
+.pgreen{background:#F0FDF4;color:#16A34A}
+.pred{background:#FEF2F2;color:#DC2626}
+.pgray{background:#F9FAFB;color:#6B7280}
+.empty{padding:44px;text-align:center}
+.empty-ico{font-size:36px;margin-bottom:12px}
+.empty-ttl{font-size:15px;font-weight:500;color:var(--charcoal);margin-bottom:5px}
+.empty-sub{font-size:13px;color:var(--taupe);font-weight:300;margin-bottom:16px}
+
+/* SC = section card */
+.sc{background:white;border-radius:14px;padding:20px;
+  border:1px solid rgba(38,32,25,.06);margin-bottom:16px}
+.sc-ttl{font-size:14px;font-weight:500;color:var(--charcoal);
+  margin-bottom:14px;display:flex;align-items:center;gap:7px}
+
+/* Link box */
+.lnkbox{background:var(--ivory);border-radius:8px;padding:11px 13px;
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.lnkurl{font-size:12.5px;color:var(--ch40);word-break:break-all;flex:1}
+
+/* ════════════════════════════════════════════════
+   SPLIT EDITOR
+   ════════════════════════════════════════════════ */
+.editor-shell{display:flex;flex:1;overflow:hidden;height:100%}
+
+/* LEFT PANEL */
+.ed-panel{width:400px;flex-shrink:0;overflow-y:auto;background:var(--ivory);
+  border-right:1px solid rgba(38,32,25,.07);padding:16px}
+/* Section accordion */
+.eds{background:white;border-radius:12px;border:1px solid rgba(38,32,25,.06);
+  margin-bottom:10px;overflow:hidden}
+.eds-hdr{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;
+  cursor:pointer;user-select:none;border-bottom:1px solid rgba(38,32,25,.06);
+  transition:background .18s}
+.eds-hdr:hover{background:rgba(38,32,25,.02)}
+.eds-left{display:flex;align-items:center;gap:8px;font-size:13.5px;
+  font-weight:500;color:var(--charcoal)}
+.eds-ico{font-size:15px}
+.eds-arrow{font-size:11px;color:var(--taupe);transition:transform .25s}
+.eds.collapsed .eds-arrow{transform:rotate(-90deg)}
+.eds-body{padding:14px;display:block}
+.eds.collapsed .eds-body{display:none}
+
+/* RIGHT PREVIEW PANE */
+.prev-pane{flex:1;overflow:hidden;display:flex;flex-direction:column;background:#DDD8D0}
+.prev-toolbar{background:white;border-bottom:1px solid rgba(38,32,25,.07);
+  padding:9px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.prev-mode-btn{padding:4px 13px;border-radius:20px;font-size:12px;
+  cursor:pointer;border:1px solid rgba(38,32,25,.12);background:none;
+  color:var(--ch40);font-family:'Jost',sans-serif;transition:all .18s}
+.prev-mode-btn.on{background:var(--charcoal);color:white;border-color:var(--charcoal)}
+.prev-wrap{flex:1;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:18px}
+.prev-frame{width:100%;height:100%;border:none;border-radius:12px;
+  box-shadow:0 20px 60px rgba(38,32,25,.2);background:white;transition:all .3s}
+.prev-frame.mobile{width:375px;max-height:812px;height:100%;
+  border-radius:32px;box-shadow:0 24px 80px rgba(38,32,25,.3),0 0 0 2px rgba(38,32,25,.1)}
+
+/* Image editor controls */
+.img-upload{border:2px dashed rgba(38,32,25,.14);border-radius:12px;
+  padding:28px;text-align:center;cursor:pointer;transition:all .18s;background:rgba(38,32,25,.01)}
+.img-upload:hover{border-color:var(--gold);background:rgba(168,124,62,.04)}
+.img-prev-wrap{border-radius:10px;overflow:hidden;aspect-ratio:16/9;
+  background:var(--cream);margin-bottom:12px;position:relative}
+.img-prev-img{width:100%;height:100%;object-fit:cover;display:block}
+.img-edit-btns{display:flex;gap:7px;margin-bottom:10px}
+.img-controls{background:var(--ivory);border-radius:10px;padding:13px;margin-top:8px}
+.ic-label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--taupe);margin-bottom:5px;display:block;font-weight:500}
+.ic-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ic-row:last-child{margin-bottom:0}
+/* 2D positioning pad */
+.pos-pad{width:100%;aspect-ratio:2.5/1;border-radius:9px;
+  background:linear-gradient(135deg,var(--cream),var(--sand));
+  position:relative;cursor:crosshair;margin-bottom:8px;overflow:hidden;
+  border:1.5px solid rgba(38,32,25,.1);user-select:none}
+.pos-pad-grid{position:absolute;inset:0;pointer-events:none;
+  background-image:linear-gradient(rgba(38,32,25,.08) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(38,32,25,.08) 1px,transparent 1px);
+  background-size:25% 33.33%}
+.pos-handle{position:absolute;width:22px;height:22px;background:var(--gold);
+  border-radius:50%;transform:translate(-50%,-50%);
+  box-shadow:0 2px 8px rgba(168,124,62,.5),0 0 0 4px rgba(168,124,62,.2);
+  cursor:grab;z-index:2;pointer-events:none}
+.pos-handle:active{cursor:grabbing}
+/* Slider */
+.ic-slider{flex:1;-webkit-appearance:none;height:4px;border-radius:2px;
+  background:var(--sand);outline:none;cursor:pointer}
+.ic-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;
+  border-radius:50%;background:var(--gold);cursor:pointer;
+  box-shadow:0 2px 5px rgba(168,124,62,.4)}
+.ic-val{min-width:34px;text-align:right;font-size:11.5px;color:var(--ch40);font-weight:500}
+
+/* Gallery in editor */
+.gal-ed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:11px}
+.gal-ed-item{border-radius:8px;overflow:hidden;aspect-ratio:1;
+  position:relative;background:var(--cream);cursor:pointer}
+.gal-ed-img{width:100%;height:100%;object-fit:cover}
+.gal-ed-del{position:absolute;top:4px;right:4px;background:rgba(220,38,38,.85);
+  color:white;border:none;border-radius:5px;padding:3px 7px;font-size:10px;
+  cursor:pointer;opacity:0;transition:opacity .18s;font-family:'Jost',sans-serif}
+.gal-ed-pos{position:absolute;top:4px;left:4px;background:rgba(38,32,25,.72);
+  color:white;border:none;border-radius:5px;padding:3px 7px;font-size:10px;
+  cursor:pointer;opacity:0;transition:opacity .18s;font-family:'Jost',sans-serif}
+.gal-ed-item:hover .gal-ed-del,.gal-ed-item:hover .gal-ed-pos{opacity:1}
+
+/* QR */
+.qr-c{display:flex;flex-direction:column;align-items:center;padding:28px;text-align:center}
+.qr-url{font-size:12px;color:var(--ch40);margin:12px 0 20px;
+  word-break:break-all;max-width:240px}
+
+/* Analytics bar */
+.abar{height:11px;border-radius:6px;overflow:hidden;background:var(--cream);
+  margin:13px 0;display:flex}
+.abar div{height:100%;transition:width .5s}
+
+/* DB setup banner */
+#db-banner{position:fixed;bottom:0;left:0;right:0;z-index:9000;
+  background:#1a1208;color:var(--ivory);padding:14px 22px;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  border-top:2px solid var(--gold);font-family:'Jost',sans-serif;font-size:13px;
+  box-shadow:0 -8px 32px rgba(0,0,0,.4)}
+
+/* Pub toggle label */
+#pub-lbl{font-size:12px;color:var(--ch40)}
+
+/* Timeline editor rows */
+.tl-row{background:var(--ivory);border-radius:9px;padding:10px;margin-bottom:8px;
+  display:grid;grid-template-columns:42px 72px 1fr 28px;gap:6px;align-items:center}
+
+/* Font tab */
+.ftabs{display:flex;border-bottom:1px solid rgba(38,32,25,.07);margin-bottom:12px}
+.ftab{flex:1;padding:10px 6px;font-size:12.5px;font-weight:400;color:var(--taupe);
+  cursor:pointer;text-align:center;border:none;background:none;
+  font-family:'Jost',sans-serif;border-bottom:2px solid transparent;transition:all .18s}
+.ftab.on{color:var(--gold);border-bottom-color:var(--gold)}
+.font-item{border:1.5px solid rgba(38,32,25,.08);border-radius:9px;padding:10px 12px;
+  cursor:pointer;transition:all .18s;display:flex;align-items:center;
+  justify-content:space-between;margin-bottom:5px;background:none;
+  width:100%;text-align:left;font-family:'Jost',sans-serif}
+.font-item:hover{border-color:var(--gold);background:rgba(168,124,62,.04)}
+.font-item.on{border-color:var(--gold);background:rgba(168,124,62,.09)}
+.font-prev{font-size:20px;color:var(--charcoal)}
+.font-nm{font-size:11.5px;font-weight:500;color:var(--ch40)}
+.font-cat{font-size:10.5px;color:var(--taupe)}
+.preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px 0 12px}
+.preset-btn{border:1.5px solid rgba(38,32,25,.1);border-radius:10px;padding:12px;
+  cursor:pointer;transition:all .18s;background:none;text-align:left;
+  width:100%;font-family:'Jost',sans-serif}
+.preset-btn:hover{border-color:var(--gold)}
+.preset-btn.on{border-color:var(--gold);background:rgba(168,124,62,.08)}
+.preset-prev{font-size:18px;color:var(--charcoal);margin-bottom:4px}
+.preset-name{font-size:12px;font-weight:500;color:var(--charcoal);margin-bottom:1px}
+.preset-desc{font-size:10.5px;color:var(--taupe)}
+.live-prev-box{background:linear-gradient(145deg,var(--cream),var(--blush));
+  border-radius:12px;padding:26px 20px;text-align:center;margin-bottom:16px}
+.lprev-names{font-size:36px;color:var(--charcoal);line-height:1.2;margin-bottom:8px}
+.lprev-detail{font-size:12.5px;color:var(--ch40);letter-spacing:.1em;text-transform:uppercase}
+
+/* Color input */
+.col-row{display:flex;gap:9px;align-items:center}
+.col-sw{width:42px;height:36px;border:none;border-radius:7px;
+  cursor:pointer;padding:2px;background:none}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .sidebar{width:56px}
+  .sb-logo span:last-child,.sb-inv,.sb-lbl,
+  .sb-item>span:last-child,.sb-uname,.sb-uplan,.sb-logout{display:none}
+  .sb-item{justify-content:center}
+  .sb-ico{width:auto}
+  .stats{grid-template-columns:1fr 1fr}
+  .ed-panel{width:320px}
+  .prev-pane{display:none}
+}
+@media(max-width:540px){
+  .ed-panel{width:100%}
+  .stats{grid-template-columns:1fr 1fr}
+  .frow{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div id="toasts"></div>
+
+<!-- AUTH PAGE (shown when logged out) -->
+<div id="auth-page" class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo">Festlich<span>.</span></div>
+    <p class="auth-tag">Digitale Einladungen, die berühren</p>
+    <div id="auth-alert"></div>
+    <!-- LOGIN -->
+    <div id="login-view">
+      <div class="auth-ttl">Willkommen zurück</div>
+      <p class="auth-hint">Melde dich in deinem Festlich-Konto an.</p>
+      <div class="fg"><label class="fl">E-Mail</label><input id="l-email" class="fi" type="email" autocomplete="email" onkeydown="if(event.key==='Enter')doLogin()"></div>
+      <div class="fg"><label class="fl">Passwort</label><input id="l-pw" class="fi" type="password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+        <span class="auth-forgot" onclick="showView('forgot')">Passwort vergessen?</span></div>
+      <button id="l-btn" class="btn btn-dark btn-md" style="width:100%;margin-bottom:11px" onclick="doLogin()">Anmelden</button>
+      <p class="auth-link">Noch kein Konto? <a onclick="showView('register')">Registrieren</a></p>
+    </div>
+    <!-- REGISTER -->
+    <div id="register-view" class="hidden">
+      <div class="auth-ttl">Konto erstellen</div>
+      <p class="auth-hint">Starte kostenlos — keine Kreditkarte nötig.</p>
+      <div class="fg"><label class="fl">Name</label><input id="r-name" class="fi" type="text" autocomplete="name" onkeydown="if(event.key==='Enter')doRegister()"></div>
+      <div class="fg"><label class="fl">E-Mail</label><input id="r-email" class="fi" type="email" autocomplete="email" onkeydown="if(event.key==='Enter')doRegister()"></div>
+      <div class="fg"><label class="fl">Passwort (min. 8 Zeichen)</label><input id="r-pw" class="fi" type="password" autocomplete="new-password" onkeydown="if(event.key==='Enter')doRegister()"></div>
+      <button id="r-btn" class="btn btn-dark btn-md" style="width:100%;margin-bottom:11px" onclick="doRegister()">Kostenlos registrieren →</button>
+      <p class="auth-link">Bereits registriert? <a onclick="showView('login')">Anmelden</a></p>
+    </div>
+    <!-- FORGOT -->
+    <div id="forgot-view" class="hidden">
+      <div class="auth-ttl">Passwort zurücksetzen</div>
+      <p class="auth-hint">Gib deine E-Mail ein. Wir senden dir einen Reset-Link.</p>
+      <div class="fg"><label class="fl">E-Mail</label><input id="f-email" class="fi" type="email" onkeydown="if(event.key==='Enter')doForgot()"></div>
+      <button id="f-btn" class="btn btn-dark btn-md" style="width:100%;margin-bottom:11px" onclick="doForgot()">Reset-Link senden</button>
+      <p class="auth-link"><a onclick="showView('login')">← Zurück zur Anmeldung</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD (shown when logged in) -->
+<div id="app" class="hidden">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo" onclick="if(confirm('Zur Startseite zurück?'))location.href='festlich-builder.html'">Festlich<span>.</span></div>
+    <div class="sb-inv">
+      <select class="sb-sel" id="inv-sel" onchange="onInvSwitch(this.value)">
+        <option>Keine Einladungen</option>
+      </select>
+    </div>
+    <nav class="sb-nav">
+      <span class="sb-lbl">Dashboard</span>
+      <div class="sb-item on" id="ni-overview"  onclick="switchTab('overview')"><span class="sb-ico">📊</span><span>Übersicht</span></div>
+      <div class="sb-item"    id="ni-guests"    onclick="switchTab('guests')"><span class="sb-ico">👥</span><span>Gästeliste</span></div>
+      <div class="sb-item"    id="ni-rsvps"     onclick="switchTab('rsvps')"><span class="sb-ico">💌</span><span>RSVPs</span></div>
+      <span class="sb-lbl">Einladung</span>
+      <div class="sb-item"    id="ni-editor"    onclick="switchTab('editor')"><span class="sb-ico">✏️</span><span>Editor</span></div>
+      <div class="sb-item"    id="ni-gallery"   onclick="switchTab('gallery')"><span class="sb-ico">🖼️</span><span>Galerie</span></div>
+      <div class="sb-item"    id="ni-design"    onclick="switchTab('design')"><span class="sb-ico">🔤</span><span>Design</span></div>
+      <div class="sb-item"    id="ni-qr"        onclick="switchTab('qr')"><span class="sb-ico">📱</span><span>QR-Code</span></div>
+      <div class="sb-item"    id="ni-analytics" onclick="switchTab('analytics')"><span class="sb-ico">📈</span><span>Statistik</span></div>
+    </nav>
+    <div class="sb-btm">
+      <div class="sb-user">
+        <div class="sb-av" id="sb-av">?</div>
+        <div><div class="sb-uname" id="sb-uname">–</div><div class="sb-uplan">Kostenlos</div></div>
+      </div>
+      <button class="sb-logout" onclick="doLogout()">Abmelden</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main" id="main-area">
+    <div style="display:flex;align-items:center;justify-content:center;height:100%">
+      <div class="spin spin-dk" style="width:24px;height:24px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<!-- Guest modal -->
+<div id="m-guest" class="moverlay hidden">
+  <div class="modal">
+    <div class="modal-ttl" id="gm-ttl">Gast hinzufügen</div>
+    <div class="modal-sub" id="gm-sub">Füge einen Gast zur Einladung hinzu.</div>
+    <div id="gm-alert"></div>
+    <input type="hidden" id="g-id">
+    <div class="frow">
+      <div class="fg"><label class="fl">Name *</label><input id="g-name" class="fi" type="text"></div>
+      <div class="fg"><label class="fl">E-Mail</label><input id="g-email" class="fi" type="email"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Telefon</label><input id="g-phone" class="fi" type="tel"></div>
+      <div class="fg"><label class="fl">Tischnr.</label><input id="g-table" class="fi" type="text"></div>
+    </div>
+    <div class="fg"><label class="fl">Notizen</label><textarea id="g-notes" class="fta" style="min-height:54px"></textarea></div>
+    <div class="fcheck"><label class="tog"><input type="checkbox" id="g-vip"><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13.5px">VIP-Gast</span></div>
+    <div class="modal-foot">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('m-guest')">Abbrechen</button>
+      <button class="btn btn-gold btn-sm" id="gm-save" onclick="saveGuest()">Speichern</button>
+    </div>
+  </div>
+</div>
+<!-- Confirm modal -->
+<div id="m-confirm" class="moverlay hidden">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-ttl" id="cm-ttl">Löschen bestätigen</div>
+    <div class="modal-sub" id="cm-msg">Wirklich löschen?</div>
+    <div class="modal-foot">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('m-confirm')">Abbrechen</button>
+      <button class="btn btn-sm" id="cm-ok" style="background:#DC2626;color:white">Löschen</button>
+    </div>
+  </div>
+</div>
+<!-- Image position modal -->
+<div id="m-imgpos" class="moverlay hidden">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-ttl">📐 Bild positionieren</div>
+    <div class="modal-sub">Klicke oder ziehe auf dem Feld, um die Position anzupassen.</div>
+    <div class="img-prev-wrap" id="pos-preview" style="margin-bottom:14px">
+      <img id="pos-prev-img" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:block">
+    </div>
+    <div class="img-controls">
+      <span class="ic-label">Position (klicken oder ziehen)</span>
+      <div class="pos-pad" id="pos-pad">
+        <div class="pos-pad-grid"></div>
+        <div class="pos-handle" id="pos-handle" style="left:50%;top:50%"></div>
+      </div>
+      <span class="ic-label">Zoom</span>
+      <div class="ic-row">
+        <span style="font-size:12px;color:var(--taupe)">🔍</span>
+        <input class="ic-slider" type="range" id="pos-scale" min="100" max="300" step="1" value="100" oninput="onScaleChange(this.value)">
+        <span class="ic-val" id="pos-scale-val">100%</span>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('m-imgpos')">Abbrechen</button>
+      <button class="btn btn-gold btn-sm" id="pos-save-btn" onclick="saveImagePosition()">Position speichern</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   FESTLICH BUILDER v3 — Complete implementation
+   ════════════════════════════════════════════════════════════════ */
+
+const SUPA_URL = 'https://odtvcglpxojsyxstmbtq.supabase.co'
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kdHZjZ2xweG9qc3l4c3RtYnRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMTg2MTAsImV4cCI6MjA5MDc5NDYxMH0.HjODTfOS4OAM2z4T3naX2xHzwikgD-r_H1v-wtgd7GM'
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY, { db:{ schema:'public' } })
+
+/* ── STORAGE BUCKET ──────────────────────────────────────────────
+   REQUIRED: Create this bucket in Supabase Dashboard
+   Dashboard → Storage → New bucket
+   Name: invitation-gallery
+   Public: YES (toggle on)
+──────────────────────────────────────────────────────────────── */
+const BUCKET = 'invitation-gallery'
+
+/* ── PUBLIC URL GENERATION ───────────────────────────────────────
+   Uses ?slug=  — works on GitHub Pages, Netlify, any static host.
+   The invitation page (festlich-invitation.html) reads this param.
+───────────────────────────────────────────────────────────────── */
+/* ── PUBLIC URL ────────────────────────────────────────────────
+   Strategy: ?slug=XYZ param on festlich-invitation.html
+   Works on GitHub Pages, Netlify, local — any static host.
+
+   If your GitHub Pages URL is wrong, set the override:
+     localStorage.setItem('festlich_base_url', 'https://yourname.github.io/yourrepo/')
+   Then reload the dashboard.
+──────────────────────────────────────────────────────────────── */
+function getSiteBase() {
+  // 1. Manual override stored in localStorage
+  const override = localStorage.getItem('festlich_base_url')
+  if (override) return override.endsWith('/') ? override : override + '/'
+  // 2. Auto-detect from current URL
+  const href = window.location.href
+  const base = href.replace(/\/[^/?#]*(\?.*)?$/, '/')
+  return base
+}
+function getPublicUrl(slug) {
+  if (!slug) return ''
+  return `${getSiteBase()}festlich-invitation.html?slug=${slug}`
+}
+function setBaseUrl() {
+  const current = localStorage.getItem('festlich_base_url') || getSiteBase()
+  const url = prompt(
+    '🔗 Gib deine GitHub Pages Basis-URL ein:\n\nBeispiel: https://Ahmpo9.github.io/festlich0/\n\nAktuell:',
+    current
+  )
+  if (url && url.trim()) {
+    const clean = url.trim().endsWith('/') ? url.trim() : url.trim() + '/'
+    localStorage.setItem('festlich_base_url', clean)
+    toast('✓ URL gespeichert: ' + clean, 'ok')
+    // Re-render current tab to update all links
+    renderTab(S.tab)
+  }
+}
+
+/* ── SETUP BANNER (shown when base URL is not configured) ── */
+function checkURLSetup() {
+  const stored = localStorage.getItem('festlich_base_url')
+  // If running from GitHub Pages but no override set yet, auto-detect and show banner
+  const isGitHubPages = location.hostname.endsWith('.github.io')
+  const isLocalFile   = location.protocol === 'file:'
+  const isLocalhost   = location.hostname === 'localhost' || location.hostname === '127.0.0.1'
+
+  if (!stored && (isGitHubPages || isLocalFile) && !isLocalhost) {
+    // Auto-set from current location
+    const autoBase = getSiteBase()
+    showURLBanner(autoBase)
+  } else if (stored) {
+    // Already configured — show small info bar
+    showURLInfo(stored)
+  } else {
+    // localhost — auto works, no banner needed
+  }
+}
+
+function showURLBanner(detectedUrl) {
+  if ($('url-banner')) return
+  const b = document.createElement('div')
+  b.id = 'url-banner'
+  b.style.cssText = `
+    position:fixed;top:0;left:0;right:0;z-index:8000;
+    background:#1a3a5c;color:white;padding:14px 22px;
+    display:flex;align-items:center;justify-content:space-between;
+    gap:14px;flex-wrap:wrap;font-family:'Jost',sans-serif;
+    font-size:13px;box-shadow:0 4px 20px rgba(0,0,0,.3);
+  `
+  b.innerHTML = `
+    <div style="display:flex;align-items:center;gap:10px;flex:1">
+      <span style="font-size:20px">🔗</span>
+      <div>
+        <div style="font-weight:600;color:#7EC8E3;margin-bottom:2px">GitHub Pages URL einrichten</div>
+        <div style="opacity:.85;font-size:12px">
+          Damit Links & QR-Codes funktionieren, bestätige deine URL:
+          <strong style="color:#FFD700">${detectedUrl}</strong>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;flex-shrink:0">
+      <button onclick="confirmAutoURL('${detectedUrl}')"
+        style="background:#2E86AB;color:white;border:none;padding:9px 18px;
+        border-radius:20px;cursor:pointer;font-family:'Jost',sans-serif;
+        font-size:12.5px;font-weight:500;white-space:nowrap">
+        ✓ URL bestätigen
+      </button>
+      <button onclick="setBaseUrl()"
+        style="background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3);
+        padding:9px 16px;border-radius:20px;cursor:pointer;
+        font-family:'Jost',sans-serif;font-size:12.5px;white-space:nowrap">
+        ✏️ Ändern
+      </button>
+      <button onclick="document.getElementById('url-banner').remove()"
+        style="background:none;border:none;color:rgba(255,255,255,.5);
+        cursor:pointer;font-size:18px;padding:4px 8px">✕</button>
+    </div>
+  `
+  document.body.prepend(b)
+  // Push app content down
+  const app = $('app')
+  if (app) app.style.paddingTop = '60px'
+}
+
+function showURLInfo(url) {
+  // Small subtle indicator in corner — not intrusive
+  if ($('url-info')) return
+  const d = document.createElement('div')
+  d.id = 'url-info'
+  d.style.cssText = `
+    position:fixed;bottom:60px;right:16px;z-index:7000;
+    background:rgba(38,32,25,.85);color:rgba(250,248,243,.7);
+    padding:8px 12px;border-radius:8px;font-size:11px;
+    font-family:'Jost',sans-serif;cursor:pointer;
+    backdrop-filter:blur(8px);max-width:260px;line-height:1.4;
+  `
+  const short = url.replace('https://','').replace(/\/$/, '')
+  d.innerHTML = `🔗 ${short} <span style="color:#CEB98A">✓</span>`
+  d.onclick = () => { setBaseUrl(); d.remove() }
+  d.title = 'Klicken um URL zu ändern'
+  document.body.appendChild(d)
+}
+
+function confirmAutoURL(url) {
+  const clean = url.endsWith('/') ? url : url + '/'
+  localStorage.setItem('festlich_base_url', clean)
+  $('url-banner')?.remove()
+  const app = $('app')
+  if (app) app.style.paddingTop = ''
+  toast('✓ URL gespeichert: ' + clean, 'ok')
+  renderTab(S.tab)
+  showURLInfo(clean)
+}
+
+/* ── STATE ── */
+const S = {
+  user: null,
+  invs: [],
+  curInvId: null,
+  guests: [],
+  rsvps: [],
+  gallery: [],
+  tab: 'overview',
+  pendingDel: null,
+  // Image positioning
+  posTarget: null, // {type:'hero'|'gallery', galleryId, url, x, y, scale}
+  // Font state
+  fontH: 'Great Vibes', fontB: 'Lato', fontPreset: 'blossom',
+  curTemplate: 'blossom',
+  prevTimer: null,
+  // Timeline items (local editing buffer)
+  tlItems: [],
+}
+
+/* ── FONTS ── */
+const FONTS = [
+  {n:'Great Vibes',f:"'Great Vibes',cursive",g:'Great+Vibes',c:'elegantScript',p:'Lena & Florian'},
+  {n:'Allura',f:"'Allura',cursive",g:'Allura',c:'elegantScript',p:'Lena & Florian'},
+  {n:'Sacramento',f:"'Sacramento',cursive",g:'Sacramento',c:'elegantScript',p:'Lena & Florian'},
+  {n:'Parisienne',f:"'Parisienne',cursive",g:'Parisienne',c:'elegantScript',p:'Lena & Florian'},
+  {n:'Alex Brush',f:"'Alex Brush',cursive",g:'Alex+Brush',c:'elegantScript',p:'Lena & Florian'},
+  {n:'Pinyon Script',f:"'Pinyon Script',cursive",g:'Pinyon+Script',c:'elegantScript',p:'Lena & Florian'},
+  {n:'Tangerine',f:"'Tangerine',cursive",g:'Tangerine',c:'elegantScript',p:'Lena & Florian'},
+  {n:'Italianno',f:"'Italianno',cursive",g:'Italianno',c:'elegantScript',p:'Lena & Florian'},
+  {n:'Euphoria Script',f:"'Euphoria Script',cursive",g:'Euphoria+Script',c:'elegantScript',p:'Lena & Florian'},
+  {n:'Yellowtail',f:"'Yellowtail',cursive",g:'Yellowtail',c:'elegantScript',p:'Lena & Florian'},
+  {n:'Dancing Script',f:"'Dancing Script',cursive",g:'Dancing+Script',c:'modernScript',p:'Lena & Florian'},
+  {n:'Satisfy',f:"'Satisfy',cursive",g:'Satisfy',c:'modernScript',p:'Lena & Florian'},
+  {n:'Courgette',f:"'Courgette',cursive",g:'Courgette',c:'modernScript',p:'Lena & Florian'},
+  {n:'Clicker Script',f:"'Clicker Script',cursive",g:'Clicker+Script',c:'modernScript',p:'Lena & Florian'},
+  {n:'Marck Script',f:"'Marck Script',cursive",g:'Marck+Script',c:'modernScript',p:'Lena & Florian'},
+  {n:'Rouge Script',f:"'Rouge Script',cursive",g:'Rouge+Script',c:'modernScript',p:'Lena & Florian'},
+  {n:'Playfair Display',f:"'Playfair Display',serif",g:'Playfair+Display',c:'classicSerif',p:'Lena & Florian'},
+  {n:'Cormorant Garamond',f:"'Cormorant Garamond',serif",g:'Cormorant+Garamond',c:'classicSerif',p:'Lena & Florian'},
+  {n:'Cinzel',f:"'Cinzel',serif",g:'Cinzel',c:'classicSerif',p:'LENA & FLORIAN'},
+  {n:'Lora',f:"'Lora',serif",g:'Lora',c:'classicSerif',p:'Lena & Florian'},
+  {n:'Libre Baskerville',f:"'Libre Baskerville',serif",g:'Libre+Baskerville',c:'classicSerif',p:'Lena & Florian'},
+  {n:'EB Garamond',f:"'EB Garamond',serif",g:'EB+Garamond',c:'classicSerif',p:'Lena & Florian'},
+  {n:'Crimson Text',f:"'Crimson Text',serif",g:'Crimson+Text',c:'classicSerif',p:'Lena & Florian'},
+  {n:'GFS Didot',f:"'GFS Didot',serif",g:'GFS+Didot',c:'classicSerif',p:'Lena & Florian'},
+  {n:'Josefin Sans',f:"'Josefin Sans',sans-serif",g:'Josefin+Sans',c:'minimalSans',p:'LENA & FLORIAN'},
+  {n:'Raleway',f:"'Raleway',sans-serif",g:'Raleway',c:'minimalSans',p:'Lena & Florian'},
+  {n:'Jost',f:"'Jost',sans-serif",g:'Jost',c:'minimalSans',p:'Lena & Florian'},
+  {n:'Montserrat',f:"'Montserrat',sans-serif",g:'Montserrat',c:'minimalSans',p:'Lena & Florian'},
+  {n:'Lato',f:"'Lato',sans-serif",g:'Lato',c:'minimalSans',p:'Lena & Florian'},
+  {n:'Nunito',f:"'Nunito',sans-serif",g:'Nunito',c:'minimalSans',p:'Lena & Florian'},
+  {n:'Source Sans 3',f:"'Source Sans 3',sans-serif",g:'Source+Sans+3',c:'minimalSans',p:'Lena & Florian'},
+]
+const PRESETS = [
+  {id:'elegant',de:'Elegante Hochzeit',h:'Great Vibes',b:'Lora',dd:'Romantisch & zeitlos'},
+  {id:'modern',de:'Modern Minimal',h:'Josefin Sans',b:'Raleway',dd:'Klar & zeitgemäß'},
+  {id:'luxury',de:'Luxus Klassik',h:'Cormorant Garamond',b:'EB Garamond',dd:'Historisch & edel'},
+  {id:'romantic',de:'Romantik',h:'Sacramento',b:'Lato',dd:'Verträumt & persönlich'},
+  {id:'editorial',de:'Editorial',h:'Playfair Display',b:'Jost',dd:'Modern & markant'},
+  {id:'parisian',de:'Parisien',h:'Parisienne',b:'Raleway',dd:'Französisch & charmant'},
+  {id:'roman',de:'Römische Klassik',h:'Cinzel',b:'Crimson Text',dd:'Majestätisch & förmlich'},
+  {id:'dancing',de:'Handschrift',h:'Dancing Script',b:'Montserrat',dd:'Verspielt & lesbar'},
+]
+
+/* ── TEMPLATE REGISTRY ──────────────────────────────────────────
+   Each template defines: colors, hero gradient, section backgrounds,
+   font defaults, calendar style, button style.
+   Saved as font_preset in Supabase invitations table.
+──────────────────────────────────────────────────────────────── */
+const TEMPLATES = {
+  blossom: {
+    id:'blossom', label:'Blossom', emoji:'🌸',
+    desc:'Lavendel · Engel · Bögen · Romantisch',
+    gold:'#9080B0', bg:'#F4F0F8',
+    heroGrad:'#C8B8D8,#D8C8E8 50%,#E8D8F0',
+    darkBg:'#B0A0C8', fontH:'Great Vibes', fontB:'Josefin Sans',
+  },
+  mono: {
+    id:'mono', label:'Mono', emoji:'🖤',
+    desc:'Schwarz & Weiß · Editorial · Bold',
+    gold:'#111111', bg:'#FAFAFA',
+    heroGrad:'#111,#333 50%,#555',
+    darkBg:'#111111', fontH:'Playfair Display', fontB:'Josefin Sans',
+  },
+  boho: {
+    id:'boho', label:'Boho', emoji:'🍂',
+    desc:'Warm · Editorial · Palast-Arch · Zeitlos',
+    gold:'#A67C52', bg:'#FDF8F0',
+    heroGrad:'#E8D5C0,#D4B896 50%,#C4A882',
+    darkBg:'#3D2E1E', fontH:'Cormorant Garamond', fontB:'Josefin Sans',
+  },
+  azur: {
+    id:'azur', label:'Azur', emoji:'🌊',
+    desc:'Türkis · Gold · Split-Layout · Mediterran',
+    gold:'#B8922A', bg:'#FDFBF7',
+    heroGrad:'#87CEEB,#5F9EA0 50%,#4682B4',
+    darkBg:'#1A1208', fontH:'Playfair Display', fontB:'Josefin Sans',
+  },
+}
+
+const loadedFonts = new Set(['Cormorant Garamond','Jost'])
+function loadFont(name) {
+  if (loadedFonts.has(name)) return
+  const f = FONTS.find(x=>x.n===name); if(!f) return
+  if (!document.getElementById('gf-'+f.g)) {
+    const l=document.createElement('link');l.id='gf-'+f.g;l.rel='stylesheet'
+    l.href=`https://fonts.googleapis.com/css2?family=${f.g}:ital,wght@0,400;0,700;1,400&display=swap`
+    document.head.appendChild(l)
+  }
+  loadedFonts.add(name)
+}
+
+/* ═══════════════════════════════════════════════════════════
+   UTILITIES
+   ═══════════════════════════════════════════════════════════ */
+const $=id=>document.getElementById(id)
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+const curInv=()=>S.invs.find(i=>i.id===S.curInvId)
+
+function toast(msg,type='info'){
+  const d=document.createElement('div');d.className=`toast ${type==='error'?'err':type==='success'?'ok':''}`
+  d.innerHTML=`<span>${type==='success'?'✓':type==='error'?'✗':'ℹ'}</span>${msg}`
+  $('toasts').appendChild(d);setTimeout(()=>d.remove(),4200)
+}
+function closeModal(id){$(id)?.classList.add('hidden')}
+function openModal(id){$(id)?.classList.remove('hidden')}
+function setLoading(id,on){
+  const b=$(id);if(!b)return;b.disabled=on
+  if(on){b._o=b.innerHTML;b.innerHTML='<span class="spin"></span>'}
+  else b.innerHTML=b._o||b.innerHTML
+}
+function dbErrMsg(e){
+  const m=e?.message||'',c=e?.code||''
+  if(m.includes('schema cache')||m.includes('relation')||c==='PGRST200')
+    return 'Tabellen fehlen. Bitte festlich-schema-v2.sql in Supabase ausführen.'
+  if(m.includes('row-level')||c==='42501') return 'Keine Berechtigung. Bitte neu anmelden.'
+  if(m.includes('JWT')||c==='PGRST301') return 'Sitzung abgelaufen. Bitte neu anmelden.'
+  if(m.includes('Failed to fetch')) return 'Verbindungsfehler. Internetverbindung prüfen.'
+  return m||'Unbekannter Fehler'
+}
+function showDBBanner(type='db'){
+  const existing=$('db-banner')
+  if(existing){existing.remove()} // Replace with latest error
+  const b=document.createElement('div');b.id='db-banner'
+  const isBucket = type==='bucket'
+  const title = isBucket ? 'Storage Bucket fehlt' : 'Datenbank-Setup erforderlich'
+  const msg = isBucket
+    ? 'Supabase → Storage → New bucket → Name: <strong>invitation-gallery</strong> → Public: AN → Create'
+    : 'festlich-schema-v2.sql in Supabase SQL Editor ausführen, dann Seite neu laden.'
+  b.innerHTML=`<div style="display:flex;align-items:center;gap:10px;flex:1"><span style="font-size:20px">${isBucket?'🪣':'⚠️'}</span><div><div style="font-weight:500;color:#CEB98A;margin-bottom:2px">${title}</div><div style="opacity:.85;font-size:12px">${msg}</div></div></div><div style="display:flex;gap:8px;flex-shrink:0"><a href="https://supabase.com/dashboard/project/odtvcglpxojsyxstmbtq/storage/buckets" target="_blank" style="background:#A87C3E;color:white;padding:7px 14px;border-radius:20px;text-decoration:none;font-size:12px;white-space:nowrap">${isBucket?'Storage öffnen →':'Supabase →'}</a><button onclick="this.closest('#db-banner').remove()" style="background:rgba(255,255,255,.1);color:white;border:none;padding:7px 11px;border-radius:20px;cursor:pointer;font-family:'Jost',sans-serif;font-size:12px">✕</button></div>`
+  document.body.appendChild(b)
+}
+async function checkDB(){
+  const{error}=await sb.from('invitations').select('id').limit(1)
+  if(error&&(error.code==='PGRST200'||error.message?.includes('schema cache')||error.message?.includes('relation')))showDBBanner()
+}
+
+/* ═══════════════════════════════════════════════════════════
+   AUTH
+   ═══════════════════════════════════════════════════════════ */
+function showView(v){
+  ['login','register','forgot'].forEach(x=>$(x+'-view').classList.add('hidden'))
+  $(v+'-view').classList.remove('hidden')
+  $('auth-alert').innerHTML=''
+}
+function showAuthAlert(msg,type='error'){
+  $('auth-alert').innerHTML=`<div class="alert alert-${type}">${msg}</div>`
+}
+async function doLogin(){
+  const email=$('l-email')?.value.trim(),pw=$('l-pw')?.value
+  if(!email||!pw){showAuthAlert('Bitte alle Felder ausfüllen.');return}
+  setLoading('l-btn',true)
+  const{error}=await sb.auth.signInWithPassword({email,password:pw})
+  setLoading('l-btn',false)
+  if(error){
+    let m=error.message
+    if(m.includes('Invalid')||m.includes('invalid_credentials'))m='E-Mail oder Passwort falsch.'
+    if(m.includes('Email not confirmed'))m='E-Mail noch nicht bestätigt. Postfach prüfen.'
+    showAuthAlert(m);return
+  }
+  // Auth state change will trigger boot
+}
+async function doRegister(){
+  const name=$('r-name')?.value.trim(),email=$('r-email')?.value.trim(),pw=$('r-pw')?.value
+  if(!name||!email||!pw){showAuthAlert('Bitte alle Felder ausfüllen.');return}
+  if(pw.length<8){showAuthAlert('Passwort min. 8 Zeichen.');return}
+  setLoading('r-btn',true)
+  const{error}=await sb.auth.signUp({email,password:pw,options:{data:{full_name:name}}})
+  setLoading('r-btn',false)
+  if(error){showAuthAlert(error.message);return}
+  showAuthAlert('Bitte bestätige deine E-Mail, dann anmelden.','success')
+}
+async function doForgot(){
+  const email=$('f-email')?.value.trim()
+  if(!email){showAuthAlert('Bitte E-Mail eingeben.');return}
+  setLoading('f-btn',true)
+  const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:location.origin})
+  setLoading('f-btn',false)
+  if(error){showAuthAlert(error.message);return}
+  showAuthAlert('Reset-Link gesendet! Postfach prüfen.','success')
+}
+async function doLogout(){
+  await sb.auth.signOut()
+  location.reload()
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INVITATION CRUD
+   ═══════════════════════════════════════════════════════════ */
+async function createInvitation(){
+  const{data,error}=await sb.from('invitations')
+    .insert({owner_id:S.user.id,title:'Neue Einladung',event_type:'wedding'})
+    .select().single()
+  if(error){
+    toast(dbErrMsg(error),'error')
+    if(error.code==='PGRST200'||error.message?.includes('schema cache'))showDBBanner()
+    return null
+  }
+  S.invs.unshift(data)
+  S.curInvId=data.id
+  return data
+}
+async function loadInvitations(){
+  const{data,error}=await sb.from('invitations').select('*')
+    .eq('owner_id',S.user.id).order('created_at',{ascending:false})
+  if(error){console.error(error);S.invs=[];return}
+  S.invs=data||[]
+  if(!S.curInvId&&S.invs.length)S.curInvId=S.invs[0].id
+}
+async function saveInv(fields){
+  if(!S.curInvId||!S.user)return false
+  const{error}=await sb.from('invitations')
+    .update({...fields,updated_at:new Date().toISOString()})
+    .eq('id',S.curInvId).eq('owner_id',S.user.id)
+  if(error){toast(dbErrMsg(error),'error');return false}
+  const idx=S.invs.findIndex(i=>i.id===S.curInvId)
+  if(idx>-1)S.invs[idx]={...S.invs[idx],...fields}
+  return true
+}
+
+/* ═══════════════════════════════════════════════════════════
+   LIVE PREVIEW ENGINE
+   Builds a self-contained HTML string from current inv state
+   and loads it into the iframe via blob URL.
+   ═══════════════════════════════════════════════════════════ */
+function buildPreviewHTML(){
+  const inv=curInv()
+  const gallery=S.gallery||[]
+  if(!inv)return'<html><body style="font-family:sans-serif;padding:40px;color:#999;text-align:center"><p>Keine Einladung ausgewählt</p></body></html>'
+
+  const hf=inv.font_heading||'Great Vibes'
+  const bf=inv.font_body||'Lato'
+  const tplId=inv.font_preset||'blossom'
+  const tpl=TEMPLATES[tplId]||TEMPLATES.blossom
+  const gold=inv.theme_primary_color||tpl.gold
+  const bg=inv.theme_bg_color||tpl.bg
+  const hasImg=!!inv.hero_image_url
+  const n1=inv.host_name_1||'Name 1', n2=inv.host_name_2||'Name 2'
+
+  // Calendar
+  let calHTML=''
+  let countdownTarget=''
+  if(inv.event_date){
+    const d=new Date(inv.event_date+'T12:00:00')
+    const yr=d.getFullYear(),mo=d.getMonth(),dy=d.getDate()
+    const months=['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember']
+    const wdays=['Mo','Di','Mi','Do','Fr','Sa','So']
+    const first=new Date(yr,mo,1).getDay(),offset=first===0?6:first-1
+    const total=new Date(yr,mo+1,0).getDate()
+    let cells=''
+    for(let i=0;i<offset;i++)cells+=`<div></div>`
+    for(let dd=1;dd<=total;dd++){
+      const active=dd===dy
+      cells+=`<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:300;color:${active?'white':'rgba(250,248,243,.6)'};border-radius:50%;background:${active?gold:'transparent'};${active?`box-shadow:0 0 14px ${gold}80`:''};">${dd}</div>`
+    }
+    // Countdown target ISO string for JS
+    const hm=(inv.ceremony_time||'14:00:00').slice(0,5)
+    countdownTarget=`${inv.event_date}T${hm}:00`
+    calHTML=`<div style="background:${tpl.darkBg||'#262019'};padding:56px 20px;text-align:center;color:white">
+      <div style="font-family:'${hf}',serif;font-size:clamp(26px,5vw,42px);font-style:italic;color:${gold};margin-bottom:28px;letter-spacing:.06em">${months[mo]} ${yr}</div>
+      <div style="max-width:280px;margin:0 auto">
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px">${wdays.map(w=>`<div style="font-size:8.5px;text-transform:uppercase;color:rgba(250,248,243,.35);text-align:center;padding:2px 0">${w}</div>`).join('')}</div>
+        <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">${cells}</div>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:36px;flex-wrap:wrap">
+        ${[['cd-d','Tage'],['cd-h','Std.'],['cd-m','Min.'],['cd-s','Sek.']].map(([id,l])=>`<div style="background:rgba(250,248,243,.07);border:1px solid rgba(250,248,243,.14);border-radius:12px;padding:14px 16px;text-align:center;min-width:62px"><div id="${id}" style="font-family:'${hf}',serif;font-size:32px;font-weight:400;color:#FAF8F3;line-height:1">…</div><div style="font-size:9px;letter-spacing:.12em;text-transform:uppercase;opacity:.45;margin-top:4px;color:white">${l}</div></div>`).join('')}
+      </div>
+    </div>`
+  }
+
+  // Gallery
+  const pics=gallery.filter(g=>g.url)
+  const galHTML=pics.length>0?`<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:3px">${pics.slice(0,4).map(g=>`<div style="aspect-ratio:4/3;overflow:hidden;background:#E5D8C3"><img src="${g.url}" style="width:100%;height:100%;object-fit:cover;object-position:${g.position_x||50}% ${g.position_y||50}%;transform:scale(${g.scale||1});transform-origin:center"></div>`).join('')}</div>`:''
+
+  // Countdown script — runs inside iframe
+  const cdScript = countdownTarget ? `<script>
+(function(){
+  var target=new Date('${countdownTarget}').getTime();
+  function pad(n){return String(n).padStart(2,'0')}
+  function tick(){
+    var diff=Math.max(0,target-Date.now());
+    var d=Math.floor(diff/86400000),h=Math.floor(diff%86400000/3600000),
+        m=Math.floor(diff%3600000/60000),s=Math.floor(diff%60000/1000);
+    ['cd-d','cd-h','cd-m','cd-s'].forEach(function(id,i){
+      var e=document.getElementById(id);
+      if(e)e.textContent=pad([d,h,m,s][i]);
+    });
+  }
+  tick();setInterval(tick,1000);
+})();
+<\/script>` : ''
+
+  return`<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=${hf.replace(/ /g,'+')}:ital,wght@0,300;0,400;1,400&family=${bf.replace(/ /g,'+')}:wght@300;400&display=swap">
+<style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:'${bf}',sans-serif;background:${bg};color:#262019;overflow-x:hidden;-webkit-font-smoothing:antialiased;line-height:1.6}:root{--gold:${gold}}</style>
+</head><body>
+<!-- HERO -->
+<div style="position:relative;min-height:100vh;display:flex;align-items:flex-end;overflow:hidden;background:${hasImg?'#5C4838':'linear-gradient(150deg,'+tpl.heroGrad+')'}">
+  ${hasImg?`<img src="${inv.hero_image_url}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:${inv.hero_pos_x||50}% ${inv.hero_pos_y||50}%;transform:scale(${inv.hero_scale||1});transform-origin:center"><div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(38,32,25,.1),rgba(38,32,25,.7))"></div>`:''}
+  <div style="position:relative;z-index:1;text-align:center;padding:52px 24px 72px;width:100%;color:white">
+    ${tplId!=='boho'?`<div style="font-size:9.5px;letter-spacing:.3em;text-transform:uppercase;opacity:.6;margin-bottom:18px">${tplId==='azur'?'— Wedding Celebration —':'— Einladung zur Hochzeit —'}</div>`:''}
+    <div style="font-family:'${hf}',serif;font-size:clamp(48px,9vw,96px);font-weight:300;line-height:1.05;letter-spacing:.02em">${n1}<br><span style="font-style:italic;opacity:.72;font-size:.65em">&amp;</span><br>${n2}</div>
+    ${inv.tagline?`<div style="font-size:14px;font-weight:300;opacity:.7;margin-top:10px;letter-spacing:.08em">${inv.tagline}</div>`:''}
+  </div>
+</div>
+${inv.quote_enabled&&inv.quote_text?`<div style="background:${tpl.quoteBg||'linear-gradient(150deg,#F3EDE0,#FAF8F3)'};padding:60px 32px;text-align:center;position:relative;overflow:hidden"><div style="position:absolute;top:-30px;left:14px;font-family:'${hf}',serif;font-size:180px;font-weight:300;color:#E5D8C3;opacity:.5;line-height:1">\u201C</div>${inv.quote_heading?`<div style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:${gold};margin-bottom:16px">${inv.quote_heading}</div>`:''}<div style="font-family:'${hf}',serif;font-size:clamp(20px,4vw,32px);font-weight:300;font-style:italic;color:#3F3828;line-height:1.55;margin-bottom:14px;position:relative">${inv.quote_text}</div>${inv.quote_source?`<div style="font-size:12.5px;color:#AE8E6C">— ${inv.quote_source}</div>`:''}</div>`:''}
+${calHTML}
+${(inv.ceremony_venue_name||inv.ceremony_address)?`<div style="background:${tpl.ceremonyBg||'#FEFCF9'};padding:60px 24px;text-align:center"><div style="width:66px;height:66px;border-radius:50%;background:linear-gradient(135deg,#F3EDE0,#E5D8C3);display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 20px;box-shadow:0 8px 24px rgba(38,32,25,.08)">${{church:'⛪',mosque:'🕌',registry:'🏛️',garden:'🌿',beach:'🌊',custom:'🏡'}[inv.ceremony_venue_type]||'📍'}</div><div style="font-family:'${hf}',serif;font-size:clamp(26px,4vw,40px);font-weight:400;color:#262019;margin-bottom:20px">${inv.ceremony_title||'Zeremonie'}</div>${inv.ceremony_venue_name?`<div style="font-size:17px;font-weight:500;color:#262019;margin-bottom:6px">${inv.ceremony_venue_name}</div>`:''} ${inv.ceremony_time_str?`<div style="display:inline-flex;align-items:center;gap:7px;background:#F3EDE0;border-radius:100px;padding:10px 22px;font-size:15px;font-weight:500;margin:14px 0">🕐 ${inv.ceremony_time_str} Uhr</div>`:''} ${inv.ceremony_address?`<div style="font-size:14px;color:#AE8E6C;font-weight:300;margin-top:8px">${inv.ceremony_address}</div>`:''} ${inv.ceremony_map_url?`<div style="margin-top:18px"><a href="${inv.ceremony_map_url}" style="display:inline-flex;align-items:center;gap:7px;background:${gold};color:white;border-radius:100px;padding:12px 26px;font-size:13.5px;text-decoration:none">📍 Route anzeigen</a></div>`:''}</div>`:''}
+${inv.welcome_note?`<div style="background:${bg};padding:56px 24px;text-align:center"><div style="font-family:'${hf}',serif;font-size:clamp(17px,2.5vw,24px);font-weight:300;font-style:italic;color:#3F3828;line-height:1.7;max-width:500px;margin:0 auto">${inv.welcome_note.replace(/\n/g,'<br>')}</div></div>`:''}
+${(inv.reception_enabled&&(inv.timeline_json||[]).length>0)?`<div style="background:${tpl.timelineBg||'#F3EDE0'};padding:56px 24px"><div style="font-family:'${hf}',serif;font-size:clamp(26px,4vw,38px);font-weight:400;color:#262019;text-align:center;margin-bottom:40px">${inv.reception_title||'Ablauf'}</div><div style="max-width:440px;margin:0 auto;padding-left:44px;position:relative"><div style="position:absolute;left:21px;top:6px;bottom:6px;width:1px;background:linear-gradient(to bottom,transparent,#E5D8C3 10%,#E5D8C3 90%,transparent)"></div>${(inv.timeline_json||[]).map(item=>`<div style="position:relative;margin-bottom:28px"><div style="position:absolute;left:-44px;width:40px;height:40px;border-radius:50%;background:white;border:1.5px solid #E5D8C3;display:flex;align-items:center;justify-content:center;font-size:15px;box-shadow:0 2px 7px rgba(38,32,25,.06)">${item.icon||'🎉'}</div><div style="font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:${gold};margin-bottom:3px">${item.time||''}</div><div style="font-size:15px;font-weight:500;color:#262019;margin-bottom:2px">${item.title||''}</div><div style="font-size:13px;color:#AE8E6C;font-weight:300">${item.venue||''}</div></div>`).join('')}</div></div>`:''}
+${galHTML}
+${inv.rsvp_enabled?`<div style="background:${tpl.rsvpBg||'#262019'};padding:60px 24px;text-align:center"><div style="font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:${gold};margin-bottom:13px">✦ Rückmeldung ✦</div><div style="font-family:'${hf}',serif;font-size:clamp(28px,5vw,46px);font-weight:300;color:${tpl.rsvpTitle||'#FAF8F3'};margin-bottom:6px">Bist du dabei?</div><div style="font-size:14px;color:rgba(250,248,243,.45);font-weight:300;margin-bottom:26px">Wir freuen uns auf deine Antwort</div><div style="max-width:380px;margin:0 auto"><div style="background:rgba(250,248,243,.07);border:1.5px solid rgba(250,248,243,.14);border-radius:9px;padding:12px 14px;font-size:13.5px;color:rgba(250,248,243,.3);margin-bottom:9px;text-align:left">Dein vollständiger Name</div><div style="background:linear-gradient(135deg,${gold},${gold}cc);color:white;border-radius:9px;padding:14px;font-size:14px;text-align:center;letter-spacing:.04em">Rückmeldung bestätigen →</div></div></div>`:''}
+<div style="background:#262019;padding:24px;text-align:center"><span style="font-family:'Cormorant Garamond',serif;font-size:18px;color:rgba(250,248,243,.3);letter-spacing:.06em">Festlich<span style="color:${gold}">.</span></span></div>
+${cdScript}
+</body></html>`
+}
+
+let prevBlobURL = null
+function updatePreview(){
+  const frame=$('preview-frame'); if(!frame)return
+  const html=buildPreviewHTML()
+  const blob=new Blob([html],{type:'text/html'})
+  const url=URL.createObjectURL(blob)
+  frame.src=url
+  if(prevBlobURL)setTimeout(()=>URL.revokeObjectURL(prevBlobURL),1500)
+  prevBlobURL=url
+}
+function schedulePreview(){
+  if(S.prevTimer)clearTimeout(S.prevTimer)
+  S.prevTimer=setTimeout(updatePreview,450)
+}
+function setPreviewMode(m){
+  const frame=$('preview-frame')
+  ;[$('pm-desktop'),$('pm-mobile')].forEach(b=>b?.classList.remove('on'))
+  $(m==='desktop'?'pm-desktop':'pm-mobile')?.classList.add('on')
+  frame?.classList.toggle('mobile',m==='mobile')
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DASHBOARD TABS
+   ═══════════════════════════════════════════════════════════ */
+async function switchTab(tab){
+  S.tab=tab
+  document.querySelectorAll('.sb-item').forEach(el=>{
+    el.classList.toggle('on',el.id==='ni-'+tab)
+  })
+  await renderTab(tab)
+}
+
+async function onInvSwitch(id){
+  S.curInvId=id;S.gallery=[]
+  await renderTab(S.tab)
+}
+
+async function renderTab(tab){
+  const main=$('main-area');if(!main)return
+  main.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100%"><div class="spin spin-dk" style="width:22px;height:22px"></div></div>'
+  const inv=curInv()
+  switch(tab){
+    case 'overview':  await tabOverview(main,inv);break
+    case 'guests':    await tabGuests(main,inv);break
+    case 'rsvps':     await tabRSVPs(main,inv);break
+    case 'editor':    await tabEditor(main,inv);break
+    case 'gallery':   await tabGallery(main,inv);break
+    case 'design':    tabDesign(main,inv);break
+    case 'qr':        tabQR(main,inv);break
+    case 'analytics': await tabAnalytics(main,inv);break
+  }
+}
+
+/* helper: topbar */
+function topbar(title,sub,right=''){
+  return`<div class="topbar"><div><div class="tb-ttl serif">${title}</div>${sub?`<div class="tb-sub">${sub}</div>`:''}</div><div class="tb-right">${right}</div></div>`
+}
+function noInvHTML(){
+  return`<div class="empty"><div class="empty-ico">💌</div><div class="empty-ttl">Noch keine Einladung</div><div class="empty-sub">Erstelle deine erste Einladung.</div><button class="btn btn-gold btn-md" onclick="doCreateInv()">+ Neue Einladung</button></div>`
+}
+
+async function doCreateInv(){
+  toast('Erstelle Einladung…','info')
+  const data=await createInvitation()
+  if(!data)return
+  $('db-banner')?.remove()
+  updateInvSelect()
+  toast('Einladung erstellt! ✓','success')
+  switchTab('editor')
+}
+
+/* ── OVERVIEW ── */
+async function tabOverview(main,inv){
+  if(!inv){main.innerHTML=topbar('Übersicht')+`<div class="content">${noInvHTML()}</div>`;return}
+  const[rr,ir]=await Promise.all([
+    sb.from('rsvps').select('attending,guest_count').eq('invitation_id',S.curInvId),
+    sb.from('invitations').select('view_count').eq('id',S.curInvId).single()
+  ])
+  const rsvps=rr.data||[]
+  const attending=rsvps.filter(r=>r.attending===true).length
+  const declined=rsvps.filter(r=>r.attending===false).length
+  const views=ir.data?.view_count||0
+  const{data:gs}=await sb.from('guests').select('id').eq('invitation_id',S.curInvId)
+  const{data:rg}=await sb.from('rsvps').select('guest_id').eq('invitation_id',S.curInvId)
+  const rIds=new Set((rg||[]).map(r=>r.guest_id).filter(Boolean))
+  const pending=(gs||[]).filter(g=>!rIds.has(g.id)).length
+  const{data:rec}=await sb.from('rsvps').select('*').eq('invitation_id',S.curInvId).order('submitted_at',{ascending:false}).limit(5)
+  const pubUrl=getPublicUrl(inv.slug)
+  const ml={meat:'Fleisch',fish:'Fisch',vegetarian:'Vegetarisch',vegan:'Vegan',none:'–'}
+  main.innerHTML=topbar(esc(inv.title),'Übersicht',`<a href="${pubUrl}" target="_blank" class="btn btn-outline btn-sm">Öffnen →</a><button class="btn btn-gold btn-sm" onclick="doCreateInv()">+ Neue</button>`)+
+  `<div class="content">
+    <div class="stats">
+      ${[['👁️','#EFF6FF',views,'Aufrufe'],['✓','#F0FDF4',attending,'Zusagen'],['✗','#FEF2F2',declined,'Absagen'],['?','#FEFCE8',pending,'Offen']].map(([ico,bg,n,l])=>`<div class="stat-c"><div class="stat-ico" style="background:${bg}">${ico}</div><div class="stat-n serif">${n}</div><div class="stat-l">${l}</div></div>`).join('')}
+    </div>
+    <div class="cbox">
+      <div class="cbox-hdr"><div class="cbox-ttl">💌 Aktuelle RSVPs</div><button class="btn btn-ghost btn-sm" onclick="switchTab('rsvps')">Alle</button></div>
+      <div class="tw"><table><thead><tr><th>Gast</th><th>Status</th><th>Pers.</th><th>Menü</th></tr></thead><tbody>
+      ${!(rec||[]).length?`<tr><td colspan="4" style="padding:24px;text-align:center;color:var(--taupe)">Noch keine RSVPs</td></tr>`:(rec||[]).map(r=>`<tr><td><div style="font-weight:500">${esc(r.guest_name)}</div>${r.guest_email?`<div style="font-size:11px;color:var(--taupe)">${esc(r.guest_email)}</div>`:''}</td><td>${r.attending?`<span class="pill pgreen">✓ Zusage</span>`:`<span class="pill pred">✗ Absage</span>`}</td><td>${r.guest_count||1}</td><td>${ml[r.meal_preference]||'–'}</td></tr>`).join('')}
+      </tbody></table></div>
+    </div>
+    <div class="cbox">
+      <div class="cbox-hdr"><div class="cbox-ttl">🔗 Einladungslink</div><button class="btn btn-ghost btn-sm" onclick="copyToClip('${pubUrl}','Link kopiert!')">Kopieren</button></div>
+      <div style="padding:13px 17px"><div class="lnkbox"><div class="lnkurl">${pubUrl}</div><button class="btn btn-outline btn-sm" onclick="copyToClip('${pubUrl}','Link kopiert!')">Kopieren</button><a href="${pubUrl}" target="_blank" class="btn btn-ghost btn-sm">Öffnen →</a></div></div>
+    </div>
+  </div>`
+}
+function copyToClip(txt,msg){navigator.clipboard.writeText(txt).then(()=>toast(msg,'success'))}
+
+/* ── GUESTS ── */
+async function tabGuests(main,inv){
+  if(!inv){main.innerHTML=topbar('Gästeliste')+`<div class="content">${noInvHTML()}</div>`;return}
+  const{data}=await sb.from('guests').select('*').eq('invitation_id',S.curInvId).order('created_at')
+  S.guests=data||[]
+  main.innerHTML=topbar(esc(inv.title),'Gästeliste',`<button class="btn btn-ghost btn-sm" onclick="exportCSV()">CSV</button><button class="btn btn-gold btn-sm" onclick="openGuestModal()">+ Gast</button>`)+
+  `<div class="content"><div class="cbox"><div class="tw"><table><thead><tr><th>Name</th><th>E-Mail</th><th>Tisch</th><th>VIP</th><th>Aktionen</th></tr></thead><tbody id="g-tbody">${renderGuestRows()}</tbody></table></div></div></div>`
+}
+function renderGuestRows(){
+  if(!S.guests.length)return`<tr><td colspan="5"><div class="empty"><div class="empty-ico">👥</div><div class="empty-ttl">Noch keine Gäste</div><div class="empty-sub">Füge Gäste zur Einladung hinzu.</div></div></td></tr>`
+  return S.guests.map(g=>`<tr><td><div style="font-weight:500">${esc(g.name)}</div>${g.notes?`<div style="font-size:11px;color:var(--taupe)">${esc(g.notes)}</div>`:''}</td><td>${esc(g.email||'–')}</td><td>${esc(g.table_number||'–')}</td><td>${g.is_vip?`<span class="pill pgreen">VIP</span>`:'–'}</td><td style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="openGuestModal('${g.id}')">Bearb.</button><button class="btn-danger" onclick="confirmDel('guest','${g.id}')">Löschen</button></td></tr>`).join('')
+}
+function openGuestModal(gid=null){
+  const g=gid?S.guests.find(x=>x.id===gid):null
+  $('gm-ttl').textContent=gid?'Gast bearbeiten':'Gast hinzufügen'
+  $('gm-sub').textContent=gid?'Gast-Details bearbeiten.':'Füge einen Gast zur Einladung hinzu.'
+  $('g-id').value=gid||''
+  ;['g-name','g-email','g-phone','g-table','g-notes'].forEach(id=>{if($(id))$(id).value=g?g[id.replace('g-',id.includes('name')?'name':id.includes('email')?'email':id.includes('phone')?'phone':id.includes('table')?'table_number':'notes')]||'':''})
+  if($('g-vip'))$('g-vip').checked=g?.is_vip||false
+  $('gm-alert').innerHTML=''
+  openModal('m-guest')
+}
+async function saveGuest(){
+  const name=$('g-name')?.value.trim()
+  if(!name){$('gm-alert').innerHTML='<div class="alert alert-error">Name ist erforderlich.</div>';return}
+  const data={name,email:$('g-email')?.value.trim()||'',phone:$('g-phone')?.value.trim()||'',table_number:$('g-table')?.value.trim()||'',notes:$('g-notes')?.value.trim()||'',is_vip:$('g-vip')?.checked||false}
+  const gid=$('g-id').value
+  setLoading('gm-save',true)
+  let error
+  if(gid){const r=await sb.from('guests').update(data).eq('id',gid).eq('invitation_id',S.curInvId);error=r.error}
+  else{const r=await sb.from('guests').insert({...data,invitation_id:S.curInvId});error=r.error}
+  setLoading('gm-save',false)
+  if(error){$('gm-alert').innerHTML=`<div class="alert alert-error">${error.message}</div>`;return}
+  toast(gid?'Gast aktualisiert':'Gast hinzugefügt','success')
+  closeModal('m-guest')
+  const{data:guests}=await sb.from('guests').select('*').eq('invitation_id',S.curInvId).order('created_at')
+  S.guests=guests||[]
+  const tbody=$('g-tbody');if(tbody)tbody.innerHTML=renderGuestRows()
+}
+function confirmDel(type,id){
+  S.pendingDel={type,id}
+  $('cm-ttl').textContent='Löschen bestätigen'
+  $('cm-msg').textContent='Wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.'
+  $('cm-ok').onclick=execDel
+  openModal('m-confirm')
+}
+async function execDel(){
+  if(!S.pendingDel)return
+  const{type,id}=S.pendingDel;S.pendingDel=null;closeModal('m-confirm')
+  if(type==='guest'){
+    await sb.from('rsvps').delete().eq('guest_id',id)
+    const{error}=await sb.from('guests').delete().eq('id',id)
+    if(error){toast(error.message,'error');return}
+    S.guests=S.guests.filter(g=>g.id!==id)
+    const tbody=$('g-tbody');if(tbody)tbody.innerHTML=renderGuestRows()
+    toast('Gast gelöscht','success')
+  } else if(type==='gallery'){
+    const item=S.gallery.find(g=>g.id===id)
+    if(item?.storage_path){await sb.storage.from(BUCKET).remove([item.storage_path])}
+    const{error}=await sb.from('gallery_items').delete().eq('id',id)
+    if(error){toast(error.message,'error');return}
+    S.gallery=S.gallery.filter(g=>g.id!==id)
+    renderGalGrid()
+    updatePreview()
+    toast('Bild gelöscht','success')
+  }
+}
+
+/* ── RSVPS ── */
+async function tabRSVPs(main,inv){
+  if(!inv){main.innerHTML=topbar('RSVPs')+`<div class="content">${noInvHTML()}</div>`;return}
+  const{data}=await sb.from('rsvps').select('*').eq('invitation_id',S.curInvId).order('submitted_at',{ascending:false})
+  S.rsvps=data||[]
+  const ml={meat:'Fleisch',fish:'Fisch',vegetarian:'Vegetarisch',vegan:'Vegan',none:'–'}
+  main.innerHTML=topbar(esc(inv.title),'RSVPs',`<button class="btn btn-ghost btn-sm" onclick="exportCSV()">CSV</button>`)+
+  `<div class="content"><div class="cbox"><div class="tw"><table><thead><tr><th>Gast</th><th>Status</th><th>Pers.</th><th>Menü</th><th>Datum</th></tr></thead><tbody>${!S.rsvps.length?`<tr><td colspan="5" style="padding:24px;text-align:center;color:var(--taupe)">Noch keine RSVPs</td></tr>`:S.rsvps.map(r=>`<tr><td><div style="font-weight:500">${esc(r.guest_name)}</div></td><td>${r.attending?`<span class="pill pgreen">✓ Zusage</span>`:`<span class="pill pred">✗ Absage</span>`}</td><td>${r.guest_count||1}</td><td>${ml[r.meal_preference]||'–'}</td><td style="font-size:11px;color:var(--taupe)">${new Date(r.submitted_at).toLocaleDateString('de-DE')}</td></tr>`).join('')}</tbody></table></div></div></div>`
+}
+
+/* ── EDITOR (split panel with live preview) ── */
+async function tabEditor(main,inv){
+  if(!inv){main.innerHTML=topbar('Editor')+`<div class="content">${noInvHTML()}</div>`;return}
+  // Load gallery for preview
+  if(!S.gallery.length){
+    const{data}=await sb.from('gallery_items').select('*').eq('invitation_id',S.curInvId).order('sort_order')
+    S.gallery=data||[]
+  }
+  S.tlItems=[...(inv.timeline_json||[])]
+  const pubUrl=getPublicUrl(inv.slug)
+  const vtypes={wedding:'Hochzeit',engagement:'Verlobung',birthday:'Geburtstag',reception:'Empfang',celebration:'Feier',other:'Sonstiges'}
+  const vicons={church:'⛪ Kirche',mosque:'🕌 Moschee',registry:'🏛️ Standesamt',garden:'🌿 Garten',beach:'🌊 Strand',custom:'🏡 Individuell'}
+
+  main.innerHTML=
+    topbar(esc(inv.title),'Einladung',`
+      <div style="display:flex;align-items:center;gap:8px">
+        <label class="tog" title="Veröffentlichen">
+          <input type="checkbox" id="pub-tog" ${inv.is_published?'checked':''} onchange="handlePublish(this.checked)">
+          <div class="tog-tr"></div><div class="tog-th"></div>
+        </label>
+        <span id="pub-lbl">${inv.is_published?'Veröffentlicht ✓':'Entwurf'}</span>
+      </div>
+      <button class="btn btn-gold btn-sm" id="ed-save" onclick="saveAllFields()">Speichern</button>`)+
+    `<div class="editor-shell">
+      <!-- LEFT: EDIT PANEL -->
+      <div class="ed-panel">
+
+        <!-- HERO IMAGE -->
+        <div class="eds" id="es-hero">
+          <div class="eds-hdr" onclick="toggleSection('es-hero')">
+            <div class="eds-left"><span class="eds-ico">📷</span>Hero & Titelbild</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            ${inv.hero_image_url
+              ? `<div class="img-prev-wrap"><img class="img-prev-img" id="hero-prev-img" src="${inv.hero_image_url}" style="object-position:${inv.hero_pos_x||50}% ${inv.hero_pos_y||50}%;transform:scale(${inv.hero_scale||1});transform-origin:center"></div>
+                 <div class="img-edit-btns">
+                   <button class="btn btn-ghost btn-sm" style="flex:1" onclick="openImgPos('hero','${inv.hero_image_url}',${inv.hero_pos_x||50},${inv.hero_pos_y||50},${inv.hero_scale||1})">📐 Positionieren</button>
+                   <button class="btn-danger" onclick="removeHeroImg()">✕ Entfernen</button>
+                 </div>`
+              : `<div class="img-upload" onclick="$('hero-input').click()">
+                   <div style="font-size:28px;margin-bottom:7px">🖼️</div>
+                   <div style="font-size:14px;color:var(--ch40);margin-bottom:3px">Hero-Bild hochladen</div>
+                   <div style="font-size:12px;color:var(--taupe)">JPG, PNG, WebP · max. 10 MB</div>
+                 </div>`}
+            <input type="file" id="hero-input" style="display:none" accept="image/*" onchange="uploadHero(this)">
+          </div>
+        </div>
+
+        <!-- BASIC INFO -->
+        <div class="eds" id="es-basic">
+          <div class="eds-hdr" onclick="toggleSection('es-basic')">
+            <div class="eds-left"><span class="eds-ico">💍</span>Grundinformationen</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            <div class="fg"><label class="fl">Einladungstitel</label><input id="ed-title" class="fi" value="${esc(inv.title||'')}" oninput="schedulePreview()"></div>
+            <div class="frow">
+              <div class="fg"><label class="fl">Name 1</label><input id="ed-n1" class="fi" value="${esc(inv.host_name_1||'')}" placeholder="Lena" oninput="schedulePreview()"></div>
+              <div class="fg"><label class="fl">Name 2</label><input id="ed-n2" class="fi" value="${esc(inv.host_name_2||'')}" placeholder="Florian" oninput="schedulePreview()"></div>
+            </div>
+            <div class="fg"><label class="fl">Tagline / Untertitel</label><input id="ed-tagline" class="fi" value="${esc(inv.tagline||'')}" oninput="schedulePreview()"></div>
+            <div class="frow">
+              <div class="fg"><label class="fl">Datum</label><input id="ed-date" class="fi" type="date" value="${inv.event_date||''}" onchange="schedulePreview()"></div>
+              <div class="fg"><label class="fl">Uhrzeit</label><input id="ed-time" class="fi" type="time" value="${inv.ceremony_time||''}"></div>
+            </div>
+            <div class="fg"><label class="fl">Art der Veranstaltung</label>
+              <select id="ed-type" class="fsel">${Object.entries(vtypes).map(([v,n])=>`<option value="${v}" ${inv.event_type===v?'selected':''}>${n}</option>`).join('')}</select></div>
+          </div>
+        </div>
+
+        <!-- QUOTE / VERSE -->
+        <div class="eds" id="es-quote">
+          <div class="eds-hdr" onclick="toggleSection('es-quote')">
+            <div class="eds-left"><span class="eds-ico">✦</span>Zitat / Vers</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            <div class="fcheck"><label class="tog"><input type="checkbox" id="ed-qon" ${inv.quote_enabled?'checked':''} onchange="schedulePreview()"><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13.5px">Zitat aktivieren</span></div>
+            <div style="margin-top:11px">
+              <div class="fg"><label class="fl">Überschrift (z.B. "Ein Vers für uns")</label><input id="ed-qh" class="fi" value="${esc(inv.quote_heading||'')}" oninput="schedulePreview()"></div>
+              <div class="fg"><label class="fl">Zitat / Vers Text</label><textarea id="ed-qt" class="fta" oninput="schedulePreview()">${esc(inv.quote_text||'')}</textarea></div>
+              <div class="fg"><label class="fl">Quelle (z.B. 1. Korinther 13,4-7)</label><input id="ed-qs" class="fi" value="${esc(inv.quote_source||'')}" oninput="schedulePreview()"></div>
+              <div class="fg"><label class="fl">Typ</label>
+                <select id="ed-qtype" class="fsel">
+                  ${[['romantic','Romantisches Zitat'],['bible','Bibelvers'],['quran','Koranvers'],['poem','Gedicht'],['custom','Eigener Text']].map(([v,n])=>`<option value="${v}" ${inv.quote_type===v?'selected':''}>${n}</option>`).join('')}
+                </select></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CEREMONY -->
+        <div class="eds" id="es-ceremony">
+          <div class="eds-hdr" onclick="toggleSection('es-ceremony')">
+            <div class="eds-left"><span class="eds-ico">⛪</span>Zeremonie</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            <div class="fg"><label class="fl">Titel des Abschnitts</label><input id="ed-ctitle" class="fi" value="${esc(inv.ceremony_title||'Zeremonie')}" oninput="schedulePreview()"></div>
+            <div class="fg"><label class="fl">Typ des Veranstaltungsorts</label>
+              <select id="ed-ctype" class="fsel" onchange="schedulePreview()">${Object.entries(vicons).map(([v,n])=>`<option value="${v}" ${inv.ceremony_venue_type===v?'selected':''}>${n}</option>`).join('')}</select></div>
+            <div class="fg"><label class="fl">Name des Ortes</label><input id="ed-cvenue" class="fi" value="${esc(inv.ceremony_venue_name||'')}" oninput="schedulePreview()"></div>
+            <div class="frow">
+              <div class="fg"><label class="fl">Uhrzeit (Text)</label><input id="ed-ctime" class="fi" value="${esc(inv.ceremony_time_str||'')}" placeholder="14:00" oninput="schedulePreview()"></div>
+              <div class="fg"><label class="fl">Maps-Link</label><input id="ed-cmap" class="fi" type="url" value="${esc(inv.ceremony_map_url||'')}" placeholder="https://maps.google.com/..."></div>
+            </div>
+            <div class="fg"><label class="fl">Adresse</label><textarea id="ed-caddr" class="fta" style="min-height:60px" oninput="schedulePreview()">${esc(inv.ceremony_address||'')}</textarea></div>
+            <div class="fg"><label class="fl">Beschreibung (optional)</label><textarea id="ed-cdesc" class="fta" style="min-height:54px" oninput="schedulePreview()">${esc(inv.ceremony_description||'')}</textarea></div>
+          </div>
+        </div>
+
+        <!-- WELCOME NOTE -->
+        <div class="eds" id="es-welcome">
+          <div class="eds-hdr" onclick="toggleSection('es-welcome')">
+            <div class="eds-left"><span class="eds-ico">💌</span>Willkommenstext</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            <div class="fg"><label class="fl">Persönliche Nachricht</label><textarea id="ed-welcome" class="fta" oninput="schedulePreview()">${esc(inv.welcome_note||'')}</textarea></div>
+            <div class="fg"><label class="fl">English version</label><textarea id="ed-welcome-en" class="fta">${esc(inv.welcome_note_en||'')}</textarea></div>
+          </div>
+        </div>
+
+        <!-- TIMELINE / RECEPTION -->
+        <div class="eds" id="es-timeline">
+          <div class="eds-hdr" onclick="toggleSection('es-timeline')">
+            <div class="eds-left"><span class="eds-ico">🎉</span>Ablauf & Empfang</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            <div class="fcheck"><label class="tog"><input type="checkbox" id="ed-recon" ${inv.reception_enabled?'checked':''} onchange="schedulePreview()"><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13.5px">Ablauf aktivieren</span></div>
+            <div style="margin-top:11px">
+              <div class="fg"><label class="fl">Titel</label><input id="ed-rectitle" class="fi" value="${esc(inv.reception_title||'Ablauf des Tages')}" oninput="schedulePreview()"></div>
+              <div id="tl-list">${renderTLItems()}</div>
+              <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:4px" onclick="addTLItem()">+ Ablaufpunkt hinzufügen</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- RSVP -->
+        <div class="eds" id="es-rsvp">
+          <div class="eds-hdr" onclick="toggleSection('es-rsvp')">
+            <div class="eds-left"><span class="eds-ico">📋</span>RSVP-Einstellungen</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            <div class="fcheck"><label class="tog"><input type="checkbox" id="ed-rsvpon" ${inv.rsvp_enabled!==false?'checked':''} onchange="schedulePreview()"><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13.5px">RSVP aktivieren</span></div>
+            <div class="fcheck"><label class="tog"><input type="checkbox" id="ed-mealon" ${inv.collect_meal_pref!==false?'checked':''}><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13.5px">Menüwahl erfassen</span></div>
+            <div class="frow" style="margin-top:11px">
+              <div class="fg"><label class="fl">RSVP-Frist</label><input id="ed-rsvpdl" class="fi" type="date" value="${inv.rsvp_deadline||''}"></div>
+              <div class="fg"><label class="fl">Max. Personen</label><select id="ed-maxg" class="fsel">${[1,2,3,4,5,6,8,10].map(n=>`<option value="${n}" ${(inv.max_guests_per_rsvp||4)==n?'selected':''}>${n}</option>`).join('')}</select></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EXTRAS -->
+        <div class="eds collapsed" id="es-extras">
+          <div class="eds-hdr" onclick="toggleSection('es-extras')">
+            <div class="eds-left"><span class="eds-ico">✨</span>Weitere Details</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            <div class="fg"><label class="fl">Dresscode</label><input id="ed-dress" class="fi" value="${esc(inv.dress_code||'')}"></div>
+            <div class="fg"><label class="fl">Besondere Hinweise</label><textarea id="ed-notes" class="fta">${esc(inv.special_notes||'')}</textarea></div>
+            <div class="fg"><label class="fl">Geschenke / Registry</label><textarea id="ed-registry" class="fta">${esc(inv.registry_message||'')}</textarea></div>
+          </div>
+        </div>
+
+        <div style="height:40px"></div>
+      </div><!-- end ed-panel -->
+
+      <!-- RIGHT: LIVE PREVIEW -->
+      <div class="prev-pane">
+        <div class="prev-toolbar">
+          <span style="font-size:13px;color:var(--ch40);font-weight:500">👁️ Live-Vorschau</span>
+          <div style="display:flex;gap:5px;margin-left:auto">
+            <button class="prev-mode-btn on" id="pm-desktop" onclick="setPreviewMode('desktop')">Desktop</button>
+            <button class="prev-mode-btn" id="pm-mobile" onclick="setPreviewMode('mobile')">Mobile</button>
+          </div>
+          <a href="${pubUrl}" target="_blank" class="btn btn-ghost btn-sm" style="font-size:12px">Öffnen →</a>
+        </div>
+        <div class="prev-wrap">
+          <iframe class="prev-frame" id="preview-frame" sandbox="allow-same-origin allow-scripts" frameborder="0"></iframe>
+        </div>
+      </div>
+
+    </div><!-- end editor-shell -->`
+
+  setTimeout(updatePreview,120)
+}
+
+function toggleSection(id){
+  document.getElementById(id)?.classList.toggle('collapsed')
+}
+
+/* Save all editor fields */
+async function saveAllFields(){
+  if(!S.curInvId||!S.user)return
+  setLoading('ed-save',true)
+  const fields={
+    title:$('ed-title')?.value.trim()||'Einladung',
+    event_type:$('ed-type')?.value||'wedding',
+    host_name_1:$('ed-n1')?.value.trim()||'',
+    host_name_2:$('ed-n2')?.value.trim()||'',
+    tagline:$('ed-tagline')?.value.trim()||'',
+    event_date:$('ed-date')?.value||null,
+    ceremony_time:$('ed-time')?.value||null,
+    quote_enabled:$('ed-qon')?.checked||false,
+    quote_heading:$('ed-qh')?.value.trim()||'',
+    quote_text:$('ed-qt')?.value.trim()||'',
+    quote_source:$('ed-qs')?.value.trim()||'',
+    quote_type:$('ed-qtype')?.value||'romantic',
+    ceremony_title:$('ed-ctitle')?.value.trim()||'Zeremonie',
+    ceremony_venue_type:$('ed-ctype')?.value||'church',
+    ceremony_venue_name:$('ed-cvenue')?.value.trim()||'',
+    ceremony_time_str:$('ed-ctime')?.value.trim()||'',
+    ceremony_map_url:$('ed-cmap')?.value.trim()||'',
+    ceremony_address:$('ed-caddr')?.value.trim()||'',
+    ceremony_description:$('ed-cdesc')?.value.trim()||'',
+    welcome_note:$('ed-welcome')?.value.trim()||'',
+    welcome_note_en:$('ed-welcome-en')?.value.trim()||'',
+    reception_enabled:$('ed-recon')?.checked||false,
+    reception_title:$('ed-rectitle')?.value.trim()||'Ablauf des Tages',
+    timeline_json:S.tlItems,
+    rsvp_enabled:$('ed-rsvpon')?.checked!==false,
+    collect_meal_pref:$('ed-mealon')?.checked!==false,
+    rsvp_deadline:$('ed-rsvpdl')?.value||null,
+    max_guests_per_rsvp:parseInt($('ed-maxg')?.value)||4,
+    dress_code:$('ed-dress')?.value.trim()||'',
+    special_notes:$('ed-notes')?.value.trim()||'',
+    registry_message:$('ed-registry')?.value.trim()||'',
+  }
+  const ok=await saveInv(fields)
+  setLoading('ed-save',false)
+  if(ok){
+    toast('Gespeichert ✓','success')
+    updateInvSelect()
+    updatePreview()
+  }
+}
+
+async function handlePublish(val){
+  const ok=await saveInv({is_published:val})
+  if(ok){
+    const lbl=$('pub-lbl');if(lbl)lbl.textContent=val?'Veröffentlicht ✓':'Entwurf'
+    toast(val?'Einladung veröffentlicht!':'Als Entwurf gespeichert.','success')
+  }
+}
+
+/* ── TIMELINE ITEMS ── */
+function renderTLItems(){
+  return S.tlItems.map((item,i)=>`
+  <div class="tl-row" id="tl-${i}">
+    <input class="fi" style="padding:7px;font-size:15px;text-align:center" type="text" value="${esc(item.icon||'')}" placeholder="🎉" oninput="S.tlItems[${i}].icon=this.value;schedulePreview()">
+    <input class="fi" style="padding:7px" type="text" value="${esc(item.time||'')}" placeholder="19:00" oninput="S.tlItems[${i}].time=this.value;schedulePreview()">
+    <input class="fi" style="padding:7px" type="text" value="${esc(item.title||'')}" placeholder="Titel..." oninput="S.tlItems[${i}].title=this.value;schedulePreview()">
+    <button onclick="removeTLItem(${i})" style="background:none;border:none;color:#DC2626;font-size:16px;cursor:pointer;padding:4px;flex-shrink:0">✕</button>
+  </div>
+  <div style="padding:0 0 6px 0"><input class="fi" style="padding:7px;font-size:12.5px" type="text" value="${esc(item.venue||'')}" placeholder="Ort / Venue..." oninput="S.tlItems[${i}].venue=this.value;schedulePreview()"></div>`).join('')
+}
+function addTLItem(){
+  S.tlItems.push({icon:'🎉',time:'',title:'',venue:''})
+  const list=$('tl-list');if(list)list.innerHTML=renderTLItems();schedulePreview()
+}
+function removeTLItem(idx){
+  S.tlItems.splice(idx,1)
+  const list=$('tl-list');if(list)list.innerHTML=renderTLItems();schedulePreview()
+}
+
+/* ── HERO IMAGE UPLOAD ── */
+async function uploadHero(input){
+  if(!input.files.length||!S.curInvId||!S.user)return
+  const file=input.files[0];input.value=''
+  if(file.size>10*1024*1024){toast('Bild ist zu groß (max. 10 MB).','error');return}
+  toast('Bild wird hochgeladen…','info')
+  const ext=file.name.split('.').pop().toLowerCase()
+  const path=`${S.user.id}/${S.curInvId}/hero-${Date.now()}.${ext}`
+  const{error:upErr}=await sb.storage.from(BUCKET).upload(path,file,{cacheControl:'3600',upsert:true})
+  if(upErr){
+    if(upErr.message?.includes('Bucket not found')||upErr.message?.includes('bucket')){
+      showDBBanner('bucket')
+    } else {
+      toast('Upload-Fehler: '+upErr.message,'error')
+    }
+    return
+  }
+  const{data:{publicUrl}}=sb.storage.from(BUCKET).getPublicUrl(path)
+  const ok=await saveInv({hero_image_url:publicUrl,hero_image_path:path,hero_pos_x:50,hero_pos_y:50,hero_scale:1.0})
+  if(ok){toast('Bild hochgeladen!','success');await switchTab('editor')}
+}
+async function removeHeroImg(){
+  const inv=curInv();if(!inv)return
+  if(inv.hero_image_path){await sb.storage.from(BUCKET).remove([inv.hero_image_path])}
+  await saveInv({hero_image_url:'',hero_image_path:'',hero_pos_x:50,hero_pos_y:50,hero_scale:1.0})
+  toast('Bild entfernt','success');await switchTab('editor')
+}
+
+/* ── IMAGE POSITIONING MODAL ── */
+function openImgPos(type,url,x=50,y=50,scale=1.0,galleryId=null){
+  S.posTarget={type,url,x:+x,y:+y,scale:+(scale||1),galleryId}
+  const img=$('pos-prev-img');if(img){img.src=url;img.style.objectPosition=`${x}% ${y}%`;img.style.transform=`scale(${scale})`}
+  // Set handle position
+  const handle=$('pos-handle')
+  if(handle){handle.style.left=x+'%';handle.style.top=y+'%'}
+  // Set slider
+  const sl=$('pos-scale'),sv=$('pos-scale-val')
+  if(sl){sl.value=Math.round((scale||1)*100)}
+  if(sv)sv.textContent=Math.round((scale||1)*100)+'%'
+  openModal('m-imgpos')
+  setupPosPad()
+}
+function setupPosPad(){
+  const pad=$('pos-pad'),handle=$('pos-handle')
+  if(!pad||!handle)return
+  function move(e){
+    e.preventDefault()
+    const rect=pad.getBoundingClientRect()
+    const cx=(e.touches?e.touches[0].clientX:e.clientX)
+    const cy=(e.touches?e.touches[0].clientY:e.clientY)
+    const x=Math.max(0,Math.min(100,(cx-rect.left)/rect.width*100))
+    const y=Math.max(0,Math.min(100,(cy-rect.top)/rect.height*100))
+    handle.style.left=x+'%';handle.style.top=y+'%'
+    S.posTarget.x=x;S.posTarget.y=y
+    // Update preview img
+    const img=$('pos-prev-img')
+    if(img)img.style.objectPosition=`${x}% ${y}%`
+  }
+  function start(e){
+    move(e)
+    pad.addEventListener('mousemove',move)
+    pad.addEventListener('touchmove',move,{passive:false})
+    const stop=()=>{
+      pad.removeEventListener('mousemove',move)
+      pad.removeEventListener('touchmove',move)
+    }
+    document.addEventListener('mouseup',stop,{once:true})
+    document.addEventListener('touchend',stop,{once:true})
+  }
+  pad.onmousedown=start
+  pad.ontouchstart=start
+}
+function onScaleChange(val){
+  const sv=$('pos-scale-val');if(sv)sv.textContent=val+'%'
+  if(S.posTarget)S.posTarget.scale=parseFloat(val)/100
+  const img=$('pos-prev-img')
+  if(img)img.style.transform=`scale(${parseFloat(val)/100})`
+}
+async function saveImagePosition(){
+  if(!S.posTarget)return
+  setLoading('pos-save-btn',true)
+  const{type,x,y,scale,galleryId}=S.posTarget
+  let ok=false
+  if(type==='hero'){
+    ok=await saveInv({hero_pos_x:x,hero_pos_y:y,hero_scale:scale})
+    // Update hero preview img in editor if visible
+    const heroImg=$('hero-prev-img')
+    if(heroImg){heroImg.style.objectPosition=`${x}% ${y}%`;heroImg.style.transform=`scale(${scale})`}
+  } else if(type==='gallery'&&galleryId){
+    const{error}=await sb.from('gallery_items').update({position_x:x,position_y:y,scale}).eq('id',galleryId)
+    if(!error){
+      const item=S.gallery.find(g=>g.id===galleryId)
+      if(item){item.position_x=x;item.position_y=y;item.scale=scale}
+      ok=true
+    }
+  }
+  setLoading('pos-save-btn',false)
+  if(ok){
+    toast('Position gespeichert ✓','success')
+    closeModal('m-imgpos')
+    updatePreview()
+    renderGalGrid()
+  }
+}
+
+/* ── GALLERY TAB ── */
+async function tabGallery(main,inv){
+  if(!inv){main.innerHTML=topbar('Galerie')+`<div class="content">${noInvHTML()}</div>`;return}
+  const{data}=await sb.from('gallery_items').select('*').eq('invitation_id',S.curInvId).order('sort_order')
+  S.gallery=data||[]
+  main.innerHTML=topbar(esc(inv.title),'Galerie')+
+  `<div class="content">
+    <div class="sc"><div class="sc-ttl">📤 Bilder hochladen</div>
+      <div class="img-upload" id="gal-drop" onclick="$('gal-input').click()">
+        <div style="font-size:26px;margin-bottom:7px">📷</div>
+        <div style="font-size:14px;color:var(--ch40);margin-bottom:3px">Bilder hier ablegen oder klicken</div>
+        <div style="font-size:12px;color:var(--taupe)">JPG, PNG, WebP · max. 10 MB</div>
+        <input type="file" id="gal-input" style="display:none" accept="image/*" multiple onchange="uploadGalleryImgs(this)">
+      </div>
+      <div id="gal-prog" class="hidden" style="margin-top:12px">
+        <div style="background:var(--cream);border-radius:4px;height:4px;overflow:hidden">
+          <div id="gal-bar" style="width:0%;height:100%;background:var(--gold);transition:width .3s"></div>
+        </div>
+        <div id="gal-status" style="font-size:12px;color:var(--taupe);margin-top:5px">Wird hochgeladen…</div>
+      </div>
+    </div>
+    <div class="sc"><div class="sc-ttl">🖼️ Hochgeladene Bilder</div>
+      <div class="gal-ed-grid" id="gal-ed-grid">${renderGalGridHTML()}</div>
+      ${!S.gallery.length?`<div class="empty"><div class="empty-ico">🖼️</div><div class="empty-ttl">Noch keine Bilder</div><div class="empty-sub">Lade Bilder hoch, die auf der Einladung erscheinen.</div></div>`:''}
+    </div>
+  </div>`
+  setupGalDrop()
+}
+function renderGalGridHTML(){
+  return S.gallery.map(g=>`
+  <div class="gal-ed-item">
+    <img class="gal-ed-img" src="${g.url}" style="object-position:${g.position_x||50}% ${g.position_y||50}%">
+    <button class="gal-ed-pos" onclick="openImgPos('gallery','${g.url}',${g.position_x||50},${g.position_y||50},${g.scale||1},'${g.id}')">📐</button>
+    <button class="gal-ed-del" onclick="confirmDel('gallery','${g.id}')">✕</button>
+  </div>`).join('')
+}
+function renderGalGrid(){
+  const grid=$('gal-ed-grid');if(grid)grid.innerHTML=renderGalGridHTML()
+}
+function setupGalDrop(){
+  const drop=$('gal-drop');if(!drop)return
+  drop.ondragover=e=>{e.preventDefault();drop.style.borderColor='var(--gold)'}
+  drop.ondragleave=()=>{drop.style.borderColor=''}
+  drop.ondrop=e=>{e.preventDefault();drop.style.borderColor='';const fi=$('gal-input');if(!fi)return;const dt=new DataTransfer();Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')).forEach(f=>dt.items.add(f));fi.files=dt.files;uploadGalleryImgs(fi)}
+}
+async function uploadGalleryImgs(input){
+  if(!input.files.length||!S.curInvId||!S.user)return
+  const files=Array.from(input.files);input.value=''
+  const prog=$('gal-prog'),bar=$('gal-bar'),status=$('gal-status')
+  if(prog)prog.classList.remove('hidden')
+  let uploaded=0
+  for(let i=0;i<files.length;i++){
+    const file=files[i]
+    if(file.size>10*1024*1024){toast(`${file.name}: zu groß (max. 10 MB)`,'error');continue}
+    if(bar)bar.style.width=`${Math.round(i/files.length*100)}%`
+    if(status)status.textContent=`${file.name} (${i+1}/${files.length})`
+    const ext=file.name.split('.').pop().toLowerCase()||'jpg'
+    const path=`${S.user.id}/${S.curInvId}/${Date.now()}-${i}.${ext}`
+    const{error:upErr}=await sb.storage.from(BUCKET).upload(path,file,{cacheControl:'3600',upsert:false})
+    if(upErr){
+      if(upErr.message?.includes('Bucket not found')||upErr.message?.includes('bucket')||upErr.statusCode==='404'){
+        showDBBanner('bucket');if(prog)prog.classList.add('hidden');return
+      }
+      toast('Upload: '+upErr.message,'error');continue
+    }
+    const{data:{publicUrl}}=sb.storage.from(BUCKET).getPublicUrl(path)
+    await sb.from('gallery_items').insert({invitation_id:S.curInvId,storage_path:path,url:publicUrl,size_bytes:file.size,sort_order:S.gallery.length+i,position_x:50,position_y:50,scale:1.0,image_type:'gallery'})
+    uploaded++
+  }
+  if(bar)bar.style.width='100%'
+  if(status)status.textContent=`${uploaded} Bild(er) fertig!`
+  setTimeout(()=>{if(prog)prog.classList.add('hidden')},1500)
+  const{data}=await sb.from('gallery_items').select('*').eq('invitation_id',S.curInvId).order('sort_order')
+  S.gallery=data||[]
+  renderGalGrid()
+  updatePreview()
+  if(uploaded>0)toast(`${uploaded} Bild(er) hochgeladen`,'ok')
+}
+
+/* ── DESIGN TAB — Template selector + fonts + colors ── */
+function tabDesign(main,inv){
+  if(!inv){main.innerHTML=topbar('Design')+`<div class="content">${noInvHTML()}</div>`;return}
+  S.fontH=inv.font_heading||'Great Vibes'
+  S.fontB=inv.font_body||'Lato'
+  S.fontPreset=inv.font_preset||'blossom'
+  S.curTemplate=inv.font_preset||'blossom'
+  loadFont(S.fontH);loadFont(S.fontB)
+  PRESETS.forEach(p=>{loadFont(p.h);loadFont(p.b)})
+  const n1=inv.host_name_1||'Lena',n2=inv.host_name_2||'Florian'
+  const hfam=FONTS.find(f=>f.n===S.fontH)?.f||S.fontH
+  const bfam=FONTS.find(f=>f.n===S.fontB)?.f||S.fontB
+  const cats=['elegantScript','modernScript','classicSerif','minimalSans']
+  const catLabels={elegantScript:'Elegante Schrift',modernScript:'Moderne Schrift',classicSerif:'Klassische Serife',minimalSans:'Minimale Sans-Serif'}
+
+  main.innerHTML=topbar(esc(inv.title),'Design & Vorlage',`<button class="btn btn-gold btn-sm" id="design-save" onclick="saveDesign()">Speichern</button>`)+
+  `<div class="content">
+
+    <!-- TEMPLATE CARDS -->
+    <div class="sc"><div class="sc-ttl">🎨 Einladungsvorlage wählen</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px">
+        ${Object.values(TEMPLATES).map(t=>`
+        <button onclick="selectTemplate('${t.id}')" id="tpl-btn-${t.id}" style="
+          border:2px solid ${t.id===S.curTemplate?t.gold:'rgba(38,32,25,.1)'};
+          border-radius:14px;padding:0;overflow:hidden;cursor:pointer;
+          background:none;transition:all .2s;
+          ${t.id===S.curTemplate?'box-shadow:0 4px 16px rgba(38,32,25,.15)':''}
+        ">
+          <div style="height:80px;background:linear-gradient(150deg,${t.heroGrad});display:flex;align-items:center;justify-content:center">
+            <span style="font-size:28px">${t.emoji}</span>
+          </div>
+          <div style="padding:10px 12px;background:${t.bg};text-align:left">
+            <div style="font-size:12.5px;font-weight:600;color:${t.gold};margin-bottom:2px">${t.label}</div>
+            <div style="font-size:11px;color:#5C5442;font-weight:300;line-height:1.4">${t.desc}</div>
+          </div>
+        </button>`).join('')}
+      </div>
+      <div style="margin-top:12px;padding:11px 14px;background:var(--ivory);border-radius:9px;font-size:12.5px;color:var(--ch40)">
+        Ausgewählte Vorlage wird sofort in der Live-Vorschau angezeigt und beim Speichern gespeichert.
+      </div>
+    </div>
+
+    <!-- LIVE PREVIEW STRIP -->
+    <div class="sc"><div class="sc-ttl">👁️ Live-Vorschau Schriften</div>
+      <div class="live-prev-box" id="design-prev-box">
+        <div class="lprev-names" id="lprev-names" style="font-family:${hfam}">${n1} &amp; ${n2}</div>
+        <div class="lprev-detail" id="lprev-detail" style="font-family:${bfam}">21. JUNI 2025 · HOCHZEIT</div>
+        <div style="margin-top:9px;font-size:11px;color:var(--ch40)">Überschrift: <strong id="lprev-hname">${S.fontH}</strong> · Text: <strong id="lprev-bname">${S.fontB}</strong></div>
+      </div>
+    </div>
+
+    <!-- FONT SELECTOR -->
+    <div class="sc"><div class="sc-ttl">🔤 Schriftart anpassen</div>
+      <div style="border:1px solid rgba(38,32,25,.07);border-radius:10px;overflow:hidden">
+        <div class="ftabs">
+          <button class="ftab on" id="ft-presets" onclick="switchFontTab('presets')">Kombinationen</button>
+          <button class="ftab" id="ft-heading" onclick="switchFontTab('heading')">Überschrift</button>
+          <button class="ftab" id="ft-body" onclick="switchFontTab('body')">Fließtext</button>
+        </div>
+        <div id="fp-presets" style="padding:4px 12px 12px">
+          <div class="preset-grid">${PRESETS.map(p=>`
+          <button class="preset-btn ${p.id===S.fontPreset?'on':''}" onclick="selectPreset('${p.id}')">
+            <div class="preset-prev" style="font-family:${FONTS.find(f=>f.n===p.h)?.f||p.h}">${p.de}</div>
+            <div class="preset-name">${p.de}</div>
+            <div class="preset-desc">${p.dd}</div>
+          </button>`).join('')}</div>
+        </div>
+        <div id="fp-heading" style="padding:4px 12px 12px;display:none">
+          ${cats.map(cat=>{
+            const cf=FONTS.filter(f=>f.c===cat)
+            return`<div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--taupe);padding:12px 0 8px;font-weight:500">${catLabels[cat]}</div>
+            ${cf.map(f=>`<button class="font-item ${S.fontH===f.n?'on':''}" id="fh-${f.n.replace(/\s+/g,'-')}" onmouseenter="loadFont('${f.n}')" onclick="selectFont('${f.n}','h')">
+              <div class="font-prev" style="font-family:${f.f}">${f.p}</div>
+              <div><div class="font-nm">${f.n}</div><div class="font-cat">${cat.replace(/([A-Z])/g,' $1').toLowerCase()}</div></div>
+            </button>`).join('')}`
+          }).join('')}
+        </div>
+        <div id="fp-body" style="padding:4px 12px 12px;display:none">
+          ${cats.map(cat=>{
+            const cf=FONTS.filter(f=>f.c===cat)
+            return`<div style="font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--taupe);padding:12px 0 8px;font-weight:500">${catLabels[cat]}</div>
+            ${cf.map(f=>`<button class="font-item ${S.fontB===f.n?'on':''}" id="fb-${f.n.replace(/\s+/g,'-')}" onmouseenter="loadFont('${f.n}')" onclick="selectFont('${f.n}','b')">
+              <div class="font-prev" style="font-family:${f.f}">${f.p}</div>
+              <div><div class="font-nm">${f.n}</div><div class="font-cat">${cat.replace(/([A-Z])/g,' $1').toLowerCase()}</div></div>
+            </button>`).join('')}`
+          }).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- COLOR OVERRIDES -->
+    <div class="sc"><div class="sc-ttl">🎨 Farben anpassen (optional)</div>
+      <p style="font-size:12.5px;color:var(--ch40);margin-bottom:14px;font-weight:300">Jede Vorlage hat eigene Standardfarben. Hier kannst du sie überschreiben.</p>
+      <div class="frow">
+        <div class="fg"><label class="fl">Akzentfarbe</label>
+          <div class="col-row"><input type="color" id="col-accent" class="col-sw" value="${inv.theme_primary_color||'#A87C3E'}" oninput="syncColHex('accent',this.value);schedulePreview()"><input class="fi" id="col-accent-hex" style="margin:0;flex:1" value="${inv.theme_primary_color||'#A87C3E'}" oninput="syncColPicker('accent',this.value)"></div>
+        </div>
+        <div class="fg"><label class="fl">Hintergrundfarbe</label>
+          <div class="col-row"><input type="color" id="col-bg" class="col-sw" value="${inv.theme_bg_color||'#FAF8F3'}" oninput="syncColHex('bg',this.value);schedulePreview()"><input class="fi" id="col-bg-hex" style="margin:0;flex:1" value="${inv.theme_bg_color||'#FAF8F3'}" oninput="syncColPicker('bg',this.value)"></div>
+        </div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="resetColors()">↺ Vorlage-Farben wiederherstellen</button>
+    </div>
+  </div>`
+}
+
+function selectTemplate(id){
+  const tpl=TEMPLATES[id];if(!tpl)return
+  S.curTemplate=id
+  S.fontH=tpl.fontH;S.fontB=tpl.fontB;S.fontPreset=id
+  loadFont(S.fontH);loadFont(S.fontB)
+  // Update template card borders
+  Object.keys(TEMPLATES).forEach(tid=>{
+    const btn=$(`tpl-btn-${tid}`)
+    if(btn){
+      btn.style.borderColor=tid===id?tpl.gold:'rgba(38,32,25,.1)'
+      btn.style.boxShadow=tid===id?`0 4px 16px rgba(38,32,25,.15)`:''
+    }
+  })
+  // Update color pickers to template defaults
+  const ca=$('col-accent'),cahex=$('col-accent-hex')
+  if(ca){ca.value=tpl.gold;if(cahex)cahex.value=tpl.gold}
+  updateDesignPreview()
+  schedulePreview()
+}
+
+function resetColors(){
+  const tpl=TEMPLATES[S.curTemplate]||TEMPLATES.blossom
+  const ca=$('col-accent'),cahex=$('col-accent-hex'),cb=$('col-bg'),cbhex=$('col-bg-hex')
+  if(ca){ca.value=tpl.gold;if(cahex)cahex.value=tpl.gold}
+  if(cb){cb.value=tpl.bg;if(cbhex)cbhex.value=tpl.bg}
+  schedulePreview()
+}
+
+function switchFontTab(tab){
+  ['presets','heading','body'].forEach(t=>{
+    const btn=$(`ft-${t}`),panel=$(`fp-${t}`)
+    if(btn)btn.classList.toggle('on',t===tab)
+    if(panel)panel.style.display=t===tab?'block':'none'
+  })
+}
+function selectPreset(id){
+  const p=PRESETS.find(x=>x.id===id);if(!p)return
+  S.fontPreset=id;loadFont(p.h);loadFont(p.b);S.fontH=p.h;S.fontB=p.b
+  document.querySelectorAll('.preset-btn').forEach(el=>el.classList.remove('on'))
+  document.querySelectorAll('.font-item').forEach(el=>el.classList.remove('on'))
+  document.querySelector(`.preset-btn[onclick="selectPreset('${id}')"]`)?.classList.add('on')
+  updateDesignPreview();schedulePreview()
+}
+function selectFont(name,type){
+  loadFont(name);if(type==='h')S.fontH=name;else S.fontB=name
+  const pfx=type==='h'?'fh-':'fb-'
+  document.querySelectorAll(`[id^="${pfx}"]`).forEach(el=>el.classList.toggle('on',el.id===pfx+name.replace(/\s+/g,'-')))
+  updateDesignPreview();schedulePreview()
+}
+function updateDesignPreview(){
+  const hf=FONTS.find(f=>f.n===S.fontH)?.f||S.fontH
+  const bf=FONTS.find(f=>f.n===S.fontB)?.f||S.fontB
+  const e1=$('lprev-names'),e2=$('lprev-detail')
+  if(e1&&hf)e1.style.fontFamily=hf
+  if(e2&&bf)e2.style.fontFamily=bf
+  const hn=$('lprev-hname'),bn=$('lprev-bname')
+  if(hn)hn.textContent=S.fontH;if(bn)bn.textContent=S.fontB
+}
+async function saveDesign(){
+  setLoading('design-save',true)
+  const ok=await saveInv({
+    font_heading:S.fontH, font_body:S.fontB,
+    font_preset:S.curTemplate||S.fontPreset,
+    theme_primary_color:$('col-accent')?.value,
+    theme_bg_color:$('col-bg')?.value,
+  })
+  setLoading('design-save',false)
+  if(ok)toast('Design gespeichert ✓','ok')
+  updatePreview()
+}
+function syncColHex(w,val){const e=$(`col-${w}-hex`);if(e)e.value=val}
+function syncColPicker(w,val){if(!/^#[0-9A-Fa-f]{6}$/.test(val))return;const e=$(`col-${w}`);if(e)e.value=val}
+
+/* ── QR CODE TAB ── */
+function tabQR(main,inv){
+  if(!inv){main.innerHTML=topbar('QR-Code')+`<div class="content">${noInvHTML()}</div>`;return}
+
+  const storedBase = localStorage.getItem('festlich_base_url')
+  const autoBase   = getSiteBase()
+  const baseUrl    = storedBase || autoBase
+  const pubUrl     = getPublicUrl(inv.slug)
+  const isConfigured = !!storedBase
+  const invitationFileName = 'festlich-invitation.html'
+
+  main.innerHTML=topbar(esc(inv.title),'QR-Code & Link')+
+  `<div class="content">
+
+    <!-- STEP 1: URL SETUP (prominent if not configured) -->
+    <div class="sc" style="border:2px solid ${isConfigured?'#38A169':'#E53E3E'};border-radius:14px">
+      <div class="sc-ttl">
+        <span style="font-size:18px">${isConfigured?'✅':'⚠️'}</span>
+        ${isConfigured ? 'GitHub Pages URL — konfiguriert' : 'SCHRITT 1 — GitHub Pages URL einrichten'}
+      </div>
+      ${!isConfigured ? `
+      <div style="background:#FFF5F5;border-radius:9px;padding:14px;margin-bottom:14px;font-size:13px;color:#742A2A;line-height:1.6">
+        <strong>Ohne diese Einstellung funktionieren Links & QR-Code nicht!</strong><br>
+        Klicke auf den Button und gib deine GitHub Pages Adresse ein.
+      </div>` : ''}
+      <div style="background:var(--ivory);border-radius:9px;padding:12px 14px;margin-bottom:12px;font-size:12.5px;color:var(--ch40)">
+        <div style="margin-bottom:4px;font-weight:500;color:var(--charcoal)">Aktuelle Basis-URL:</div>
+        <code style="font-size:13px;color:${isConfigured?'#276749':'#E53E3E'};word-break:break-all">${baseUrl}</code>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-dark btn-md" onclick="setBaseUrl();setTimeout(()=>switchTab('qr'),300)">
+          ✏️ ${isConfigured ? 'URL ändern' : 'URL jetzt einrichten →'}
+        </button>
+        ${!isConfigured ? `
+        <button class="btn btn-outline btn-md" onclick="confirmAutoURL('${autoBase}');setTimeout(()=>switchTab('qr'),300)">
+          ✓ Auto-erkannte URL verwenden
+        </button>` : ''}
+      </div>
+      <div style="margin-top:12px;font-size:12px;color:var(--taupe);line-height:1.6">
+        Deine GitHub Pages URL findest du unter:<br>
+        <strong>GitHub → Dein Repo → Settings → Pages → "Your site is published at..."</strong><br>
+        Beispiel: <code>https://Ahmpo9.github.io/festlich0/</code>
+      </div>
+    </div>
+
+    <!-- STEP 2: FILE CHECK -->
+    <div class="sc">
+      <div class="sc-ttl">📁 SCHRITT 2 — Dateien auf GitHub prüfen</div>
+      <div style="font-size:13px;color:var(--ch40);line-height:1.8">
+        Diese Dateien müssen in deinem GitHub Repo vorhanden sein:
+      </div>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:6px">
+        ${[
+          ['index.html','Startseite (umbenannt von festlich-index.html)'],
+          ['festlich-builder.html','Dashboard & Editor'],
+          ['festlich-invitation.html','Öffentliche Einladungsseite ← WICHTIG für Links!'],
+        ].map(([f,d])=>`
+        <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;background:var(--ivory);border-radius:8px">
+          <span style="font-size:14px">${f==='festlich-invitation.html'?'⭐':'📄'}</span>
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--charcoal)">${f}</div>
+            <div style="font-size:11.5px;color:var(--taupe)">${d}</div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- QR CODE (only show if configured) -->
+    <div class="sc" style="max-width:420px;margin:0 auto">
+      <div class="sc-ttl" style="justify-content:center">📱 QR-Code</div>
+      ${isConfigured ? `
+      <div class="qr-c">
+        <div id="qr-canvas"></div>
+        <div style="font-size:11.5px;color:var(--ch40);margin:10px 0 18px;word-break:break-all;text-align:center;max-width:280px">${pubUrl}</div>
+        <button class="btn btn-gold btn-md" onclick="downloadQR()" style="margin-bottom:10px">⬇ QR-Code herunterladen</button>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center">
+          <button class="btn btn-ghost btn-sm" onclick="copyToClip('${pubUrl}','✓ Link kopiert!')">🔗 Link kopieren</button>
+          <a href="${pubUrl}" target="_blank" class="btn btn-ghost btn-sm">🌐 Öffnen</a>
+        </div>
+      </div>` : `
+      <div style="text-align:center;padding:28px;color:var(--taupe);font-size:13.5px">
+        ⚠️ Erst URL einrichten (Schritt 1), dann erscheint hier der QR-Code.
+      </div>`}
+    </div>
+
+  </div>`
+
+  if(isConfigured){
+    setTimeout(()=>{
+      const c=$('qr-canvas')
+      if(!c||typeof QRCode==='undefined')return
+      new QRCode(c,{text:pubUrl,width:200,height:200,colorDark:'#262019',colorLight:'#FEFCF9',correctLevel:QRCode.CorrectLevel.M})
+    },60)
+  }
+}
+function downloadQR(){
+  const canvas=document.querySelector('#qr-canvas canvas')
+  if(!canvas){toast('QR nicht verfügbar','error');return}
+  const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='festlich-qr.png';a.click()
+  toast('QR-Code heruntergeladen!','success')
+}
+
+/* ── ANALYTICS TAB ── */
+async function tabAnalytics(main,inv){
+  if(!inv){main.innerHTML=topbar('Statistik')+`<div class="content">${noInvHTML()}</div>`;return}
+  const[rr,ir]=await Promise.all([
+    sb.from('rsvps').select('attending,guest_count').eq('invitation_id',S.curInvId),
+    sb.from('invitations').select('view_count').eq('id',S.curInvId).single()
+  ])
+  const rsvps=rr.data||[]
+  const attending=rsvps.filter(r=>r.attending===true).length
+  const declined=rsvps.filter(r=>r.attending===false).length
+  const views=ir.data?.view_count||0
+  const totalGuests=rsvps.filter(r=>r.attending).reduce((s,r)=>s+(r.guest_count||1),0)
+  const total=rsvps.length||1
+  main.innerHTML=topbar(esc(inv.title),'Statistik')+
+  `<div class="content">
+    <div class="stats">
+      ${[['👁️','#EFF6FF',views,'Aufrufe'],['✓','#F0FDF4',attending,'Zusagen'],['✗','#FEF2F2',declined,'Absagen'],['👫','#FDF4FF',totalGuests,'Gäste gesamt']].map(([ico,bg,n,l])=>`<div class="stat-c"><div class="stat-ico" style="background:${bg}">${ico}</div><div class="stat-n serif">${n}</div><div class="stat-l">${l}</div></div>`).join('')}
+    </div>
+    <div class="sc"><div class="sc-ttl">📊 RSVP-Übersicht</div>
+      <div class="abar"><div style="background:#22C55E;width:${attending/total*100}%"></div><div style="background:#EF4444;width:${declined/total*100}%"></div></div>
+      <div style="display:flex;gap:18px;flex-wrap:wrap">
+        ${[['#22C55E','Zusagen',attending],['#EF4444','Absagen',declined]].map(([c,l,n])=>`<div style="display:flex;align-items:center;gap:6px"><div style="width:11px;height:11px;border-radius:50%;background:${c}"></div><span style="font-size:13px;color:var(--ch40)">${l}: ${n}</span></div>`).join('')}
+      </div>
+    </div>
+  </div>`
+}
+
+/* ── CSV EXPORT ── */
+async function exportCSV(){
+  if(!S.curInvId)return
+  const[gRes,rRes]=await Promise.all([
+    sb.from('guests').select('*').eq('invitation_id',S.curInvId),
+    sb.from('rsvps').select('*').eq('invitation_id',S.curInvId)
+  ])
+  const guests=gRes.data||[],rsvps=rRes.data||[]
+  const rMap={};rsvps.forEach(r=>{if(r.guest_id)rMap[r.guest_id]=r})
+  const ml={meat:'Fleisch',fish:'Fisch',vegetarian:'Vegetarisch',vegan:'Vegan',none:'–'}
+  const header=['Name','E-Mail','Telefon','Tisch','VIP','Status','Personen','Menü']
+  const rows=guests.map(g=>{const r=rMap[g.id];return[g.name,g.email,g.phone,g.table_number,g.is_vip?'Ja':'Nein',r?(r.attending?'Zusage':'Absage'):'Ausstehend',r?.guest_count||'–',ml[r?.meal_preference]||'–']})
+  const csv=[header,...rows].map(r=>r.map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n')
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'})
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='gaesteliste.csv';a.click()
+  toast('CSV exportiert!','success')
+}
+
+/* ── UPDATE SIDEBAR SELECT ── */
+function updateInvSelect(){
+  const sel=$('inv-sel');if(!sel)return
+  sel.innerHTML=S.invs.length===0
+    ?'<option>Keine Einladungen</option>'
+    :S.invs.map(i=>`<option value="${i.id}" ${i.id===S.curInvId?'selected':''}>${esc(i.title)}</option>`).join('')
+}
+
+/* ═══════════════════════════════════════════════════════════
+   BOOT
+   ═══════════════════════════════════════════════════════════ */
+;(async()=>{
+  // Load extra fonts
+  const fl=document.createElement('link');fl.rel='stylesheet'
+  fl.href='https://fonts.googleapis.com/css2?family=Great+Vibes&family=Lato:wght@300;400&display=swap'
+  document.head.appendChild(fl)
+  loadedFonts.add('Great Vibes');loadedFonts.add('Lato')
+
+  const{data:{session}}=await sb.auth.getSession()
+
+  if(session){
+    S.user=session.user
+    $('auth-page').classList.add('hidden')
+    $('app').classList.remove('hidden')
+    // Update sidebar user info
+    const name=S.user.user_metadata?.full_name||S.user.email?.split('@')[0]||'Nutzer'
+    const av=$('sb-av'),un=$('sb-uname')
+    if(av)av.textContent=name[0].toUpperCase()
+    if(un)un.textContent=name
+    // Load invitations
+    await loadInvitations()
+    updateInvSelect()
+    // Check DB health
+    checkDB()
+    // Check URL configuration — show banner if GitHub Pages URL not set
+    checkURLSetup()
+    // Render default tab
+    await renderTab(S.tab)
+  } else {
+    $('auth-page').classList.remove('hidden')
+    $('app').classList.add('hidden')
+  }
+
+  // Auth state changes
+  sb.auth.onAuthStateChange(async(event,session)=>{
+    if(event==='SIGNED_IN'&&session){
+      S.user=session.user
+      const name=S.user.user_metadata?.full_name||S.user.email?.split('@')[0]||'Nutzer'
+      const av=$('sb-av'),un=$('sb-uname')
+      if(av)av.textContent=name[0].toUpperCase()
+      if(un)un.textContent=name
+      $('auth-page').classList.add('hidden')
+      $('app').classList.remove('hidden')
+      await loadInvitations()
+      updateInvSelect()
+      checkDB()
+      checkURLSetup()
+      await renderTab(S.tab)
+    } else if(event==='SIGNED_OUT'){
+      S.user=null;S.invs=[];S.curInvId=null
+      $('auth-page').classList.remove('hidden')
+      $('app').classList.add('hidden')
+    }
+  })
+})()
+</script>
+</body>
+</html>
