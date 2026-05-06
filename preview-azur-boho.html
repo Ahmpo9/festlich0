@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Festlich — Templates</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Cinzel:wght@400;500;600&family=Josefin+Sans:wght@200;300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#080808;display:flex;flex-direction:column;align-items:center;
+  padding:44px 16px 60px;font-family:'Josefin Sans',sans-serif;color:#fff;min-height:100vh}
+h1{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;
+  color:#C8A060;letter-spacing:.1em;margin-bottom:6px;text-align:center}
+.sub{font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:rgba(255,255,255,.25);margin-bottom:44px;text-align:center}
+.row{display:flex;gap:28px;flex-wrap:wrap;justify-content:center}
+.col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.lbl{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.32em;
+  text-transform:uppercase;color:rgba(255,255,255,.3)}
+.phone{width:290px;border-radius:36px;overflow:hidden;flex-shrink:0;
+  box-shadow:0 28px 80px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.05)}
+.screen{overflow-y:scroll;max-height:620px;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+
+/* ═══════════════════════════════════════════════════
+   TEMPLATE: AZUR
+   Layout: SPLIT SCREEN — Foto links + Text rechts
+   dann volle Sektionen darunter
+   Türkises Meer · Gold · Sonne · Luxus
+   ═══════════════════════════════════════════════════ */
+.az{background:#FDFBF7;font-family:'Josefin Sans',sans-serif}
+
+/* SPLIT HERO — völlig anders als alle anderen Templates */
+.az-split{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+.az-split-img{position:relative;overflow:hidden}
+.az-split-img img{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center}
+.az-split-img::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(to right,transparent 60%,rgba(253,251,247,.8))}
+.az-split-text{background:#FDFBF7;display:flex;flex-direction:column;
+  justify-content:center;padding:28px 16px 28px 12px;}
+.az-split-eyebrow{font-family:'Cinzel',serif;font-size:6.5px;letter-spacing:.32em;
+  text-transform:uppercase;color:#B8922A;margin-bottom:12px;display:block}
+.az-split-names{font-family:'DM Serif Display',serif;font-size:22px;
+  color:#1A1208;line-height:1.15;margin-bottom:6px}
+.az-split-amp{font-style:italic;display:block;font-size:.85em;
+  color:#B8922A;margin:2px 0}
+.az-split-date{font-family:'Cinzel',serif;font-size:7px;
+  letter-spacing:.18em;color:#8A6A2A;margin-bottom:14px}
+.az-split-line{width:24px;height:1px;background:#B8922A;margin-bottom:14px}
+.az-split-tagline{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:12px;color:#5A4A2A;line-height:1.55;font-weight:300}
+
+/* Sun decoration floating */
+.az-sun-deco{width:100%;padding:24px 20px 0;display:flex;justify-content:center}
+.az-sun-deco img{width:72px;filter:drop-shadow(0 4px 16px rgba(200,160,60,.35))}
+
+/* Quote — diagonal stripe layout */
+.az-quote-stripe{position:relative;overflow:hidden;background:#1A1208;
+  padding:36px 24px;color:white;text-align:center}
+.az-qs-bg{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;opacity:.15}
+.az-qs-overlay{position:absolute;inset:0;background:rgba(26,18,8,.82)}
+.az-qs-content{position:relative;z-index:2}
+.az-qs-label{font-family:'Cinzel',serif;font-size:7px;letter-spacing:.32em;
+  text-transform:uppercase;color:rgba(200,160,60,.7);margin-bottom:12px;display:block}
+.az-qs-mark{font-family:'Playfair Display',serif;font-size:72px;
+  line-height:.8;color:rgba(200,160,60,.25);display:block;margin-bottom:-6px}
+.az-qs-text{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:18px;color:rgba(255,255,255,.9);line-height:1.65;margin-bottom:10px}
+.az-qs-src{font-family:'Cinzel',serif;font-size:9px;
+  letter-spacing:.2em;color:rgba(200,160,60,.65)}
+.az-artdeco{width:70%;max-width:200px;margin:16px auto 0;display:block;opacity:.4}
+
+/* Aerial sea full-width section */
+.az-sea-section{position:relative;height:200px;overflow:hidden}
+.az-sea-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.az-sea-overlay{position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent,rgba(26,18,8,.6))}
+.az-sea-text{position:absolute;bottom:0;left:0;right:0;
+  padding:16px 20px;text-align:center;color:white}
+.az-sea-big{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.28em;
+  text-transform:uppercase;opacity:.8}
+
+/* Calendar — horizontal strip, not centered box */
+.az-cal-strip{background:#1A1208;padding:28px 20px}
+.az-cal-strip-month{display:flex;align-items:baseline;gap:10px;margin-bottom:18px}
+.az-cal-strip-m{font-family:'DM Serif Display',serif;font-style:italic;
+  font-size:28px;color:#C8A060}
+.az-cal-strip-y{font-family:'Cinzel',serif;font-size:10px;
+  letter-spacing:.2em;color:rgba(200,160,60,.45)}
+.az-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.az-wd{font-size:7.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);text-align:center;padding:3px 0}
+.az-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:300;color:rgba(255,255,255,.55);border-radius:50%}
+.az-day.a{background:#C8A060;color:#1A1208;font-weight:700;
+  box-shadow:0 0 18px rgba(200,160,96,.5)}
+.az-day.p{opacity:.18}
+
+/* Countdown — horizontal bar, very different */
+.az-cd-bar{background:#C8A060;padding:20px 24px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.az-cd-item{text-align:center;padding:8px 4px;
+  border-right:1px solid rgba(26,18,8,.2)}
+.az-cd-item:last-child{border:none}
+.az-cd-n{font-family:'DM Serif Display',serif;font-size:34px;
+  color:#1A1208;line-height:1;display:block}
+.az-cd-l{font-family:'Cinzel',serif;font-size:7px;letter-spacing:.16em;
+  text-transform:uppercase;color:rgba(26,18,8,.55);display:block;margin-top:3px}
+
+/* Zeremonie — card with left border accent */
+.az-cer-sec{padding:24px 20px;background:#FDFBF7}
+.az-cer-card{border-left:3px solid #C8A060;padding:16px 18px;
+  background:white;box-shadow:0 2px 16px rgba(26,18,8,.06)}
+.az-cer-lbl{font-family:'Cinzel',serif;font-size:7.5px;letter-spacing:.3em;
+  text-transform:uppercase;color:#B8922A;margin-bottom:8px;display:block}
+.az-cer-name-big{font-family:'DM Serif Display',serif;font-size:22px;
+  color:#1A1208;margin-bottom:6px}
+.az-cer-details{font-size:12px;color:#5A4A2A;font-weight:300;line-height:1.7}
+.az-cer-time-pill{display:inline-flex;align-items:center;gap:5px;
+  border:1px solid #C8A060;border-radius:3px;padding:5px 12px;
+  font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;
+  color:#8A6A2A;margin:8px 0}
+.az-map{display:inline-flex;align-items:center;gap:6px;
+  background:#1A1208;color:#C8A060;border:none;padding:9px 18px;
+  font-family:'Cinzel',serif;font-size:9px;letter-spacing:.14em;
+  text-transform:uppercase;cursor:pointer;margin-top:10px;
+  box-shadow:0 4px 12px rgba(26,18,8,.25)}
+
+/* Flower arch couple photo — arch shaped */
+.az-couple-sec{padding:20px 20px 0;background:#FDFBF7}
+.az-couple-arch{border-radius:999px 999px 4px 4px;overflow:hidden;height:320px}
+.az-couple-arch img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
+.az-couple-cap{text-align:center;padding:12px 0 16px;
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:13px;color:#8A6A2A}
+
+/* RSVP — full dark with sun */
+.az-rsvp{background:#1A1208;padding:36px 20px;text-align:center;
+  position:relative;overflow:hidden}
+.az-rsvp-sun{position:absolute;top:-20px;right:-20px;width:120px;
+  opacity:.12;pointer-events:none}
+.az-rsvp-title{font-family:'DM Serif Display',serif;font-size:32px;
+  color:white;margin-bottom:6px;position:relative;z-index:1}
+.az-rsvp-sub{font-size:11px;color:rgba(255,255,255,.45);
+  margin-bottom:20px;letter-spacing:.1em;text-transform:uppercase;
+  position:relative;z-index:1}
+.az-rf{width:100%;padding:11px 16px;background:rgba(255,255,255,.07);
+  border:1px solid rgba(200,160,60,.3);color:white;
+  font-family:'Josefin Sans',sans-serif;font-size:11.5px;
+  outline:none;margin-bottom:9px;letter-spacing:.05em;
+  position:relative;z-index:1}
+.az-rf::placeholder{color:rgba(255,255,255,.28)}
+.az-rb{width:100%;background:#C8A060;color:#1A1208;border:none;padding:13px;
+  font-family:'Cinzel',serif;font-size:10px;letter-spacing:.22em;
+  text-transform:uppercase;cursor:pointer;font-weight:500;
+  position:relative;z-index:1;
+  box-shadow:0 4px 18px rgba(200,160,60,.35)}
+.az-radios{display:flex;gap:10px;justify-content:center;margin-bottom:13px;
+  position:relative;z-index:1}
+.az-radio{display:flex;align-items:center;gap:5px;font-size:11px;
+  color:rgba(255,255,255,.7);cursor:pointer}
+.az-footer{background:#0E0906;padding:16px;text-align:center}
+.az-fb{font-family:'DM Serif Display',serif;font-style:italic;
+  font-size:20px;color:rgba(255,255,255,.2)}
+.az-fb span{color:#C8A060}
+
+/* ═══════════════════════════════════════════════════
+   TEMPLATE: BOHO
+   Layout: MAGAZINE EDITORIAL — große Bilder, wenig Text
+   Warm · Terracotta · Licht · Sommer-Hochzeit
+   ═══════════════════════════════════════════════════ */
+.bh{background:#FAF7F4;font-family:'Josefin Sans',sans-serif}
+
+/* HERO: Volle Höhe, Text über Foto, kein Arch */
+.bh-hero{position:relative;height:100vh;overflow:hidden}
+.bh-hero-img{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center}
+.bh-hero-ov{position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.05) 0%,transparent 40%,rgba(0,0,0,.55) 100%)}
+/* Namen oben links — editorial style */
+.bh-hero-top{position:absolute;top:28px;left:22px;right:22px;z-index:2}
+.bh-hero-top-eyebrow{font-family:'Cinzel',serif;font-size:7px;letter-spacing:.34em;
+  text-transform:uppercase;color:rgba(255,255,255,.6);display:block;margin-bottom:8px}
+.bh-hero-names{font-family:'Playfair Display',serif;font-size:36px;font-weight:400;
+  color:white;line-height:1.05;letter-spacing:-.01em}
+.bh-hero-amp{font-style:italic;color:rgba(255,255,255,.5);font-size:.6em}
+/* Datum unten rechts */
+.bh-hero-bottom{position:absolute;bottom:32px;right:22px;text-align:right;z-index:2}
+.bh-hero-date{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;
+  color:rgba(255,255,255,.75);display:block}
+.bh-hero-scroll{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);margin-top:5px;display:block}
+/* Ornament bottom center */
+.bh-hero-orn{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);
+  z-index:2;width:60px;opacity:.4;
+  filter:brightness(10) sepia(.5)}
+
+/* Quote — stark, links ausgerichtet, nicht zentriert */
+.bh-quote-block{padding:32px 22px;background:#FAF7F4}
+.bh-q-num{font-family:'Playfair Display',serif;font-size:80px;font-weight:700;
+  color:#F0E8E0;line-height:.8;display:block;margin-bottom:-10px}
+.bh-q-text{font-family:'Playfair Display',serif;font-style:italic;
+  font-size:18px;color:#2A1A10;line-height:1.6;margin-bottom:8px}
+.bh-q-src{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.2em;
+  text-transform:uppercase;color:#C87040}
+.bh-q-line{width:36px;height:2px;background:#C87040;margin:12px 0}
+
+/* Full-width boho reception photo */
+.bh-full-img{width:100%;height:240px;object-fit:cover;display:block}
+
+/* Calendar — über das Foto gelegt wie ein Overlay card */
+.bh-date-section{position:relative;background:#2A1810;padding:28px 22px}
+.bh-date-bg{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;opacity:.15;mix-blend-mode:luminosity}
+.bh-date-content{position:relative;z-index:2}
+.bh-date-top{display:flex;justify-content:space-between;align-items:flex-end;
+  margin-bottom:20px}
+.bh-date-month{font-family:'Playfair Display',serif;font-style:italic;
+  font-size:30px;color:white}
+.bh-date-year{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.2em;
+  color:rgba(255,255,255,.35)}
+.bh-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.bh-wd{font-size:8px;text-transform:uppercase;color:rgba(255,255,255,.28);
+  text-align:center;padding:3px 0}
+.bh-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:rgba(255,255,255,.55);border-radius:4px}
+.bh-day.a{background:#D4845A;color:white;font-weight:700;border-radius:4px;
+  box-shadow:0 0 14px rgba(212,132,90,.5)}
+.bh-day.p{opacity:.18}
+
+/* Countdown — 3 große Zahlen inline */
+.bh-cd-inline{display:flex;align-items:baseline;justify-content:center;
+  gap:4px;padding:24px 22px;background:#C87040}
+.bh-cd-num{font-family:'Playfair Display',serif;font-size:52px;font-weight:700;
+  color:white;line-height:1;letter-spacing:-.02em}
+.bh-cd-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(255,255,255,.6);display:block;text-align:center}
+.bh-cd-sep{font-size:32px;color:rgba(255,255,255,.3);padding:0 4px 16px}
+.bh-cd-unit{text-align:center}
+.bh-cd-sek{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;
+  color:rgba(255,255,255,.5);line-height:1}
+
+/* Zeremonie — kein Card, direkt auf Seite */
+.bh-cer-sec{padding:28px 22px;background:#FAF7F4}
+.bh-cer-big-title{font-family:'Playfair Display',serif;font-style:italic;
+  font-size:34px;color:#2A1810;margin-bottom:18px;line-height:1.15}
+.bh-cer-row{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+.bh-cer-ico{font-size:22px;flex-shrink:0;margin-top:2px}
+.bh-cer-lbl{font-family:'Cinzel',serif;font-size:7.5px;letter-spacing:.24em;
+  text-transform:uppercase;color:#C87040;margin-bottom:3px}
+.bh-cer-val{font-size:15px;color:#2A1810;font-weight:400;margin-bottom:2px}
+.bh-cer-sub{font-size:12.5px;color:#7A5A4A;font-weight:300}
+.bh-divider{height:1px;background:#E8DDD5;margin:6px 0}
+.bh-map{display:inline-flex;align-items:center;gap:7px;
+  background:transparent;color:#C87040;border:1.5px solid #C87040;
+  padding:9px 20px;font-family:'Cinzel',serif;font-size:9px;
+  letter-spacing:.14em;text-transform:uppercase;cursor:pointer;
+  margin-top:10px}
+
+/* Couple palace photo — full width, no radius */
+.bh-palace{width:100%;height:300px;object-fit:cover;display:block;
+  object-position:center 25%}
+.bh-palace-cap{background:#2A1810;padding:12px 22px;
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:13px;color:rgba(255,255,255,.45);text-align:right}
+
+/* Zeitline — numbered, editorial */
+.bh-timeline{padding:28px 22px;background:#FAF7F4}
+.bh-tl-title{font-family:'Playfair Display',serif;font-size:24px;
+  color:#2A1810;margin-bottom:20px;font-style:italic}
+.bh-tl-row{display:flex;gap:16px;margin-bottom:18px}
+.bh-tl-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;
+  color:#F0E8E0;line-height:1;flex-shrink:0;width:36px}
+.bh-tl-content{border-top:1px solid #E8DDD5;padding-top:8px;flex:1}
+.bh-tl-time{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.18em;
+  color:#C87040;text-transform:uppercase;margin-bottom:4px}
+.bh-tl-event{font-size:14px;color:#2A1810;font-weight:400}
+
+/* RSVP — boho style, warm tones */
+.bh-rsvp{position:relative;overflow:hidden;padding:36px 22px;text-align:center}
+.bh-rsvp-bg{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;filter:brightness(.5) saturate(.8)}
+.bh-rsvp-ov{position:absolute;inset:0;background:rgba(42,24,16,.65)}
+.bh-rsvp-cont{position:relative;z-index:2}
+.bh-rsvp-title{font-family:'Playfair Display',serif;font-style:italic;
+  font-size:34px;color:white;margin-bottom:6px}
+.bh-rsvp-sub{font-size:11.5px;color:rgba(255,255,255,.55);
+  margin-bottom:20px;line-height:1.65;font-weight:300}
+.bh-rf{width:100%;padding:12px 16px;
+  background:rgba(255,255,255,.1);border:none;
+  border-bottom:1px solid rgba(255,255,255,.25);
+  color:white;font-family:'Josefin Sans',sans-serif;
+  font-size:12px;outline:none;margin-bottom:10px;
+  letter-spacing:.05em}
+.bh-rf::placeholder{color:rgba(255,255,255,.35)}
+.bh-rb{width:100%;background:white;color:#2A1810;border:none;padding:13px;
+  font-family:'Cinzel',serif;font-size:10px;letter-spacing:.22em;
+  text-transform:uppercase;cursor:pointer;font-weight:600;margin-top:6px}
+.bh-radios{display:flex;gap:10px;justify-content:center;
+  margin-bottom:14px;flex-wrap:wrap}
+.bh-radio{display:flex;align-items:center;gap:5px;font-size:11px;
+  color:rgba(255,255,255,.75);cursor:pointer}
+.bh-footer{background:#2A1810;padding:18px;text-align:center}
+.bh-fb{font-family:'Playfair Display',serif;font-style:italic;
+  font-size:22px;color:rgba(255,255,255,.22)}
+.bh-fb span{color:#C87040}
+</style>
+</head>
+<body>
+<h1>Festlich — Neue Templates</h1>
+<p class="sub">Azur &amp; Boho · Einzigartige Layouts</p>
+
+<div class="row">
+
+<!-- ════ AZUR — SPLIT SCREEN ════ -->
+<div class="col">
+  <div class="lbl">🌊 Azur — Split Layout</div>
+  <div class="phone"><div class="screen az">
+
+    <!-- SPLIT HERO: Bild links / Text rechts -->
+    <div class="az-split">
+      <div class="az-split-img">
+        <img src="img3_0.jpg" alt="">
+      </div>
+      <div class="az-split-text">
+        <span class="az-split-eyebrow">Hochzeit</span>
+        <div class="az-split-names">Lena<span class="az-split-amp">&amp;</span>Florian</div>
+        <div class="az-split-date">12 · 06 · 2025</div>
+        <div class="az-split-line"></div>
+        <div class="az-split-tagline">Ein Moment, in dem sich die Sterne für uns vereinen.</div>
+      </div>
+    </div>
+
+    <!-- Gold Sonne -->
+    <div class="az-sun-deco">
+      <img src="img3_1.png" alt="">
+    </div>
+
+    <!-- Quote auf dunklem Hintergrund -->
+    <div class="az-quote-stripe">
+      <img class="az-qs-bg" src="img3_2.jpg" alt="">
+      <div class="az-qs-overlay"></div>
+      <div class="az-qs-content">
+        <span class="az-qs-label">Hoheslied 8,7</span>
+        <span class="az-qs-mark">&ldquo;</span>
+        <div class="az-qs-text">Viele Wasser können die Liebe nicht löschen.</div>
+        <div class="az-qs-src">— Hoheslied 8,7</div>
+        <img class="az-artdeco" src="img3_3.jpg" alt="">
+      </div>
+    </div>
+
+    <!-- Aerial sea strip mit Text -->
+    <div class="az-sea-section">
+      <img class="az-sea-bg" src="img3_4.jpg" alt="">
+      <div class="az-sea-overlay"></div>
+      <div class="az-sea-text">
+        <div class="az-sea-big">18 · JUNI · 2025 · FÜSSEN</div>
+      </div>
+    </div>
+
+    <!-- Kalender horizontal -->
+    <div class="az-cal-strip">
+      <div class="az-cal-strip-month">
+        <span class="az-cal-strip-m">Juni</span>
+        <span class="az-cal-strip-y">2025</span>
+      </div>
+      <div class="az-cal-grid">
+        <div class="az-wd">Mo</div><div class="az-wd">Di</div><div class="az-wd">Mi</div>
+        <div class="az-wd">Do</div><div class="az-wd">Fr</div><div class="az-wd">Sa</div><div class="az-wd">So</div>
+        <div class="az-day p"></div><div class="az-day p">1</div><div class="az-day p">2</div>
+        <div class="az-day p">3</div><div class="az-day p">4</div><div class="az-day p">5</div><div class="az-day p">6</div>
+        <div class="az-day p">7</div><div class="az-day p">8</div><div class="az-day p">9</div>
+        <div class="az-day p">10</div><div class="az-day p">11</div><div class="az-day p">12</div><div class="az-day p">13</div>
+        <div class="az-day p">14</div><div class="az-day p">15</div><div class="az-day p">16</div>
+        <div class="az-day p">17</div><div class="az-day a">18</div><div class="az-day">19</div><div class="az-day">20</div>
+        <div class="az-day">21</div><div class="az-day">22</div><div class="az-day">23</div>
+        <div class="az-day">24</div><div class="az-day">25</div><div class="az-day">26</div>
+        <div class="az-day">27</div><div class="az-day">28</div><div class="az-day">29</div><div class="az-day">30</div>
+        <div class="az-day">31</div>
+      </div>
+    </div>
+
+    <!-- Countdown als goldener Balken -->
+    <div class="az-cd-bar">
+      <div class="az-cd-item"><span class="az-cd-n" id="az-d">–</span><span class="az-cd-l">Tage</span></div>
+      <div class="az-cd-item"><span class="az-cd-n" id="az-h">–</span><span class="az-cd-l">Std.</span></div>
+      <div class="az-cd-item"><span class="az-cd-n" id="az-m">–</span><span class="az-cd-l">Min.</span></div>
+      <div class="az-cd-item"><span class="az-cd-n" id="az-s">–</span><span class="az-cd-l">Sek.</span></div>
+    </div>
+
+    <!-- Zeremonie: Left border card -->
+    <div class="az-cer-sec">
+      <div class="az-cer-card">
+        <span class="az-cer-lbl">Zeremonie</span>
+        <div class="az-cer-name-big">Schloss Neuschwanstein</div>
+        <div class="az-cer-time-pill">🕐 15:00 Uhr</div>
+        <div class="az-cer-details">Füssen, Bayern</div>
+        <button class="az-map">📍 Route anzeigen</button>
+      </div>
+    </div>
+
+    <!-- Couple arch photo -->
+    <div class="az-couple-sec">
+      <div class="az-couple-arch">
+        <img src="img3_5.jpg" alt="">
+      </div>
+      <div class="az-couple-cap">Lena &amp; Florian · The Zeremonie</div>
+    </div>
+
+    <!-- RSVP -->
+    <div class="az-rsvp">
+      <img class="az-rsvp-sun" src="img3_6.png" alt="">
+      <div class="az-rsvp-title">Sei unser Gast</div>
+      <div class="az-rsvp-sub">Bitte bestätige uns deine Teilnahme · Bis 20.08.2025</div>
+      <input class="az-rf" placeholder="Name">
+      <input class="az-rf" placeholder="Telefonnummer">
+      <input class="az-rf" placeholder="Anzahl der Gäste">
+      <div class="az-radios">
+        <label class="az-radio"><input type="radio" name="az1" checked> Zusage</label>
+        <label class="az-radio"><input type="radio" name="az1"> Absage</label>
+      </div>
+      <button class="az-rb">Teilnahme bestätigen</button>
+    </div>
+    <div class="az-footer"><div class="az-fb">Festlich<span>.</span></div></div>
+
+  </div></div>
+</div>
+
+<!-- ════ BOHO — MAGAZINE EDITORIAL ════ -->
+<div class="col">
+  <div class="lbl">🍂 Boho — Editorial</div>
+  <div class="phone"><div class="screen bh">
+
+    <!-- HERO: Vollbild, Namen oben links -->
+    <div class="bh-hero">
+      <img class="bh-hero-img" src="img3_7.jpg" alt="">
+      <div class="bh-hero-ov"></div>
+      <div class="bh-hero-top">
+        <span class="bh-hero-top-eyebrow">Einladung</span>
+        <div class="bh-hero-names">Jana<br><span class="bh-hero-amp">&amp;</span><br>Markus</div>
+      </div>
+      <img class="bh-hero-orn" src="img3_8.png" alt="">
+      <div class="bh-hero-bottom">
+        <span class="bh-hero-date">03 · 07 · 2025</span>
+        <span class="bh-hero-scroll">Weiter ↓</span>
+      </div>
+    </div>
+
+    <!-- Quote: links, groß, editorial -->
+    <div class="bh-quote-block">
+      <span class="bh-q-num">&ldquo;</span>
+      <div class="bh-q-text">Viele Wasser können die Liebe nicht löschen.</div>
+      <div class="bh-q-line"></div>
+      <div class="bh-q-src">Hoheslied 8,7</div>
+    </div>
+
+    <!-- Boho reception full width -->
+    <img class="bh-full-img" src="img3_9.jpg" alt="">
+
+    <!-- Calendar dark -->
+    <div class="bh-date-section">
+      <div class="bh-date-content">
+        <div class="bh-date-top">
+          <span class="bh-date-month">Juni 2025</span>
+          <span class="bh-date-year">2025</span>
+        </div>
+        <div class="bh-cal">
+          <div class="bh-wd">Mo</div><div class="bh-wd">Di</div><div class="bh-wd">Mi</div>
+          <div class="bh-wd">Do</div><div class="bh-wd">Fr</div><div class="bh-wd">Sa</div><div class="bh-wd">So</div>
+          <div class="bh-day p"></div><div class="bh-day p"></div><div class="bh-day p"></div>
+          <div class="bh-day p"></div><div class="bh-day p">1</div><div class="bh-day p">2</div><div class="bh-day p">3</div>
+          <div class="bh-day p">4</div><div class="bh-day p">5</div><div class="bh-day p">6</div>
+          <div class="bh-day p">7</div><div class="bh-day p">8</div><div class="bh-day p">9</div><div class="bh-day p">10</div>
+          <div class="bh-day p">11</div><div class="bh-day p">12</div><div class="bh-day p">13</div>
+          <div class="bh-day p">14</div><div class="bh-day p">15</div><div class="bh-day p">16</div><div class="bh-day p">17</div>
+          <div class="bh-day a">18</div><div class="bh-day">19</div><div class="bh-day">20</div>
+          <div class="bh-day">21</div><div class="bh-day">22</div><div class="bh-day">23</div><div class="bh-day">24</div>
+          <div class="bh-day">25</div><div class="bh-day">26</div><div class="bh-day">27</div>
+          <div class="bh-day">28</div><div class="bh-day">29</div><div class="bh-day">30</div><div class="bh-day">31</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Countdown als oranger Balken mit großen Zahlen -->
+    <div class="bh-cd-inline">
+      <div class="bh-cd-unit">
+        <span class="bh-cd-num" id="bh-d">–</span>
+        <span class="bh-cd-lbl">Tage</span>
+      </div>
+      <span class="bh-cd-sep">:</span>
+      <div class="bh-cd-unit">
+        <span class="bh-cd-num" id="bh-h">–</span>
+        <span class="bh-cd-lbl">Std.</span>
+      </div>
+      <span class="bh-cd-sep">:</span>
+      <div class="bh-cd-unit">
+        <span class="bh-cd-num" id="bh-m">–</span>
+        <span class="bh-cd-lbl">Min.</span>
+      </div>
+      <span class="bh-cd-sep" style="font-size:22px;padding-bottom:22px">:</span>
+      <div class="bh-cd-unit">
+        <span class="bh-cd-sek" id="bh-s">–</span>
+        <span class="bh-cd-lbl" style="color:rgba(255,255,255,.45)">Sek.</span>
+      </div>
+    </div>
+
+    <!-- Zeremonie direkt, kein Card -->
+    <div class="bh-cer-sec">
+      <div class="bh-cer-big-title">Zeremonie</div>
+      <div class="bh-cer-row">
+        <span class="bh-cer-ico">⛪</span>
+        <div>
+          <div class="bh-cer-lbl">Ort</div>
+          <div class="bh-cer-val">Schloss Neuschwanstein</div>
+          <div class="bh-cer-sub">Füssen, Bayern</div>
+        </div>
+      </div>
+      <div class="bh-divider"></div>
+      <div class="bh-cer-row">
+        <span class="bh-cer-ico">🕐</span>
+        <div>
+          <div class="bh-cer-lbl">Zeit</div>
+          <div class="bh-cer-val">15:00 Uhr</div>
+        </div>
+      </div>
+      <button class="bh-map">📍 Route anzeigen</button>
+    </div>
+
+    <!-- Palace couple full width -->
+    <img class="bh-palace" src="img3_10.jpg" alt="">
+    <div class="bh-palace-cap">Ein Augenblick für die Ewigkeit</div>
+
+    <!-- Zeitline editorial -->
+    <div class="bh-timeline">
+      <div class="bh-tl-title">Ablauf des Tages</div>
+      <div class="bh-tl-row">
+        <span class="bh-tl-num">01</span>
+        <div class="bh-tl-content">
+          <div class="bh-tl-time">17:30</div>
+          <div class="bh-tl-event">Begrüßung & Ankunft</div>
+        </div>
+      </div>
+      <div class="bh-tl-row">
+        <span class="bh-tl-num">02</span>
+        <div class="bh-tl-content">
+          <div class="bh-tl-time">18:00</div>
+          <div class="bh-tl-event">Zeremonie</div>
+        </div>
+      </div>
+      <div class="bh-tl-row">
+        <span class="bh-tl-num">03</span>
+        <div class="bh-tl-content">
+          <div class="bh-tl-time">20:00</div>
+          <div class="bh-tl-event">Gala-Dinner</div>
+        </div>
+      </div>
+      <div class="bh-tl-row">
+        <span class="bh-tl-num">04</span>
+        <div class="bh-tl-content">
+          <div class="bh-tl-time">22:00</div>
+          <div class="bh-tl-event">Tanz & Feier</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RSVP auf Boho Foto -->
+    <div class="bh-rsvp">
+      <img class="bh-rsvp-bg" src="img3_11.jpg" alt="">
+      <div class="bh-rsvp-ov"></div>
+      <div class="bh-rsvp-cont">
+        <div class="bh-rsvp-title">Sei unser Gast</div>
+        <div class="bh-rsvp-sub">Bitte bestätige uns deine Teilnahme<br>Bis 20 · 07 · 2025</div>
+        <input class="bh-rf" placeholder="Name">
+        <input class="bh-rf" placeholder="Telefonnummer">
+        <input class="bh-rf" placeholder="Anzahl der Gäste">
+        <div class="bh-radios">
+          <label class="bh-radio"><input type="radio" name="bh1" checked> Zusage</label>
+          <label class="bh-radio"><input type="radio" name="bh1"> Absage</label>
+        </div>
+        <button class="bh-rb">Teilnahme bestätigen</button>
+      </div>
+    </div>
+    <div class="bh-footer"><div class="bh-fb">Festlich<span>.</span></div></div>
+
+  </div></div>
+</div>
+
+</div><!-- row -->
+
+<div style="margin-top:44px;text-align:center;font-size:10px;letter-spacing:.18em;
+  text-transform:uppercase;color:rgba(255,255,255,.15);padding-bottom:40px">
+  Vorschau · Alle Designs anpassbar
+</div>
+
+<script>
+function pad(n){return String(Math.max(0,n)).padStart(2,'0')}
+function tick(){
+  const now=Date.now()
+  ;[
+    {t:new Date('2025-07-18T18:00:00'),ids:['az-d','az-h','az-m','az-s']},
+    {t:new Date('2025-08-18T18:00:00'),ids:['bh-d','bh-h','bh-m','bh-s']},
+  ].forEach(x=>{
+    const diff=x.t-now
+    if(diff<=0)return
+    const vals=[
+      Math.floor(diff/86400000),
+      Math.floor(diff%86400000/3600000),
+      Math.floor(diff%3600000/60000),
+      Math.floor(diff%60000/1000)
+    ]
+    x.ids.forEach((id,i)=>{
+      const e=document.getElementById(id);if(e)e.textContent=pad(vals[i])
+    })
+  })
+}
+tick();setInterval(tick,1000)
+</script>
+</body>
+</html>
