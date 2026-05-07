@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Festlich — Digitale Einladungen für Hochzeit & Verlobung</title>
+<meta name="description" content="Erstelle wunderschöne digitale Einladungen. 4 einzigartige Designs. Kostenlos gestalten, 39,99 € zum Download.">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Jost',sans-serif;background:#0d0a05;color:#FAF8F3;overflow-x:hidden;line-height:1.7}
+a{color:inherit;text-decoration:none}
+
+/* Header */
+header{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(13,10,5,.95);backdrop-filter:blur(18px);border-bottom:1px solid rgba(250,248,243,.06)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;height:64px;max-width:1200px;margin:0 auto;padding:0 24px}
+.logo{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:500;letter-spacing:.06em}
+.logo span{color:#A87C3E}
+nav a{font-size:13px;color:rgba(250,248,243,.5);margin-left:28px;transition:color .2s}
+nav a:hover{color:#FAF8F3}
+.cta-btn{background:linear-gradient(135deg,#A87C3E,#C89855);color:#fff;padding:9px 20px;border-radius:100px;font-size:13px;margin-left:20px}
+
+/* Hero */
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 24px 60px;background:radial-gradient(ellipse 70% 50% at 50% 30%,rgba(168,124,62,.12),transparent)}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,6vw,72px);font-weight:300;line-height:1.08;letter-spacing:-.01em;margin-bottom:16px}
+.hero h1 em{font-style:italic;color:#A87C3E}
+.hero p{color:rgba(250,248,243,.55);font-size:16px;font-weight:300;max-width:460px;margin:0 auto 32px}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-gold{background:linear-gradient(135deg,#A87C3E,#C89855);color:#fff;padding:14px 32px;border-radius:100px;font-size:15px;letter-spacing:.04em;transition:transform .2s}
+.btn-gold:hover{transform:translateY(-2px)}
+.btn-outline{background:transparent;border:1.5px solid rgba(250,248,243,.2);color:#FAF8F3;padding:14px 32px;border-radius:100px;font-size:15px;transition:all .2s}
+.btn-outline:hover{border-color:#A87C3E}
+
+/* Design Section */
+.designs{padding:80px 24px;max-width:1400px;margin:0 auto}
+.designs h2{text-align:center;font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,44px);font-weight:300;margin-bottom:8px}
+.designs>h2 em{font-style:italic;color:#A87C3E}
+.designs>p{text-align:center;color:rgba(250,248,243,.45);font-size:15px;margin-bottom:48px}
+.phone-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:40px;justify-items:center}
+.phone-col{text-align:center}
+.phone-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#A87C3E;margin-bottom:16px;font-weight:500}
+.phone-frame{width:320px;height:640px;border-radius:40px;overflow:hidden;background:#000;box-shadow:0 20px 60px rgba(0,0,0,.6),inset 0 0 0 2px rgba(255,255,255,.1);position:relative}
+.phone-frame iframe{width:100%;height:100%;border:none;display:block}
+.phone-name{font-family:'Cormorant Garamond',serif;font-size:20px;margin-top:16px}
+.phone-desc{font-size:12px;color:rgba(250,248,243,.4);font-weight:300}
+
+/* How it works */
+.how{padding:80px 24px;background:#0a0803;text-align:center}
+.how h2{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,44px);font-weight:300;margin-bottom:48px}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;max-width:800px;margin:0 auto}
+.step{text-align:center}
+.step-num{width:56px;height:56px;border-radius:50%;border:1.5px solid #A87C3E;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:24px;color:#A87C3E;margin:0 auto 16px}
+.step h3{font-size:16px;font-weight:500;margin-bottom:8px}
+.step p{font-size:14px;color:rgba(250,248,243,.45);font-weight:300;line-height:1.6}
+
+/* Price */
+.price{padding:80px 24px;text-align:center}
+.price h2{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,4vw,44px);font-weight:300;margin-bottom:8px}
+.price>p{color:rgba(250,248,243,.45);font-size:15px;margin-bottom:40px}
+.price-card{background:rgba(250,248,243,.04);border:1px solid rgba(250,248,243,.08);border-radius:24px;padding:40px 32px;max-width:500px;margin:0 auto}
+.price-card .amount{font-family:'Cormorant Garamond',serif;font-size:64px;font-weight:300;color:#FAF8F3;line-height:1}
+.price-card .note{font-size:13px;color:rgba(250,248,243,.4);margin:8px 0 24px}
+.price-card ul{list-style:none;text-align:left;max-width:300px;margin:0 auto 24px}
+.price-card ul li{padding:8px 0;font-size:14px;color:rgba(250,248,243,.6);display:flex;align-items:center;gap:8px}
+.price-card ul li::before{content:'✓';color:#A87C3E}
+
+/* Footer */
+footer{padding:40px 24px;text-align:center;border-top:1px solid rgba(250,248,243,.06)}
+footer .logo{font-size:22px;margin-bottom:8px}
+footer p{font-size:12px;color:rgba(250,248,243,.25)}
+
+@media(max-width:900px){
+  .phone-grid{grid-template-columns:1fr}
+  .phone-frame{width:280px;height:560px}
+  .steps{grid-template-columns:1fr}
+  nav a{display:none}
+  nav a.cta-btn{display:inline-block}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">Festlich<span>.</span></div>
+    <nav>
+      <a href="#designs">Designs</a>
+      <a href="#how">So geht's</a>
+      <a href="#preis">Preis</a>
+      <a href="festlich-builder.html" class="cta-btn">Jetzt starten</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div>
+    <h1>Deine Einladung.<br>Schön. <em>Persönlich.</em><br>In Minuten.</h1>
+    <p>Erstelle wunderschöne digitale Einladungen für Hochzeiten, Verlobungen und besondere Feiern. Kostenlos gestalten — erst bezahlen, wenn du zufrieden bist.</p>
+    <div class="hero-btns">
+      <a href="festlich-builder.html" class="btn-gold">Kostenlos gestalten</a>
+      <a href="#designs" class="btn-outline">Designs ansehen</a>
+    </div>
+  </div>
+</section>
+
+<section class="designs" id="designs">
+  <h2>Wähle deinen <em>Stil</em></h2>
+  <p>4 einzigartige Designs — vollständig anpassbar mit deinen Namen, Fotos und Texten.<br>Die Einladungen sind direkt hier scrollbar.</p>
+  <div class="phone-grid">
+    <div class="phone-col">
+      <div class="phone-label">🌸 Flieder & 🖤 Glanz</div>
+      <div class="phone-frame">
+        <iframe src="preview-blossom-mono.html" loading="lazy" scrolling="yes"></iframe>
+      </div>
+      <div class="phone-name">Flieder & Glanz</div>
+      <div class="phone-desc">Romantisch · Lila · S/W · Minimal</div>
+    </div>
+    <div class="phone-col">
+      <div class="phone-label">🍂 Boho & 🌊 Azur</div>
+      <div class="phone-frame">
+        <iframe src="preview-azur-boho.html" loading="lazy" scrolling="yes"></iframe>
+      </div>
+      <div class="phone-name">Boho & Azur</div>
+      <div class="phone-desc">Warm · Editorial · Mediterran · Türkis</div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <h2>So <em>einfach</em> geht's</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Registrieren</h3>
+      <p>Kostenloses Konto erstellen. Dauert weniger als eine Minute.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Gestalten</h3>
+      <p>Design wählen, Namen eingeben, Foto hochladen. Live-Vorschau zeigt sofort das Ergebnis.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Bezahlen & Downloaden</h3>
+      <p>Einmalig 39,99 €. Dann sofort als Bild, PDF und mit QR-Code herunterladen.</p>
+    </div>
+  </div>
+</section>
+
+<section class="price" id="preis">
+  <h2>Ein Preis. <em>Klar.</em></h2>
+  <p>Kein Abo. Keine versteckten Kosten. Einmal zahlen, für immer nutzen.</p>
+  <div class="price-card">
+    <div class="amount">39,99 €</div>
+    <div class="note">einmalig pro Einladung · inkl. aller Features</div>
+    <ul>
+      <li>4 Designs zur Auswahl</li>
+      <li>Eigenes Foto hochladen</li>
+      <li>RSVP & Gästeliste</li>
+      <li>QR-Code & Teilen-Link</li>
+      <li>Kalender & Countdown</li>
+      <li>Download als Bild & PDF</li>
+    </ul>
+    <a href="festlich-builder.html" class="btn-gold">Jetzt kostenlos starten</a>
+  </div>
+</section>
+
+<footer>
+  <div class="logo">Festlich<span>.</span></div>
+  <p>© 2025 Festlich. Digitale Einladungen für besondere Momente.</p>
+</footer>
+
+</body>
+</html>
