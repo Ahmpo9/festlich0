@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Renderer Test — Festlich</title>
+</head>
+<body style="font-family:sans-serif;max-width:800px;margin:0 auto;padding:20px">
+<h1>Shared Renderer Test</h1>
+<p>This page renders all 7 templates using the shared festlich-renderer.js to verify consistency.</p>
+
+<div id="output"></div>
+
+<script src="festlich-renderer.js"></script>
+<script>
+// Demo data for all templates
+const demoInv = {
+  host_name_1: 'Sophie',
+  host_name_2: 'Max',
+  tagline: 'Wir heiraten!',
+  event_date: '2025-09-20',
+  event_time: '14:00:00',
+  welcome_note: 'Wir freuen uns, mit euch diesen besonderen Tag zu feiern. Eure Anwesenheit ist das schönste Geschenk!',
+  quote_enabled: true,
+  quote_heading: 'Unser Motto',
+  quote_text: 'Liebe ist nicht das, was man erwartet zu bekommen, sondern das, was man bereit ist zu geben.',
+  quote_source: 'Unbekannt',
+  ceremony_title: 'Zeremonie',
+  ceremony_venue_name: 'St. Michael Kirche',
+  ceremony_venue_type: 'church',
+  ceremony_address: 'Marienplatz 1\n80331 München',
+  ceremony_time: '14:00:00',
+  ceremony_map_url: '#',
+  reception_enabled: true,
+  reception_title: 'Ablauf',
+  timeline_json: [
+    {time: '13:00', title: 'Ankunft der Gäste', icon: '✨'},
+    {time: '14:00', title: 'Trauung', icon: '💍'},
+    {time: '15:30', title: 'Sektempfang', icon: '🥂'},
+    {time: '17:00', title: 'Dinner', icon: '🍽️'},
+    {time: '20:00', title: 'Party', icon: '🎉'}
+  ],
+  rsvp_enabled: true,
+  rsvp_deadline: '2025-08-01',
+  max_guests_per_rsvp: 4,
+  registry_message: 'Eure Anwesenheit ist unser größtes Geschenk. Falls ihr uns dennoch etwas schenken möchtet, freuen wir uns über einen Beitrag zu unserer Hochzeitsreise.',
+  dress_code: 'Festlich-elegant',
+  collect_meal_pref: true,
+  hero_pos_x: 50,
+  hero_pos_y: 50,
+  hero_scale: 1
+};
+
+const demoGallery = [
+  {url: 'https://picsum.photos/seed/couple1/600/400.jpg', position_x: 50, position_y: 50, scale: 1},
+  {url: 'https://picsum.photos/seed/couple2/600/400.jpg', position_x: 50, position_y: 50, scale: 1},
+  {url: 'https://picsum.photos/seed/couple3/600/400.jpg', position_x: 50, position_y: 50, scale: 1}
+];
+
+const templates = [
+  {preset: 'blossom', name: 'Flieder', hero_url: 'https://picsum.photos/seed/blossom/800/500.jpg'},
+  {preset: 'mono', name: 'Glanz', hero_url: 'https://picsum.photos/seed/mono/800/500.jpg'},
+  {preset: 'boho', name: 'Boho', hero_url: 'https://picsum.photos/seed/boho/800/500.jpg'},
+  {preset: 'azur', name: 'Azur', hero_url: 'https://picsum.photos/seed/azur/800/500.jpg'},
+  {preset: 'eternal', name: 'Eternal', hero_url: 'https://picsum.photos/seed/eternal/800/500.jpg'},
+  {preset: 'verde', name: 'Verde', hero_url: 'https://picsum.photos/seed/verde/800/500.jpg'},
+  {preset: 'floral', name: 'Floral', hero_url: 'https://picsum.photos/seed/floral/800/500.jpg'}
+];
+
+const output = document.getElementById('output');
+
+// Render each template in a section
+output.innerHTML = '<h2>All 7 Templates (Shared Renderer)</h2>' + templates.map((t, i) => {
+  const inv = {...demoInv, font_preset: t.preset, hero_image_url: t.hero_url};
+  // Inline render for visual test
+  return `<section style="margin:40px 0;border:2px solid #ddd;border-radius:12px;overflow:hidden">
+    <div style="background:#333;color:#fff;padding:10px 16px;font-size:13px;font-weight:500">Template: ${t.name} (${t.preset})</div>
+    <iframe style="width:100%;border:none;height:800px" srcdoc="${FestlichRenderer.generateInvitationHTML(inv, demoGallery).replace(/"/g, '&quot;')}"></iframe>
+  </section>`;
+}).join('');
+</script>
+</body>
+</html>

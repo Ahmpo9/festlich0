@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="format-detection" content="telephone=no">
+<title>Einladung — Festlich</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@200;300;400;500;600&family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Sacramento&display=swap" rel="stylesheet">
+<style>
+/* Loader */
+#loader{position:fixed;inset:0;background:#F8F6F3;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity .4s}
+.loader-logo{font-family:'Great Vibes',cursive;font-size:28px;color:#C8A060}
+.loader-bar{width:120px;height:2px;background:rgba(200,160,96,.15);border-radius:2px;overflow:hidden;position:relative}
+.loader-bar::after{content:'';position:absolute;left:0;top:0;height:100%;width:30%;background:#C8A060;border-radius:2px;animation:loadSlide 1.2s ease-in-out infinite}
+@keyframes loadSlide{0%{left:-30%}100%{left:130%}}
+#not-found{display:none;text-align:center;padding:60px 24px}
+#not-found.show{display:block}
+</style>
+</head>
+<body>
+<div id="loader">
+  <div class="loader-logo">Festlich<span style="color:#C8A060">.</span></div>
+  <div class="loader-bar"></div>
+</div>
+<div id="not-found">
+  <div style="font-size:48px;margin-bottom:16px">🔍</div>
+  <h2 style="font-family:'Playfair Display',serif;font-size:22px;margin-bottom:8px">Einladung nicht gefunden</h2>
+  <p style="color:#888;font-size:14px">Der Link scheint nicht zu funktionieren.</p>
+</div>
+<div id="invitation"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="festlich-renderer.js"></script>
+<script>
+const SURL='https://odtvcglpxojsyxstmbtq.supabase.co'
+const SKEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kdHZjZ2xweG9qc3l4c3RtYnRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMTg2MTAsImV4cCI6MjA5MDc5NDYxMH0.HjODTfOS4OAM2z4T3naX2xHzwikgD-r_H1v-wtgd7GM'
+const sb=supabase.createClient(SURL,SKEY,{db:{schema:'public'}})
+
+function readSlug(){
+  const params=new URLSearchParams(location.search)
+  let slug=params.get('slug')
+  if(slug)return slug
+  const hash=location.hash.slice(1)
+  if(hash)return hash
+  const parts=location.pathname.split('/').filter(Boolean)
+  return parts[parts.length-1]||''
+}
+
+/* ── RSVP handler ── */
+async function handleRSVP(invId, gallery) {
+  const name = document.getElementById('rsvp-name')?.value.trim()
+  const phone = document.getElementById('rsvp-phone')?.value.trim()
+  const guests = parseInt(document.getElementById('rsvp-guests')?.value || '1')
+  const meal = document.getElementById('rsvp-meal')?.value || 'none'
+  const attending = document.querySelector('input[name="attending"]:checked')?.value === 'yes'
+
+  if (!name) { alert('Bitte gib deinen Namen an.'); return }
+
+  document.getElementById('rsvp-btn').disabled = true
+  document.getElementById('rsvp-btn').textContent = 'Wird gesendet...'
+
+  const { error } = await sb.from('rsvps').insert({
+    invitation_id: invId,
+    guest_name: name,
+    phone: phone,
+    adults: guests,
+    menu_choice: meal,
+    attending: attending
+  })
+
+  if (error) {
+    alert('Fehler: ' + error.message)
+    document.getElementById('rsvp-btn').disabled = false
+    document.getElementById('rsvp-btn').textContent = 'Zusage bestätigen'
+    return
+  }
+
+  document.getElementById('rsvp-ok').classList.add('show')
+  document.querySelector('.rsvp-wrap').style.display = 'none'
+}
+
+/* ── BOOT ── */
+;(async () => {
+  const slug = readSlug()
+  if (!slug) {
+    document.getElementById('loader').style.display = 'none'
+    document.getElementById('not-found').classList.add('show')
+    return
+  }
+
+  // Load invitation data
+  const { data: inv, error } = await sb.from('invitations').select('*').eq('slug', slug).single()
+  if (error || !inv) {
+    document.getElementById('loader').style.display = 'none'
+    document.getElementById('not-found').classList.add('show')
+    return
+  }
+
+  // Load gallery
+  const { data: gallery } = await sb.from('gallery').select('*').eq('invitation_id', inv.id).order('sort_order')
+
+  // Render using shared engine — inject body HTML directly
+  const fullHTML = FestlichRenderer.generateInvitationHTML(inv, gallery || [])
+  const bodyMatch = fullHTML.match(/<div id="invitation" class="active">([\s\S]*?)<\/div>/)
+  if (bodyMatch) {
+    document.getElementById('invitation').innerHTML = bodyMatch[1]
+    document.getElementById('invitation').style.display = 'block'
+  }
+
+  // Start countdown directly (robust, no regex extraction)
+  if (inv.event_date) {
+    const hm = (inv.event_time || '14:00:00').slice(0, 5)
+    const target = new Date(inv.event_date + 'T' + hm)
+    const pad = n => String(Math.max(0, n)).padStart(2, '0')
+    const tick = () => {
+      const diff = target - Date.now()
+      if (diff <= 0) {
+        ['cd-d','cd-h','cd-m','cd-s'].forEach(id => {
+          const el = document.getElementById(id)
+          if (el) el.textContent = '00'
+        })
+        clearInterval(window._cd)
+        return
+      }
+      const d = Math.floor(diff / 864e5)
+      const h = Math.floor(diff % 864e5 / 36e5)
+      const m = Math.floor(diff % 36e5 / 6e4)
+      const s = Math.floor(diff % 6e4 / 1e3)
+      const vals = { 'cd-d': d, 'cd-h': h, 'cd-m': m, 'cd-s': s }
+      for (const [id, val] of Object.entries(vals)) {
+        const el = document.getElementById(id)
+        if (el) el.textContent = pad(val)
+      }
+    }
+    tick()
+    window._cd = setInterval(tick, 1000)
+  }
+
+  document.title = (inv.host_name_1 || '') + (inv.host_name_2 ? ' & ' + inv.host_name_2 : '') + ' — Festlich'
+  document.getElementById('loader').style.opacity = '0'
+  setTimeout(() => document.getElementById('loader').style.display = 'none', 400)
+
+  // Attach RSVP handler
+  document.getElementById('rsvp-btn')?.addEventListener('click', () => handleRSVP(inv.id, gallery))
+})()
+</script>
+</body>
+</html>
