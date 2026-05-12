@@ -1,0 +1,608 @@
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#0e0e0e;display:flex;flex-direction:column;align-items:center;
+  padding:44px 16px;font-family:'Josefin Sans',sans-serif;color:#fff;min-height:100vh}
+h1{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:300;
+  color:#C8A878;letter-spacing:.08em;margin-bottom:6px;text-align:center}
+.sub{font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);margin-bottom:44px;text-align:center}
+.row{display:flex;gap:32px;flex-wrap:wrap;justify-content:center;max-width:680px}
+.col{display:flex;flex-direction:column;align-items:center;gap:12px}
+.lbl{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.32em;
+  text-transform:uppercase;color:rgba(255,255,255,.35)}
+/* Phone frame */
+.phone{width:295px;border-radius:38px;overflow:hidden;
+  box-shadow:0 32px 90px rgba(0,0,0,.75),
+    0 0 0 1px rgba(255,255,255,.06),
+    inset 0 0 0 1px rgba(255,255,255,.04);
+  background:#fff}
+.screen{overflow-y:scroll;max-height:620px;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+
+/* ══ BLOSSOM ══════════════════════════════════════════ */
+.bl{background:#F0EBF6}
+
+/* Hero: fresco full-bleed, lavender overlay, arch card */
+.bl-hero{position:relative;height:440px;overflow:hidden;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-end}
+.bl-hero-bg{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center 30%}
+/* Lavender watercolor wash over fresco - atmospheric */
+.bl-hero-wash{position:absolute;inset:0;
+  background:url(/*user-image*/) center/cover;
+  opacity:.35;mix-blend-mode:multiply}
+/* Dark gradient at bottom for arch readability */
+.bl-hero-grad{position:absolute;inset:0;
+  background:linear-gradient(180deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(220,210,235,.4) 65%,
+    rgba(240,235,246,.95) 100%)}
+/* White arch card */
+.bl-arch{position:relative;z-index:3;
+  background:rgba(255,255,255,.97);
+  border-radius:999px 999px 0 0;
+  width:78%;padding:38px 26px 46px;text-align:center;
+  box-shadow:0 -20px 60px rgba(140,120,180,.2)}
+.bl-eyebrow{font-family:'Cinzel',serif;font-size:7.5px;letter-spacing:.4em;
+  text-transform:uppercase;color:#9580B8;display:block;margin-bottom:14px}
+.bl-names{font-family:'Great Vibes',cursive;font-size:40px;color:#1E1228;
+  line-height:1.1;margin-bottom:8px}
+.bl-amp{font-size:.68em;font-style:italic;color:#9580B8;opacity:.8}
+.bl-date{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.22em;color:#9580B8}
+
+/* Couple photo section — full-width with arch frame */
+.bl-couple-wrap{position:relative;background:#F0EBF6;padding:20px 20px 0}
+.bl-couple-arch{border-radius:999px 999px 0 0;overflow:hidden;
+  height:360px;position:relative}
+.bl-couple-img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
+.bl-couple-caption{text-align:center;padding:16px 0 20px;
+  font-family:'Cinzel',serif;font-size:8px;letter-spacing:.24em;
+  text-transform:uppercase;color:#9580B8}
+
+/* Quote section */
+.bl-quote-sec{background:#F0EBF6;padding:24px 20px}
+.bl-quote-inner{background:white;border-radius:18px;padding:24px 18px;
+  position:relative;overflow:hidden;
+  box-shadow:0 4px 20px rgba(140,120,180,.1)}
+.bl-quote-wash{position:absolute;bottom:-20px;right:-20px;width:130px;
+  opacity:.12;transform:rotate(15deg);pointer-events:none}
+.bl-ql{font-family:'Cinzel',serif;font-size:7.5px;letter-spacing:.28em;
+  text-transform:uppercase;color:#9580B8;margin-bottom:10px;display:block}
+.bl-qmark{position:absolute;top:-8px;left:10px;
+  font-family:'Cormorant Garamond',serif;font-size:100px;
+  color:#E8E0F2;line-height:1;z-index:0}
+.bl-qt{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:17px;color:#1E1228;line-height:1.7;
+  position:relative;z-index:1}
+.bl-qs{font-size:11px;color:#9580B8;margin-top:9px;
+  display:block;position:relative;z-index:1}
+
+/* Calendar — lavender watercolor background */
+.bl-cal-sec{position:relative;overflow:hidden;padding:36px 20px;text-align:center}
+.bl-cal-bg{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;opacity:.9}
+.bl-cal-overlay{position:absolute;inset:0;
+  background:rgba(120,90,170,.15)}
+.bl-cal-content{position:relative;z-index:2}
+.bl-cal-month{font-family:'Great Vibes',cursive;font-size:32px;
+  color:white;margin-bottom:18px;
+  text-shadow:0 2px 12px rgba(80,50,120,.4)}
+.bl-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;
+  max-width:210px;margin:0 auto}
+.bl-wd{font-size:8px;text-transform:uppercase;color:rgba(255,255,255,.5);
+  text-align:center;padding:3px 0}
+.bl-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:300;color:rgba(255,255,255,.75);border-radius:50%}
+.bl-day.a{background:white;color:#7A5AB0;font-weight:700;
+  box-shadow:0 0 18px rgba(255,255,255,.5)}
+.bl-day.p{opacity:.22}
+/* Countdown */
+.bl-cd{display:flex;gap:8px;justify-content:center;margin-top:22px}
+.bl-cdb{background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.35);
+  border-radius:10px;padding:10px 10px;min-width:50px;text-align:center}
+.bl-cdn{font-family:'Cormorant Garamond',serif;font-size:26px;
+  color:white;line-height:1;display:block;
+  text-shadow:0 2px 8px rgba(0,0,0,.2)}
+.bl-cdl{font-size:8px;letter-spacing:.1em;text-transform:uppercase;
+  color:rgba(255,255,255,.5);display:block;margin-top:3px}
+
+/* Ceremony */
+.bl-cer-sec{background:#F0EBF6;padding:24px 18px}
+.bl-cer-card{background:white;border-radius:18px;padding:24px 18px;
+  text-align:center;box-shadow:0 4px 20px rgba(140,120,180,.1)}
+.bl-cer-ico{font-size:34px;margin-bottom:10px}
+.bl-cer-title{font-family:'Great Vibes',cursive;font-size:30px;
+  color:#1E1228;margin-bottom:10px}
+.bl-cer-name{font-size:13.5px;font-weight:400;color:#1E1228;margin-bottom:5px}
+.bl-cer-time{display:inline-flex;align-items:center;gap:6px;
+  background:#F0EAF8;border-radius:100px;padding:8px 16px;
+  font-size:12.5px;color:#9580B8;margin:9px 0}
+.bl-cer-addr{font-size:11.5px;color:#7A6A8A;font-weight:300;line-height:1.65}
+.bl-map-btn{display:inline-flex;align-items:center;gap:6px;
+  background:linear-gradient(135deg,#B098CC,#9580B8);
+  color:white;border:none;border-radius:100px;
+  padding:9px 20px;font-size:10.5px;letter-spacing:.1em;
+  text-transform:uppercase;cursor:pointer;margin-top:12px}
+
+/* Timing */
+.bl-timing-sec{background:white;padding:24px 18px;
+  margin:0 18px;border-radius:18px;
+  box-shadow:0 4px 20px rgba(140,120,180,.08);
+  margin:0 18px 20px}
+.bl-timing-title{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:22px;color:#1E1228;text-align:center;margin-bottom:14px}
+.bl-tr{display:flex;align-items:center;padding:10px 0;
+  border-bottom:1px solid rgba(180,160,210,.15)}
+.bl-tr:last-child{border:none}
+.bl-tt{font-family:'Cinzel',serif;font-size:11px;color:#9580B8;min-width:44px}
+.bl-te{font-size:12.5px;color:#3A2A4A;font-weight:300}
+
+/* RSVP */
+.bl-rsvp{position:relative;overflow:hidden;
+  padding:36px 20px;text-align:center}
+.bl-rsvp-bg{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;opacity:.85}
+.bl-rsvp-overlay{position:absolute;inset:0;
+  background:rgba(100,70,150,.55)}
+.bl-rsvp-content{position:relative;z-index:2}
+.bl-rsvp-title{font-family:'Great Vibes',cursive;font-size:38px;
+  color:white;margin-bottom:6px;
+  text-shadow:0 2px 12px rgba(0,0,0,.3)}
+.bl-rsvp-sub{font-size:11.5px;color:rgba(255,255,255,.75);
+  margin-bottom:20px;line-height:1.6;font-weight:300}
+.bl-rf{width:100%;padding:11px 16px;
+  background:rgba(255,255,255,.18);
+  border:1.5px solid rgba(255,255,255,.35);
+  border-radius:100px;color:white;
+  font-family:'Josefin Sans',sans-serif;font-size:11px;
+  letter-spacing:.07em;text-transform:uppercase;
+  outline:none;margin-bottom:9px;text-align:center}
+.bl-rf::placeholder{color:rgba(255,255,255,.45)}
+.bl-rb{width:100%;background:rgba(255,255,255,.92);
+  color:#7A5AB0;border:none;border-radius:100px;padding:12px;
+  font-family:'Josefin Sans',sans-serif;font-size:11px;
+  letter-spacing:.14em;text-transform:uppercase;cursor:pointer;
+  font-weight:600}
+.bl-radios{display:flex;gap:8px;justify-content:center;
+  margin-bottom:12px;flex-wrap:wrap}
+.bl-radio{display:flex;align-items:center;gap:5px;font-size:11px;
+  color:rgba(255,255,255,.85);cursor:pointer}
+
+.bl-footer{background:#1E1228;padding:18px;text-align:center}
+.bl-fb{font-family:'Great Vibes',cursive;font-size:21px;color:rgba(255,255,255,.3)}
+.bl-fb span{color:#C8A060}
+
+/* ══ MONO ══════════════════════════════════════════════ */
+.mn{background:#FAFAFA}
+
+/* Hero: silhouette full-height, dramatic */
+.mn-hero{position:relative;height:380px;overflow:hidden;background:#0A0A0A}
+.mn-hero-img{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center;
+  filter:contrast(1.15) brightness(.9)}
+/* Ink wash decorative corner */
+.mn-ink-tl{position:absolute;top:-10px;left:-10px;width:220px;
+  opacity:.4;transform:rotate(5deg) scaleY(-1);
+  mix-blend-mode:multiply;pointer-events:none}
+.mn-hero-content{position:absolute;bottom:0;left:0;right:0;
+  padding:28px 24px 32px;
+  background:linear-gradient(to top,rgba(0,0,0,.85) 0%,transparent 100%)}
+.mn-hero-eyebrow{font-family:'Josefin Sans',sans-serif;font-size:8px;
+  letter-spacing:.36em;text-transform:uppercase;color:rgba(255,255,255,.45);
+  margin-bottom:10px;display:block}
+.mn-names{font-family:'Cormorant Garamond',serif;font-size:44px;
+  font-weight:300;color:white;line-height:1.05;letter-spacing:-.01em}
+.mn-amp{display:block;font-style:italic;font-size:.48em;opacity:.35;margin:3px 0}
+.mn-date{display:inline-block;border:1px solid rgba(255,255,255,.3);
+  padding:6px 18px;font-family:'Josefin Sans',sans-serif;font-size:8.5px;
+  letter-spacing:.26em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-top:12px}
+
+/* Couple photo in arch - portrait section */
+.mn-couple-sec{background:#F8F8F8;padding:24px 22px;text-align:center}
+.mn-couple-arch{border-radius:999px 999px 4px 4px;overflow:hidden;
+  height:320px;position:relative;margin:0 20px}
+.mn-couple-img{width:100%;height:100%;object-fit:cover;object-position:center 20%;
+  filter:grayscale(100%) contrast(1.05)}
+.mn-couple-label{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:15px;color:#888;margin-top:14px;display:block}
+
+.mn-rule{height:1px;background:#111}
+.mn-rule-lt{height:1px;background:#E8E8E8}
+
+/* Quote with ink decoration */
+.mn-quote-sec{background:white;padding:28px 22px;position:relative;overflow:hidden}
+.mn-ink-bg{position:absolute;top:-10px;right:-20px;width:200px;
+  opacity:.06;transform:rotate(-5deg);pointer-events:none}
+.mn-ql{font-family:'Josefin Sans',sans-serif;font-size:8px;letter-spacing:.3em;
+  text-transform:uppercase;color:#888;margin-bottom:10px;display:block}
+.mn-qmark{font-family:'Cormorant Garamond',serif;font-size:80px;
+  line-height:.8;color:#DDD;display:block;margin-bottom:-8px}
+.mn-qt{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:17px;color:#1A1A1A;line-height:1.72}
+.mn-qsrc{font-size:11px;color:#999;margin-top:9px;display:block}
+
+/* Dark calendar section */
+.mn-dark{background:#0A0A0A;padding:36px 22px;text-align:center;position:relative;overflow:hidden}
+/* Fern decoration in dark section */
+.mn-fern{position:absolute;bottom:-10px;right:-20px;width:180px;
+  opacity:.12;transform:rotate(-10deg);mix-blend-mode:screen;pointer-events:none}
+.mn-cal-month{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:30px;color:white;margin-bottom:18px;position:relative;z-index:1}
+.mn-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;
+  max-width:210px;margin:0 auto;position:relative;z-index:1}
+.mn-wd{font-size:8px;text-transform:uppercase;color:rgba(255,255,255,.28);
+  text-align:center;padding:2px 0}
+.mn-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:rgba(255,255,255,.6);border-radius:50%}
+.mn-day.a{background:white;color:#0A0A0A;font-weight:700}
+.mn-day.p{opacity:.18}
+/* Big countdown */
+.mn-cd{display:flex;gap:16px;justify-content:center;align-items:baseline;
+  margin-top:26px;position:relative;z-index:1}
+.mn-cdn{font-family:'Cormorant Garamond',serif;font-size:42px;color:white;
+  line-height:1;letter-spacing:-.01em}
+.mn-cdl{font-family:'Josefin Sans',sans-serif;font-size:7.5px;
+  letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.3);
+  display:block;text-align:center;margin-top:3px}
+.mn-sep{font-size:28px;color:rgba(255,255,255,.15);padding-bottom:14px}
+
+/* Ceremony */
+.mn-cer-sec{background:white;padding:26px 22px}
+.mn-cer-label{font-family:'Josefin Sans',sans-serif;font-size:8.5px;
+  letter-spacing:.3em;text-transform:uppercase;color:#888;margin-bottom:10px;display:block}
+.mn-cer-title{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:26px;color:#111;margin-bottom:16px}
+.mn-cer-row{display:flex;gap:14px;align-items:flex-start;
+  padding:12px 0;border-bottom:1px solid #EAEAEA}
+.mn-cer-row:last-child{border:none}
+.mn-cer-ico{font-size:22px;flex-shrink:0;margin-top:1px}
+.mn-cer-lbl{font-size:8.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:#AAA;margin-bottom:3px}
+.mn-cer-val{font-size:14px;color:#111;margin-bottom:1px}
+.mn-cer-sub{font-size:12px;color:#666;font-weight:300}
+/* Fern divider between rows */
+.mn-fern-divider{width:60px;margin:14px auto;display:block;opacity:.35;
+  filter:grayscale(100%)}
+
+/* Timing */
+.mn-timing-sec{background:#F6F6F6;padding:24px 22px}
+.mn-timing-label{font-family:'Josefin Sans',sans-serif;font-size:8.5px;
+  letter-spacing:.3em;text-transform:uppercase;color:#888;margin-bottom:10px;display:block}
+.mn-timing-title{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:24px;color:#111;margin-bottom:14px}
+.mn-tr{display:flex;align-items:center;padding:10px 0;
+  border-bottom:1px solid #EBEBEB}
+.mn-tr:last-child{border:none}
+.mn-tt{font-family:'Josefin Sans',sans-serif;font-size:11px;
+  color:#999;min-width:44px;letter-spacing:.06em}
+.mn-dash{color:#CCC;margin:0 10px}
+.mn-te{font-size:13px;color:#222}
+
+/* RSVP - white on black */
+.mn-rsvp-sec{background:#0A0A0A;padding:36px 22px;text-align:center;
+  position:relative;overflow:hidden}
+.mn-rsvp-ink{position:absolute;top:0;left:0;width:200px;
+  opacity:.1;mix-blend-mode:screen;pointer-events:none;transform:rotate(180deg)}
+.mn-rsvp-title{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:34px;color:white;margin-bottom:6px;position:relative;z-index:1}
+.mn-rsvp-sub{font-size:10.5px;color:rgba(255,255,255,.45);margin-bottom:18px;
+  letter-spacing:.1em;text-transform:uppercase;position:relative;z-index:1}
+.mn-rf{width:100%;padding:11px 14px;background:white;border:none;border-radius:2px;
+  font-family:'Josefin Sans',sans-serif;font-size:11.5px;outline:none;
+  margin-bottom:8px;color:#111;letter-spacing:.05em;position:relative;z-index:1}
+.mn-rf::placeholder{color:#AAA}
+.mn-rb{width:100%;background:white;color:#0A0A0A;border:none;padding:12px;
+  font-family:'Josefin Sans',sans-serif;font-size:10.5px;
+  letter-spacing:.22em;text-transform:uppercase;cursor:pointer;
+  font-weight:700;position:relative;z-index:1}
+
+.mn-footer{background:#0A0A0A;padding:18px;text-align:center;
+  border-top:1px solid #1a1a1a}
+.mn-fb{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:20px;color:rgba(255,255,255,.22)}
+.mn-fb span{color:#A87C3E}
+
+
+/* === AZUR & BOHO === */
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#080808;display:flex;flex-direction:column;align-items:center;
+  padding:44px 16px 60px;font-family:'Josefin Sans',sans-serif;color:#fff;min-height:100vh}
+h1{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:300;
+  color:#C8A060;letter-spacing:.1em;margin-bottom:6px;text-align:center}
+.sub{font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;
+  color:rgba(255,255,255,.25);margin-bottom:44px;text-align:center}
+.row{display:flex;gap:28px;flex-wrap:wrap;justify-content:center}
+.col{display:flex;flex-direction:column;align-items:center;gap:10px}
+.lbl{font-family:'Cinzel',serif;font-size:8.5px;letter-spacing:.32em;
+  text-transform:uppercase;color:rgba(255,255,255,.3)}
+.phone{width:290px;border-radius:36px;overflow:hidden;flex-shrink:0;
+  box-shadow:0 28px 80px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.05)}
+.screen{overflow-y:scroll;max-height:620px;scrollbar-width:none}
+.screen::-webkit-scrollbar{display:none}
+
+/* ═══════════════════════════════════════════════════
+   TEMPLATE: AZUR
+   Layout: SPLIT SCREEN — Foto links + Text rechts
+   dann volle Sektionen darunter
+   Türkises Meer · Gold · Sonne · Luxus
+   ═══════════════════════════════════════════════════ */
+.az{background:#FDFBF7;font-family:'Josefin Sans',sans-serif}
+
+/* SPLIT HERO — völlig anders als alle anderen Templates */
+.az-split{display:grid;grid-template-columns:1fr 1fr;min-height:100vh}
+.az-split-img{position:relative;overflow:hidden}
+.az-split-img img{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center}
+.az-split-img::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(to right,transparent 60%,rgba(253,251,247,.8))}
+.az-split-text{background:#FDFBF7;display:flex;flex-direction:column;
+  justify-content:center;padding:28px 16px 28px 12px;}
+.az-split-eyebrow{font-family:'Cinzel',serif;font-size:6.5px;letter-spacing:.32em;
+  text-transform:uppercase;color:#B8922A;margin-bottom:12px;display:block}
+.az-split-names{font-family:'DM Serif Display',serif;font-size:22px;
+  color:#1A1208;line-height:1.15;margin-bottom:6px}
+.az-split-amp{font-style:italic;display:block;font-size:.85em;
+  color:#B8922A;margin:2px 0}
+.az-split-date{font-family:'Cinzel',serif;font-size:7px;
+  letter-spacing:.18em;color:#8A6A2A;margin-bottom:14px}
+.az-split-line{width:24px;height:1px;background:#B8922A;margin-bottom:14px}
+.az-split-tagline{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:12px;color:#5A4A2A;line-height:1.55;font-weight:300}
+
+/* Sun decoration floating */
+.az-sun-deco{width:100%;padding:24px 20px 0;display:flex;justify-content:center}
+.az-sun-deco img{width:72px;filter:drop-shadow(0 4px 16px rgba(200,160,60,.35))}
+
+/* Quote — diagonal stripe layout */
+.az-quote-stripe{position:relative;overflow:hidden;background:#1A1208;
+  padding:36px 24px;color:white;text-align:center}
+.az-qs-bg{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;opacity:.15}
+.az-qs-overlay{position:absolute;inset:0;background:rgba(26,18,8,.82)}
+.az-qs-content{position:relative;z-index:2}
+.az-qs-label{font-family:'Cinzel',serif;font-size:7px;letter-spacing:.32em;
+  text-transform:uppercase;color:rgba(200,160,60,.7);margin-bottom:12px;display:block}
+.az-qs-mark{font-family:'Playfair Display',serif;font-size:72px;
+  line-height:.8;color:rgba(200,160,60,.25);display:block;margin-bottom:-6px}
+.az-qs-text{font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:18px;color:rgba(255,255,255,.9);line-height:1.65;margin-bottom:10px}
+.az-qs-src{font-family:'Cinzel',serif;font-size:9px;
+  letter-spacing:.2em;color:rgba(200,160,60,.65)}
+.az-artdeco{width:70%;max-width:200px;margin:16px auto 0;display:block;opacity:.4}
+
+/* Aerial sea full-width section */
+.az-sea-section{position:relative;height:200px;overflow:hidden}
+.az-sea-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.az-sea-overlay{position:absolute;inset:0;
+  background:linear-gradient(180deg,transparent,rgba(26,18,8,.6))}
+.az-sea-text{position:absolute;bottom:0;left:0;right:0;
+  padding:16px 20px;text-align:center;color:white}
+.az-sea-big{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.28em;
+  text-transform:uppercase;opacity:.8}
+
+/* Calendar — horizontal strip, not centered box */
+.az-cal-strip{background:#1A1208;padding:28px 20px}
+.az-cal-strip-month{display:flex;align-items:baseline;gap:10px;margin-bottom:18px}
+.az-cal-strip-m{font-family:'DM Serif Display',serif;font-style:italic;
+  font-size:28px;color:#C8A060}
+.az-cal-strip-y{font-family:'Cinzel',serif;font-size:10px;
+  letter-spacing:.2em;color:rgba(200,160,60,.45)}
+.az-cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.az-wd{font-size:7.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:rgba(255,255,255,.3);text-align:center;padding:3px 0}
+.az-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:300;color:rgba(255,255,255,.55);border-radius:50%}
+.az-day.a{background:#C8A060;color:#1A1208;font-weight:700;
+  box-shadow:0 0 18px rgba(200,160,96,.5)}
+.az-day.p{opacity:.18}
+
+/* Countdown — horizontal bar, very different */
+.az-cd-bar{background:#C8A060;padding:20px 24px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.az-cd-item{text-align:center;padding:8px 4px;
+  border-right:1px solid rgba(26,18,8,.2)}
+.az-cd-item:last-child{border:none}
+.az-cd-n{font-family:'DM Serif Display',serif;font-size:34px;
+  color:#1A1208;line-height:1;display:block}
+.az-cd-l{font-family:'Cinzel',serif;font-size:7px;letter-spacing:.16em;
+  text-transform:uppercase;color:rgba(26,18,8,.55);display:block;margin-top:3px}
+
+/* Ceremony — card with left border accent */
+.az-cer-sec{padding:24px 20px;background:#FDFBF7}
+.az-cer-card{border-left:3px solid #C8A060;padding:16px 18px;
+  background:white;box-shadow:0 2px 16px rgba(26,18,8,.06)}
+.az-cer-lbl{font-family:'Cinzel',serif;font-size:7.5px;letter-spacing:.3em;
+  text-transform:uppercase;color:#B8922A;margin-bottom:8px;display:block}
+.az-cer-name-big{font-family:'DM Serif Display',serif;font-size:22px;
+  color:#1A1208;margin-bottom:6px}
+.az-cer-details{font-size:12px;color:#5A4A2A;font-weight:300;line-height:1.7}
+.az-cer-time-pill{display:inline-flex;align-items:center;gap:5px;
+  border:1px solid #C8A060;border-radius:3px;padding:5px 12px;
+  font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;
+  color:#8A6A2A;margin:8px 0}
+.az-map{display:inline-flex;align-items:center;gap:6px;
+  background:#1A1208;color:#C8A060;border:none;padding:9px 18px;
+  font-family:'Cinzel',serif;font-size:9px;letter-spacing:.14em;
+  text-transform:uppercase;cursor:pointer;margin-top:10px;
+  box-shadow:0 4px 12px rgba(26,18,8,.25)}
+
+/* Flower arch couple photo — arch shaped */
+.az-couple-sec{padding:20px 20px 0;background:#FDFBF7}
+.az-couple-arch{border-radius:999px 999px 4px 4px;overflow:hidden;height:320px}
+.az-couple-arch img{width:100%;height:100%;object-fit:cover;object-position:center 15%}
+.az-couple-cap{text-align:center;padding:12px 0 16px;
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:13px;color:#8A6A2A}
+
+/* RSVP — full dark with sun */
+.az-rsvp{background:#1A1208;padding:36px 20px;text-align:center;
+  position:relative;overflow:hidden}
+.az-rsvp-sun{position:absolute;top:-20px;right:-20px;width:120px;
+  opacity:.12;pointer-events:none}
+.az-rsvp-title{font-family:'DM Serif Display',serif;font-size:32px;
+  color:white;margin-bottom:6px;position:relative;z-index:1}
+.az-rsvp-sub{font-size:11px;color:rgba(255,255,255,.45);
+  margin-bottom:20px;letter-spacing:.1em;text-transform:uppercase;
+  position:relative;z-index:1}
+.az-rf{width:100%;padding:11px 16px;background:rgba(255,255,255,.07);
+  border:1px solid rgba(200,160,60,.3);color:white;
+  font-family:'Josefin Sans',sans-serif;font-size:11.5px;
+  outline:none;margin-bottom:9px;letter-spacing:.05em;
+  position:relative;z-index:1}
+.az-rf::placeholder{color:rgba(255,255,255,.28)}
+.az-rb{width:100%;background:#C8A060;color:#1A1208;border:none;padding:13px;
+  font-family:'Cinzel',serif;font-size:10px;letter-spacing:.22em;
+  text-transform:uppercase;cursor:pointer;font-weight:500;
+  position:relative;z-index:1;
+  box-shadow:0 4px 18px rgba(200,160,60,.35)}
+.az-radios{display:flex;gap:10px;justify-content:center;margin-bottom:13px;
+  position:relative;z-index:1}
+.az-radio{display:flex;align-items:center;gap:5px;font-size:11px;
+  color:rgba(255,255,255,.7);cursor:pointer}
+.az-footer{background:#0E0906;padding:16px;text-align:center}
+.az-fb{font-family:'DM Serif Display',serif;font-style:italic;
+  font-size:20px;color:rgba(255,255,255,.2)}
+.az-fb span{color:#C8A060}
+
+/* ═══════════════════════════════════════════════════
+   TEMPLATE: BOHO
+   Layout: MAGAZINE EDITORIAL — große Bilder, wenig Text
+   Warm · Terracotta · Licht · Sommer-Hochzeit
+   ═══════════════════════════════════════════════════ */
+.bh{background:#FAF7F4;font-family:'Josefin Sans',sans-serif}
+
+/* HERO: Volle Höhe, Text über Foto, kein Arch */
+.bh-hero{position:relative;height:100vh;overflow:hidden}
+.bh-hero-img{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;object-position:center}
+.bh-hero-ov{position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.05) 0%,transparent 40%,rgba(0,0,0,.55) 100%)}
+/* Namen oben links — editorial style */
+.bh-hero-top{position:absolute;top:28px;left:22px;right:22px;z-index:2}
+.bh-hero-top-eyebrow{font-family:'Cinzel',serif;font-size:7px;letter-spacing:.34em;
+  text-transform:uppercase;color:rgba(255,255,255,.6);display:block;margin-bottom:8px}
+.bh-hero-names{font-family:'Playfair Display',serif;font-size:36px;font-weight:400;
+  color:white;line-height:1.05;letter-spacing:-.01em}
+.bh-hero-amp{font-style:italic;color:rgba(255,255,255,.5);font-size:.6em}
+/* Datum unten rechts */
+.bh-hero-bottom{position:absolute;bottom:32px;right:22px;text-align:right;z-index:2}
+.bh-hero-date{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;
+  color:rgba(255,255,255,.75);display:block}
+.bh-hero-scroll{font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,.4);margin-top:5px;display:block}
+/* Ornament bottom center */
+.bh-hero-orn{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);
+  z-index:2;width:60px;opacity:.4;
+  filter:brightness(10) sepia(.5)}
+
+/* Quote — stark, links ausgerichtet, nicht zentriert */
+.bh-quote-block{padding:32px 22px;background:#FAF7F4}
+.bh-q-num{font-family:'Playfair Display',serif;font-size:80px;font-weight:700;
+  color:#F0E8E0;line-height:.8;display:block;margin-bottom:-10px}
+.bh-q-text{font-family:'Playfair Display',serif;font-style:italic;
+  font-size:18px;color:#2A1A10;line-height:1.6;margin-bottom:8px}
+.bh-q-src{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.2em;
+  text-transform:uppercase;color:#C87040}
+.bh-q-line{width:36px;height:2px;background:#C87040;margin:12px 0}
+
+/* Full-width boho reception photo */
+.bh-full-img{width:100%;height:240px;object-fit:cover;display:block}
+
+/* Calendar — über das Foto gelegt wie ein Overlay card */
+.bh-date-section{position:relative;background:#2A1810;padding:28px 22px}
+.bh-date-bg{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;opacity:.15;mix-blend-mode:luminosity}
+.bh-date-content{position:relative;z-index:2}
+.bh-date-top{display:flex;justify-content:space-between;align-items:flex-end;
+  margin-bottom:20px}
+.bh-date-month{font-family:'Playfair Display',serif;font-style:italic;
+  font-size:30px;color:white}
+.bh-date-year{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.2em;
+  color:rgba(255,255,255,.35)}
+.bh-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.bh-wd{font-size:8px;text-transform:uppercase;color:rgba(255,255,255,.28);
+  text-align:center;padding:3px 0}
+.bh-day{aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:rgba(255,255,255,.55);border-radius:4px}
+.bh-day.a{background:#D4845A;color:white;font-weight:700;border-radius:4px;
+  box-shadow:0 0 14px rgba(212,132,90,.5)}
+.bh-day.p{opacity:.18}
+
+/* Countdown — 3 große Zahlen inline */
+.bh-cd-inline{display:flex;align-items:baseline;justify-content:center;
+  gap:4px;padding:24px 22px;background:#C87040}
+.bh-cd-num{font-family:'Playfair Display',serif;font-size:52px;font-weight:700;
+  color:white;line-height:1;letter-spacing:-.02em}
+.bh-cd-lbl{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.14em;
+  text-transform:uppercase;color:rgba(255,255,255,.6);display:block;text-align:center}
+.bh-cd-sep{font-size:32px;color:rgba(255,255,255,.3);padding:0 4px 16px}
+.bh-cd-unit{text-align:center}
+.bh-cd-sek{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;
+  color:rgba(255,255,255,.5);line-height:1}
+
+/* Ceremony — kein Card, direkt auf Seite */
+.bh-cer-sec{padding:28px 22px;background:#FAF7F4}
+.bh-cer-big-title{font-family:'Playfair Display',serif;font-style:italic;
+  font-size:34px;color:#2A1810;margin-bottom:18px;line-height:1.15}
+.bh-cer-row{display:flex;gap:14px;align-items:flex-start;margin-bottom:16px}
+.bh-cer-ico{font-size:22px;flex-shrink:0;margin-top:2px}
+.bh-cer-lbl{font-family:'Cinzel',serif;font-size:7.5px;letter-spacing:.24em;
+  text-transform:uppercase;color:#C87040;margin-bottom:3px}
+.bh-cer-val{font-size:15px;color:#2A1810;font-weight:400;margin-bottom:2px}
+.bh-cer-sub{font-size:12.5px;color:#7A5A4A;font-weight:300}
+.bh-divider{height:1px;background:#E8DDD5;margin:6px 0}
+.bh-map{display:inline-flex;align-items:center;gap:7px;
+  background:transparent;color:#C87040;border:1.5px solid #C87040;
+  padding:9px 20px;font-family:'Cinzel',serif;font-size:9px;
+  letter-spacing:.14em;text-transform:uppercase;cursor:pointer;
+  margin-top:10px}
+
+/* Couple palace photo — full width, no radius */
+.bh-palace{width:100%;height:300px;object-fit:cover;display:block;
+  object-position:center 25%}
+.bh-palace-cap{background:#2A1810;padding:12px 22px;
+  font-family:'Cormorant Garamond',serif;font-style:italic;
+  font-size:13px;color:rgba(255,255,255,.45);text-align:right}
+
+/* Timeline — numbered, editorial */
+.bh-timeline{padding:28px 22px;background:#FAF7F4}
+.bh-tl-title{font-family:'Playfair Display',serif;font-size:24px;
+  color:#2A1810;margin-bottom:20px;font-style:italic}
+.bh-tl-row{display:flex;gap:16px;margin-bottom:18px}
+.bh-tl-num{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;
+  color:#F0E8E0;line-height:1;flex-shrink:0;width:36px}
+.bh-tl-content{border-top:1px solid #E8DDD5;padding-top:8px;flex:1}
+.bh-tl-time{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.18em;
+  color:#C87040;text-transform:uppercase;margin-bottom:4px}
+.bh-tl-event{font-size:14px;color:#2A1810;font-weight:400}
+
+/* RSVP — boho style, warm tones */
+.bh-rsvp{position:relative;overflow:hidden;padding:36px 22px;text-align:center}
+.bh-rsvp-bg{position:absolute;inset:0;width:100%;height:100%;
+  object-fit:cover;filter:brightness(.5) saturate(.8)}
+.bh-rsvp-ov{position:absolute;inset:0;background:rgba(42,24,16,.65)}
+.bh-rsvp-cont{position:relative;z-index:2}
+.bh-rsvp-title{font-family:'Playfair Display',serif;font-style:italic;
+  font-size:34px;color:white;margin-bottom:6px}
+.bh-rsvp-sub{font-size:11.5px;color:rgba(255,255,255,.55);
+  margin-bottom:20px;line-height:1.65;font-weight:300}
+.bh-rf{width:100%;padding:12px 16px;
+  background:rgba(255,255,255,.1);border:none;
+  border-bottom:1px solid rgba(255,255,255,.25);
+  color:white;font-family:'Josefin Sans',sans-serif;
+  font-size:12px;outline:none;margin-bottom:10px;
+  letter-spacing:.05em}
+.bh-rf::placeholder{color:rgba(255,255,255,.35)}
+.bh-rb{width:100%;background:white;color:#2A1810;border:none;padding:13px;
+  font-family:'Cinzel',serif;font-size:10px;letter-spacing:.22em;
+  text-transform:uppercase;cursor:pointer;font-weight:600;margin-top:6px}
+.bh-radios{display:flex;gap:10px;justify-content:center;
+  margin-bottom:14px;flex-wrap:wrap}
+.bh-radio{display:flex;align-items:center;gap:5px;font-size:11px;
+  color:rgba(255,255,255,.75);cursor:pointer}
+.bh-footer{background:#2A1810;padding:18px;text-align:center}
+.bh-fb{font-family:'Playfair Display',serif;font-style:italic;
+  font-size:22px;color:rgba(255,255,255,.22)}
+.bh-fb span{color:#C87040}
