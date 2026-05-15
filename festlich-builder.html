@@ -1,0 +1,1602 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Festlich — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{
+  --gold:#A87C3E;--gold-lt:#C89855;--ivory:#FAF8F3;--cream:#F3EDE0;
+  --sand:#E5D8C3;--champagne:#CEB98A;--taupe:#AE8E6C;--blush:#DDB9AC;
+  --charcoal:#262019;--ch60:#3F3828;--ch40:#5C5442;--w:#FEFCF9;
+  --sidebar:256px;--nav-h:0px;
+  --r6:6px;--r8:8px;--r12:12px;--r16:16px;--r24:24px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-size:16px}
+body{font-family:'Jost',sans-serif;background:var(--w);color:var(--charcoal);overflow:hidden;-webkit-font-smoothing:antialiased;line-height:1.6}
+.serif{font-family:'Cormorant Garamond',serif}
+img{max-width:100%;display:block}
+button{font-family:'Jost',sans-serif;cursor:pointer}
+input,select,textarea{font-family:'Jost',sans-serif}
+.hidden{display:none!important}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:100px;font-family:'Jost',sans-serif;font-weight:400;letter-spacing:.04em;cursor:pointer;transition:all .2s;border:none;text-decoration:none;white-space:nowrap}
+.btn-sm{font-size:12.5px;padding:8px 17px}
+.btn-md{font-size:14px;padding:11px 24px}
+.btn-dark{background:var(--charcoal);color:var(--ivory)}
+.btn-dark:hover{background:var(--ch60);transform:translateY(-1px)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-lt));color:#fff;box-shadow:0 4px 14px rgba(168,124,62,.28)}
+.btn-gold:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(168,124,62,.42)}
+.btn-outline{background:transparent;border:1.5px solid rgba(38,32,25,.18);color:var(--charcoal)}
+.btn-outline:hover{border-color:var(--charcoal);background:rgba(38,32,25,.04)}
+.btn-ghost{background:rgba(38,32,25,.06);border:none;color:var(--charcoal)}
+.btn-ghost:hover{background:rgba(38,32,25,.1)}
+.btn-danger{background:#FEF2F2;border:1.5px solid #FCA5A5;color:#DC2626;border-radius:var(--r8);padding:6px 12px;font-size:12px;cursor:pointer;transition:all .2s;font-family:'Jost',sans-serif}
+.btn-danger:hover{background:#FEE2E2}
+.btn[disabled],.btn:disabled{opacity:.5;cursor:not-allowed;transform:none!important;box-shadow:none!important}
+
+/* FORMS */
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:10.5px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;color:var(--charcoal);margin-bottom:5px}
+.fi,.fta,.fsel{width:100%;padding:10px 13px;border:1.5px solid rgba(38,32,25,.12);border-radius:var(--r8);font-family:'Jost',sans-serif;font-size:13.5px;color:var(--charcoal);background:white;outline:none;transition:border-color .18s,box-shadow .18s}
+.fi:focus,.fta:focus,.fsel:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(168,124,62,.1)}
+.fta{resize:vertical;min-height:74px;line-height:1.55}
+.fsel{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7'%3E%3Cpath d='M1 1l4.5 4.5L10 1' stroke='%23AE8E6C' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fcheck{display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid rgba(38,32,25,.05)}
+.fcheck:last-of-type{border-bottom:none}
+
+/* TOGGLE */
+.tog{position:relative;width:38px;height:21px;cursor:pointer;flex-shrink:0}
+.tog input{opacity:0;position:absolute;width:0;height:0}
+.tog-tr{position:absolute;inset:0;background:#CCC;border-radius:11px;transition:background .2s}
+.tog input:checked+.tog-tr{background:var(--gold)}
+.tog-th{position:absolute;top:2px;left:2px;width:17px;height:17px;background:white;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.13)}
+.tog input:checked~.tog-th{transform:translateX(17px)}
+
+/* ALERTS / TOASTS */
+.alert{padding:11px 14px;border-radius:var(--r8);font-size:13px;margin-bottom:12px}
+.alert-error{background:#FDF0EF;color:#9B2C2C;border:1px solid #F5C0BA}
+.alert-success{background:#EFF7F0;color:#166534;border:1px solid #86EFAC}
+#toasts{position:fixed;top:20px;right:20px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:white;border-radius:12px;padding:12px 16px;box-shadow:0 12px 40px rgba(38,32,25,.15);font-size:13.5px;display:flex;align-items:center;gap:9px;min-width:230px;max-width:320px;border-left:3px solid var(--gold);animation:tin .25s ease}
+.toast.err{border-left-color:#E53E3E}.toast.ok{border-left-color:#38A169}
+@keyframes tin{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+
+/* SPINNER */
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:sp .65s linear infinite}
+.spin-dk{border-color:rgba(38,32,25,.18);border-top-color:var(--charcoal)}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* MODAL */
+.moverlay{position:fixed;inset:0;background:rgba(38,32,25,.52);z-index:600;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:white;border-radius:22px;padding:30px;width:100%;max-width:460px;box-shadow:0 32px 80px rgba(38,32,25,.2);max-height:90vh;overflow-y:auto}
+.modal-ttl{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--charcoal);margin-bottom:5px}
+.modal-sub{font-size:13px;color:var(--ch40);font-weight:300;margin-bottom:18px}
+.modal-foot{display:flex;gap:9px;justify-content:flex-end;margin-top:18px}
+
+/* AUTH */
+.auth-page{position:fixed;inset:0;background:var(--ivory);display:flex;align-items:center;justify-content:center;padding:24px;overflow-y:auto;background-image:radial-gradient(ellipse 65% 50% at 70% 30%,rgba(206,185,138,.2),transparent),radial-gradient(ellipse 45% 60% at 15% 78%,rgba(221,185,172,.15),transparent)}
+.auth-card{background:white;border-radius:22px;padding:44px 38px;width:100%;max-width:420px;box-shadow:0 28px 72px rgba(38,32,25,.1)}
+.auth-logo{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:500;color:var(--charcoal);text-align:center;cursor:pointer;letter-spacing:.06em;margin-bottom:5px}
+.auth-logo span{color:var(--gold)}
+.auth-tag{text-align:center;font-size:13px;color:var(--taupe);font-weight:300;margin-bottom:28px;font-style:italic}
+.auth-ttl{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:400;color:var(--charcoal);margin-bottom:5px}
+.auth-hint{font-size:13px;color:var(--ch40);font-weight:300;margin-bottom:22px}
+.auth-link{text-align:center;font-size:13px;color:var(--ch40);font-weight:300;margin-top:13px}
+.auth-link a{color:var(--gold);cursor:pointer}
+.auth-forgot{display:block;text-align:right;font-size:12px;color:var(--taupe);margin-top:-6px;margin-bottom:11px;cursor:pointer}
+.auth-forgot:hover{color:var(--gold)}
+
+/* DASHBOARD SHELL */
+#app{display:flex;height:100vh;overflow:hidden}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);background:var(--charcoal);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;overflow-x:hidden}
+.sb-logo{padding:20px 18px 16px;border-bottom:1px solid rgba(250,248,243,.08);font-family:'Cormorant Garamond',serif;font-size:22px;color:var(--ivory);font-weight:500;cursor:pointer;letter-spacing:.05em}
+.sb-logo span{color:var(--gold)}
+.sb-inv{padding:12px 14px;border-bottom:1px solid rgba(250,248,243,.07)}
+.sb-sel{width:100%;background:rgba(250,248,243,.07);border:1px solid rgba(250,248,243,.12);border-radius:var(--r8);padding:7px 9px;color:var(--ivory);font-family:'Jost',sans-serif;font-size:13px;outline:none;cursor:pointer;appearance:none}
+.sb-sel option{background:var(--charcoal);color:var(--ivory)}
+.sb-nav{padding:14px 10px;flex:1}
+.sb-lbl{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:rgba(250,248,243,.22);padding:0 7px;margin:12px 0 7px;display:block}
+.sb-item{display:flex;align-items:center;gap:9px;padding:8px 9px;border-radius:9px;font-size:13px;color:rgba(250,248,243,.55);cursor:pointer;transition:all .18s;margin-bottom:2px;user-select:none}
+.sb-item:hover,.sb-item.on{background:rgba(250,248,243,.09);color:var(--ivory)}
+.sb-item.on{color:var(--champagne)}
+.sb-ico{font-size:14px;width:18px;text-align:center;flex-shrink:0}
+.sb-btm{padding:14px;border-top:1px solid rgba(250,248,243,.07)}
+.sb-user{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.sb-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--blush),var(--sand));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:14px;color:var(--ch40);flex-shrink:0}
+.sb-uname{font-size:12.5px;color:var(--ivory);font-weight:400}
+.sb-logout{width:100%;background:rgba(250,248,243,.06);border:1px solid rgba(250,248,243,.1);color:rgba(250,248,243,.45);border-radius:var(--r8);padding:7px;font-family:'Jost',sans-serif;font-size:12px;cursor:pointer;transition:all .2s}
+.sb-logout:hover{background:rgba(250,248,243,.12);color:var(--ivory)}
+
+/* MAIN */
+.main{flex:1;overflow:hidden;background:var(--ivory);display:flex;flex-direction:column}
+.topbar{background:white;border-bottom:1px solid rgba(38,32,25,.07);padding:14px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:10}
+.tb-ttl{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:400;color:var(--charcoal)}
+.tb-sub{font-size:12px;color:var(--ch40);margin-top:1px;font-weight:300}
+.tb-right{display:flex;gap:8px;align-items:center}
+.content{flex:1;overflow-y:auto;padding:22px}
+
+/* STAT CARDS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-bottom:18px}
+.stat-c{background:white;border-radius:14px;padding:17px;border:1px solid rgba(38,32,25,.06)}
+.stat-ico{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:10px}
+.stat-n{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:400;color:var(--charcoal);line-height:1;margin-bottom:2px}
+.stat-l{font-size:10.5px;color:var(--taupe);text-transform:uppercase;letter-spacing:.1em}
+
+/* CARD BOX */
+.cbox{background:white;border-radius:14px;overflow:hidden;border:1px solid rgba(38,32,25,.06);margin-bottom:16px}
+.cbox-hdr{padding:14px 18px;border-bottom:1px solid rgba(38,32,25,.06);display:flex;align-items:center;justify-content:space-between}
+.cbox-ttl{font-size:14px;font-weight:500;color:var(--charcoal)}
+
+/* TABLE */
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{padding:10px 16px;text-align:left;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--taupe);background:rgba(38,32,25,.02);border-bottom:1px solid rgba(38,32,25,.06)}
+td{padding:12px 16px;font-size:13px;color:var(--ch40);border-bottom:1px solid rgba(38,32,25,.04)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(38,32,25,.015)}
+.pill{display:inline-flex;align-items:center;gap:3px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:500}
+.pgreen{background:#F0FDF4;color:#16A34A}
+.pred{background:#FEF2F2;color:#DC2626}
+.pgray{background:#F9FAFB;color:#6B7280}
+.pamber{background:#FFFBEB;color:#D97706}
+.empty{padding:44px;text-align:center}
+.empty-ico{font-size:36px;margin-bottom:12px}
+.empty-ttl{font-size:15px;font-weight:500;color:var(--charcoal);margin-bottom:5px}
+.empty-sub{font-size:13px;color:var(--taupe);font-weight:300;margin-bottom:16px}
+
+/* SC = section card */
+.sc{background:white;border-radius:14px;padding:20px;border:1px solid rgba(38,32,25,.06);margin-bottom:16px}
+.sc-ttl{font-size:14px;font-weight:500;color:var(--charcoal);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+
+/* Link box */
+.lnkbox{background:var(--ivory);border-radius:8px;padding:11px 13px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.lnkurl{font-size:12.5px;color:var(--ch40);word-break:break-all;flex:1}
+
+/* ANALYTICS BAR */
+.abar{height:11px;border-radius:6px;overflow:hidden;background:var(--cream);margin:13px 0;display:flex}
+.abar div{height:100%;transition:width .5s}
+
+/* SPLIT EDITOR */
+.editor-shell{display:flex;flex:1;overflow:hidden;height:100%}
+
+/* LEFT PANEL */
+.ed-panel{width:400px;flex-shrink:0;overflow-y:auto;background:var(--ivory);border-right:1px solid rgba(38,32,25,.07);padding:16px}
+.eds{background:white;border-radius:12px;border:1px solid rgba(38,32,25,.06);margin-bottom:10px;overflow:hidden}
+.eds-hdr{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;border-bottom:1px solid rgba(38,32,25,.06);transition:background .18s}
+.eds-hdr:hover{background:rgba(38,32,25,.02)}
+.eds-left{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:500;color:var(--charcoal)}
+.eds-ico{font-size:15px}
+.eds-arrow{font-size:11px;color:var(--taupe);transition:transform .25s}
+.eds.collapsed .eds-arrow{transform:rotate(-90deg)}
+.eds-body{padding:14px;display:block}
+.eds.collapsed .eds-body{display:none}
+
+/* PREVIEW PANE */
+.prev-pane{flex:1;overflow:hidden;display:flex;flex-direction:column;background:#DDD8D0}
+.prev-toolbar{background:white;border-bottom:1px solid rgba(38,32,25,.07);padding:9px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.prev-mode-btn{padding:4px 13px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid rgba(38,32,25,.12);background:none;color:var(--ch40);font-family:'Jost',sans-serif;transition:all .18s}
+.prev-mode-btn.on{background:var(--charcoal);color:white;border-color:var(--charcoal)}
+.prev-wrap{flex:1;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:18px}
+.prev-frame{width:100%;height:100%;border:none;border-radius:12px;box-shadow:0 20px 60px rgba(38,32,25,.2);background:white;transition:all .3s}
+.prev-frame.mobile{width:375px;max-height:812px;height:100%;border-radius:32px;box-shadow:0 24px 80px rgba(38,32,25,.3),0 0 0 2px rgba(38,32,25,.1)}
+
+/* IMAGE UPLOAD / CONTROLS */
+.img-upload{border:2px dashed rgba(38,32,25,.14);border-radius:12px;padding:28px;text-align:center;cursor:pointer;transition:all .18s;background:rgba(38,32,25,.01)}
+.img-upload:hover{border-color:var(--gold);background:rgba(168,124,62,.04)}
+.img-prev-wrap{border-radius:10px;overflow:hidden;aspect-ratio:16/9;background:var(--cream);margin-bottom:12px;position:relative}
+.img-prev-img{width:100%;height:100%;object-fit:cover;display:block}
+.img-edit-btns{display:flex;gap:7px;margin-bottom:10px}
+.img-controls{background:var(--ivory);border-radius:10px;padding:13px;margin-top:8px}
+.ic-label{font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--taupe);margin-bottom:5px;display:block;font-weight:500}
+.ic-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.ic-row:last-child{margin-bottom:0}
+
+/* 2D POSITION PAD */
+.pos-pad{width:100%;aspect-ratio:2.5/1;border-radius:9px;background:linear-gradient(135deg,var(--cream),var(--sand));position:relative;cursor:crosshair;margin-bottom:8px;overflow:hidden;border:1.5px solid rgba(38,32,25,.1);user-select:none}
+.pos-pad-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(38,32,25,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(38,32,25,.08) 1px,transparent 1px);background-size:25% 33.33%}
+.pos-handle{position:absolute;width:22px;height:22px;background:var(--gold);border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 2px 8px rgba(168,124,62,.5),0 0 0 4px rgba(168,124,62,.2);cursor:grab;z-index:2;pointer-events:none}
+.ic-slider{flex:1;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--sand);outline:none;cursor:pointer}
+.ic-slider::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--gold);cursor:pointer;box-shadow:0 2px 5px rgba(168,124,62,.4)}
+.ic-val{min-width:34px;text-align:right;font-size:11.5px;color:var(--ch40);font-weight:500}
+
+/* GALLERY EDITOR GRID */
+.gal-ed-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:11px}
+.gal-ed-item{border-radius:8px;overflow:hidden;aspect-ratio:1;position:relative;background:var(--cream);cursor:pointer}
+.gal-ed-img{width:100%;height:100%;object-fit:cover}
+.gal-ed-del{position:absolute;top:4px;right:4px;background:rgba(220,38,38,.85);color:white;border:none;border-radius:5px;padding:3px 7px;font-size:10px;cursor:pointer;opacity:0;transition:opacity .18s;font-family:'Jost',sans-serif}
+.gal-ed-pos{position:absolute;top:4px;left:4px;background:rgba(38,32,25,.72);color:white;border:none;border-radius:5px;padding:3px 7px;font-size:10px;cursor:pointer;opacity:0;transition:opacity .18s;font-family:'Jost',sans-serif}
+.gal-ed-item:hover .gal-ed-del,.gal-ed-item:hover .gal-ed-pos{opacity:1}
+
+/* MENU OPTIONS */
+.menu-opt-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.menu-opt-item{border:1.5px solid rgba(38,32,25,.1);border-radius:10px;padding:11px 12px;display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--charcoal)}
+.menu-opt-item input[type=checkbox]{accent-color:var(--gold);width:15px;height:15px;cursor:pointer}
+.menu-opt-item.disabled{opacity:.4}
+
+/* QR */
+.qr-c{display:flex;flex-direction:column;align-items:center;padding:28px;text-align:center}
+
+/* TEMPLATE SELECTOR */
+.tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.tpl-card{border:2px solid rgba(38,32,25,.1);border-radius:12px;padding:14px 12px;cursor:pointer;transition:all .2s;text-align:center}
+.tpl-card:hover{border-color:var(--gold);transform:translateY(-2px)}
+.tpl-card.on{border-color:var(--gold);background:rgba(168,124,62,.06)}
+.tpl-preview{height:80px;border-radius:8px;margin-bottom:9px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tpl-name{font-size:13px;font-weight:500;color:var(--charcoal);margin-bottom:2px}
+.tpl-desc{font-size:11px;color:var(--taupe)}
+
+/* Font picker */
+.font-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+.font-item{border:1.5px solid rgba(38,32,25,.1);border-radius:9px;padding:10px 9px;cursor:pointer;transition:all .18s;text-align:center}
+.font-item:hover{border-color:var(--gold)}
+.font-item.on{border-color:var(--gold);background:rgba(168,124,62,.07)}
+.font-preview{font-size:19px;margin-bottom:3px;line-height:1.2}
+.font-name{font-size:10px;color:var(--taupe);letter-spacing:.04em}
+
+/* DESIGN LIVE PREVIEW */
+.lprev{background:linear-gradient(160deg,var(--cream),var(--sand));border-radius:12px;padding:20px;text-align:center;margin-bottom:14px}
+.lprev-names{font-size:28px;color:var(--charcoal);margin-bottom:5px}
+.lprev-detail{font-size:12px;color:var(--taupe);letter-spacing:.12em}
+
+/* COLOR PICKER ROW */
+.col-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.col-swatch{width:32px;height:32px;border-radius:8px;border:2px solid rgba(38,32,25,.12);cursor:pointer;overflow:hidden;flex-shrink:0}
+.col-swatch input[type=color]{width:200%;height:200%;border:none;cursor:pointer;transform:translate(-25%,-25%);padding:0}
+.col-hex{flex:1}
+</style>
+</head>
+<body>
+<div id="toasts"></div>
+
+<!-- AUTH PAGE -->
+<div id="auth-page" class="auth-page">
+  <div class="auth-card">
+    <div class="auth-logo" onclick="location.href='index.html'">Festlich<span>.</span></div>
+    <div class="auth-tag">Deine digitale Einladung</div>
+    <!-- LOGIN -->
+    <div id="auth-login">
+      <div class="auth-ttl serif">Willkommen zurück</div>
+      <div class="auth-hint">Melde dich an, um deine Einladungen zu verwalten.</div>
+      <div id="auth-alert"></div>
+      <div class="fg"><label class="fl">E-Mail</label><input id="a-email" class="fi" type="email" placeholder="hallo@beispiel.de" autocomplete="email"></div>
+      <div class="fg"><label class="fl">Passwort</label><input id="a-pw" class="fi" type="password" placeholder="Dein Passwort" autocomplete="current-password"></div>
+      <span class="auth-forgot" onclick="showForgot()">Passwort vergessen?</span>
+      <button id="a-login-btn" class="btn btn-gold btn-md" style="width:100%" onclick="doLogin()">Anmelden</button>
+      <div class="auth-link">Noch kein Konto? <a onclick="showReg()">Registrieren</a></div>
+    </div>
+    <!-- REGISTER -->
+    <div id="auth-reg" class="hidden">
+      <div class="auth-ttl serif">Konto erstellen</div>
+      <div class="auth-hint">Kostenlos registrieren und loslegen.</div>
+      <div id="auth-alert-r"></div>
+      <div class="fg"><label class="fl">Name</label><input id="a-name" class="fi" placeholder="Dein Name"></div>
+      <div class="fg"><label class="fl">E-Mail</label><input id="a-remail" class="fi" type="email" placeholder="hallo@beispiel.de"></div>
+      <div class="fg"><label class="fl">Passwort</label><input id="a-rpw" class="fi" type="password" placeholder="Mind. 6 Zeichen"></div>
+      <button id="a-reg-btn" class="btn btn-gold btn-md" style="width:100%;margin-top:4px" onclick="doReg()">Konto erstellen</button>
+      <div class="auth-link">Schon ein Konto? <a onclick="showLogin()">Anmelden</a></div>
+    </div>
+    <!-- FORGOT -->
+    <div id="auth-forgot" class="hidden">
+      <div class="auth-ttl serif">Passwort zurücksetzen</div>
+      <div class="auth-hint">Wir schicken dir einen Reset-Link per E-Mail.</div>
+      <div id="auth-alert-f"></div>
+      <div class="fg"><label class="fl">E-Mail</label><input id="a-femail" class="fi" type="email" placeholder="Deine E-Mail-Adresse"></div>
+      <button id="a-forgot-btn" class="btn btn-gold btn-md" style="width:100%" onclick="doForgot()">Link senden</button>
+      <div class="auth-link"><a onclick="showLogin()">← Zurück zur Anmeldung</a></div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="app" class="hidden">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-logo" onclick="location.href='index.html'">Festlich<span>.</span></div>
+    <div class="sb-inv">
+      <div style="font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:rgba(250,248,243,.3);margin-bottom:6px">Einladung</div>
+      <select class="sb-sel" id="inv-sel" onchange="switchInv(this.value)">
+        <option>Keine Einladungen</option>
+      </select>
+      <button class="btn btn-gold btn-sm" style="width:100%;margin-top:8px;border-radius:8px" onclick="doCreateInv()">+ Neue Einladung</button>
+    </div>
+    <nav class="sb-nav">
+      <span class="sb-lbl">Übersicht</span>
+      <div class="sb-item on" onclick="switchTab('overview')" id="sbi-overview">
+        <span class="sb-ico">🏠</span> Dashboard
+      </div>
+      <div class="sb-item" onclick="switchTab('analytics')" id="sbi-analytics">
+        <span class="sb-ico">📊</span> Statistiken
+      </div>
+      <span class="sb-lbl">Einladung</span>
+      <div class="sb-item" onclick="switchTab('editor')" id="sbi-editor">
+        <span class="sb-ico">✏️</span> Editor
+      </div>
+      <div class="sb-item" onclick="switchTab('design')" id="sbi-design">
+        <span class="sb-ico">🎨</span> Design & Schrift
+      </div>
+      <div class="sb-item" onclick="switchTab('gallery')" id="sbi-gallery">
+        <span class="sb-ico">🖼️</span> Fotos & Galerie
+      </div>
+      <span class="sb-lbl">Gäste</span>
+      <div class="sb-item" onclick="switchTab('rsvps')" id="sbi-rsvps">
+        <span class="sb-ico">✅</span> RSVPs
+      </div>
+      <div class="sb-item" onclick="switchTab('guests')" id="sbi-guests">
+        <span class="sb-ico">👥</span> Gästeliste
+      </div>
+      <span class="sb-lbl">Teilen</span>
+      <div class="sb-item" onclick="switchTab('qr')" id="sbi-qr">
+        <span class="sb-ico">📱</span> QR-Code & Link
+      </div>
+    </nav>
+    <div class="sb-btm">
+      <div class="sb-user">
+        <div class="sb-av" id="sb-av">?</div>
+        <div>
+          <div class="sb-uname" id="sb-uname">—</div>
+          <div style="font-size:10px;color:rgba(250,248,243,.35)">Festlich Konto</div>
+        </div>
+      </div>
+      <button class="sb-logout" onclick="doLogout()">Abmelden</button>
+    </div>
+  </div>
+  <!-- MAIN -->
+  <div class="main" id="main-area"></div>
+</div>
+
+<!-- MODALS -->
+<!-- Guest -->
+<div id="m-guest" class="moverlay hidden">
+  <div class="modal">
+    <div class="modal-ttl serif" id="gm-ttl">Gast hinzufügen</div>
+    <div class="modal-sub" id="gm-sub">Gast zur Einladung hinzufügen.</div>
+    <div id="gm-alert"></div>
+    <input type="hidden" id="g-id">
+    <div class="fg"><label class="fl">Name *</label><input id="g-name" class="fi" placeholder="Max Mustermann"></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">E-Mail</label><input id="g-email" class="fi" type="email"></div>
+      <div class="fg"><label class="fl">Telefon</label><input id="g-phone" class="fi" type="tel"></div>
+    </div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Tischnummer</label><input id="g-table" class="fi" placeholder="Tisch 3"></div>
+      <div class="fg" style="display:flex;align-items:center;gap:9px;padding-top:22px">
+        <label class="tog"><input type="checkbox" id="g-vip"><div class="tog-tr"></div><div class="tog-th"></div></label>
+        <span style="font-size:13px">VIP</span>
+      </div>
+    </div>
+    <div class="fg"><label class="fl">Notiz</label><textarea id="g-notes" class="fta" style="min-height:54px"></textarea></div>
+    <div class="modal-foot">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('m-guest')">Abbrechen</button>
+      <button id="gm-save" class="btn btn-gold btn-sm" onclick="saveGuest()">Speichern</button>
+    </div>
+  </div>
+</div>
+<!-- Confirm -->
+<div id="m-confirm" class="moverlay hidden">
+  <div class="modal" style="max-width:360px">
+    <div class="modal-ttl serif" id="cm-ttl">Bestätigen</div>
+    <div style="font-size:14px;color:var(--ch40);font-weight:300;margin-bottom:18px" id="cm-msg"></div>
+    <div class="modal-foot">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('m-confirm')">Abbrechen</button>
+      <button id="cm-ok" class="btn btn-sm" style="background:#DC2626;color:white">Löschen</button>
+    </div>
+  </div>
+</div>
+<!-- Image Position Modal -->
+<div id="m-pos" class="moverlay hidden">
+  <div class="modal" style="max-width:500px">
+    <div class="modal-ttl serif">Bild positionieren</div>
+    <div class="modal-sub">Klicke oder ziehe auf den Bereich um die Position zu ändern.</div>
+    <div style="position:relative;margin-bottom:14px">
+      <div style="border-radius:10px;overflow:hidden;height:220px;background:var(--cream);position:relative" id="pos-preview-wrap">
+        <img id="pos-preview-img" style="width:100%;height:100%;object-fit:cover;transform-origin:center;display:block" src="">
+      </div>
+    </div>
+    <div class="pos-pad" id="pos-pad">
+      <div class="pos-pad-grid"></div>
+      <div class="pos-handle" id="pos-handle"></div>
+    </div>
+    <div class="img-controls">
+      <span class="ic-label">Zoom / Skalierung</span>
+      <div class="ic-row">
+        <input type="range" class="ic-slider" id="pos-scale" min="1" max="3" step="0.05" value="1" oninput="updatePosPreview()">
+        <span class="ic-val" id="pos-scale-val">100%</span>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline btn-sm" onclick="closeModal('m-pos')">Abbrechen</button>
+      <button id="pos-save-btn" class="btn btn-gold btn-sm" onclick="saveImagePosition()">Position speichern</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   FESTLICH BUILDER v3 — Komplett neu
+══════════════════════════════════════════════════════ */
+
+const SUPA_URL = 'https://odtvcglpxojsyxstmbtq.supabase.co'
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9kdHZjZ2xweG9qc3l4c3RtYnRxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUyMTg2MTAsImV4cCI6MjA5MDc5NDYxMH0.HjODTfOS4OAM2z4T3naX2xHzwikgD-r_H1v-wtgd7GM'
+const sb = supabase.createClient(SUPA_URL, SUPA_KEY)
+const BUCKET = 'invitation-gallery'
+
+/* ── TEMPLATES ── */
+const TEMPLATES = {
+  blossom:{id:'blossom',label:'Blossom',emoji:'🌸',desc:'Lavendel · Romantisch · Floral',color:'#9080B0',bg:'#F4F0F8'},
+  mono:   {id:'mono',   label:'Mono',   emoji:'🖤',desc:'Schwarz-Weiß · Editorial · Minimal',color:'#111111',bg:'#FAFAFA'},
+  azur:   {id:'azur',   label:'Azur',   emoji:'🌊',desc:'Türkis · Mediterran · Gold',color:'#3A8FA8',bg:'#EEF7FA'},
+  boho:   {id:'boho',   label:'Boho',   emoji:'🍂',desc:'Warm · Zeitlos · Palast-Arch',color:'#A67C52',bg:'#FDF8F0'},
+}
+
+/* ── FONTS ── */
+const FONTS = [
+  {n:'Great Vibes',g:'Great+Vibes',cat:'script'},
+  {n:'Sacramento',g:'Sacramento',cat:'script'},
+  {n:'Dancing Script',g:'Dancing+Script',cat:'script'},
+  {n:'Parisienne',g:'Parisienne',cat:'script'},
+  {n:'Allura',g:'Allura',cat:'script'},
+  {n:'Tangerine',g:'Tangerine',cat:'script'},
+  {n:'Cormorant Garamond',g:'Cormorant+Garamond',cat:'serif'},
+  {n:'Playfair Display',g:'Playfair+Display',cat:'serif'},
+  {n:'Cinzel',g:'Cinzel',cat:'serif'},
+  {n:'Lora',g:'Lora',cat:'serif'},
+  {n:'EB Garamond',g:'EB+Garamond',cat:'serif'},
+  {n:'Josefin Sans',g:'Josefin+Sans',cat:'sans'},
+  {n:'Jost',g:'Jost',cat:'sans'},
+  {n:'Raleway',g:'Raleway',cat:'sans'},
+  {n:'Montserrat',g:'Montserrat',cat:'sans'},
+  {n:'Lato',g:'Lato',cat:'sans'},
+]
+
+const loadedFonts = new Set(['Cormorant Garamond','Jost'])
+function loadFont(name){
+  if(loadedFonts.has(name))return
+  const f=FONTS.find(x=>x.n===name);if(!f)return
+  const id='gf-'+f.g.replace(/\+/g,'-')
+  if(!document.getElementById(id)){
+    const l=document.createElement('link');l.id=id;l.rel='stylesheet'
+    l.href=`https://fonts.googleapis.com/css2?family=${f.g}:wght@400;700&display=swap`
+    document.head.appendChild(l)
+  }
+  loadedFonts.add(name)
+}
+
+/* ── STATE ── */
+const S = {
+  user:null, invs:[], curInvId:null,
+  guests:[], rsvps:[], gallery:[],
+  tab:'overview', pendingDel:null,
+  posTarget:null,
+  fontH:'Great Vibes', fontB:'Josefin Sans',
+  curTemplate:'blossom',
+  prevTimer:null, tlItems:[],
+}
+
+/* ── UTILS ── */
+const $=id=>document.getElementById(id)
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+const curInv=()=>S.invs.find(i=>i.id===S.curInvId)
+
+function toast(msg,type='info'){
+  const d=document.createElement('div');d.className=`toast ${type==='error'?'err':type==='success'?'ok':''}`
+  d.innerHTML=`<span>${type==='success'?'✓':type==='error'?'✗':'ℹ'}</span>${msg}`
+  $('toasts').appendChild(d);setTimeout(()=>d.remove(),4200)
+}
+function closeModal(id){$(id)?.classList.add('hidden')}
+function openModal(id){$(id)?.classList.remove('hidden')}
+function setLoading(id,on){
+  const b=$(id);if(!b)return;b.disabled=on
+  if(on){b._o=b.innerHTML;b.innerHTML='<span class="spin"></span>'}
+  else b.innerHTML=b._o||b.innerHTML
+}
+
+/* ── PUBLIC URL ── */
+function getSiteBase(){
+  const ov=localStorage.getItem('festlich_base_url');if(ov)return ov.endsWith('/')?ov:ov+'/'
+  return window.location.href.replace(/\/[^/?#]*(\?.*)?$/,'/')
+}
+function getPublicUrl(slug){return slug?`${getSiteBase()}festlich-invitation.html?slug=${slug}`:''}
+function setBaseUrl(){
+  const cur=localStorage.getItem('festlich_base_url')||getSiteBase()
+  const url=prompt('GitHub Pages Basis-URL:\nBeispiel: https://NutzName.github.io/repo/',cur)
+  if(url&&url.trim()){
+    const clean=url.trim().endsWith('/')?url.trim():url.trim()+'/'
+    localStorage.setItem('festlich_base_url',clean)
+    toast('URL gespeichert ✓','success')
+    renderTab(S.tab)
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   AUTH
+══════════════════════════════════════════════════════ */
+function showLogin(){$('auth-login').classList.remove('hidden');$('auth-reg').classList.add('hidden');$('auth-forgot').classList.add('hidden')}
+function showReg(){$('auth-login').classList.add('hidden');$('auth-reg').classList.remove('hidden');$('auth-forgot').classList.add('hidden')}
+function showForgot(){$('auth-login').classList.add('hidden');$('auth-forgot').classList.remove('hidden');$('auth-reg').classList.add('hidden')}
+
+async function doLogin(){
+  const email=$('a-email').value.trim(),pw=$('a-pw').value
+  if(!email||!pw){$('auth-alert').innerHTML='<div class="alert alert-error">Bitte alle Felder ausfüllen.</div>';return}
+  setLoading('a-login-btn',true)
+  const{error}=await sb.auth.signInWithPassword({email,password:pw})
+  setLoading('a-login-btn',false)
+  if(error){$('auth-alert').innerHTML=`<div class="alert alert-error">${error.message}</div>`}
+}
+async function doReg(){
+  const name=$('a-name').value.trim(),email=$('a-remail').value.trim(),pw=$('a-rpw').value
+  if(!name||!email||!pw){$('auth-alert-r').innerHTML='<div class="alert alert-error">Bitte alle Felder ausfüllen.</div>';return}
+  if(pw.length<6){$('auth-alert-r').innerHTML='<div class="alert alert-error">Passwort mind. 6 Zeichen.</div>';return}
+  setLoading('a-reg-btn',true)
+  const{error}=await sb.auth.signUp({email,password:pw,options:{data:{full_name:name}}})
+  setLoading('a-reg-btn',false)
+  if(error){$('auth-alert-r').innerHTML=`<div class="alert alert-error">${error.message}</div>`}
+  else{$('auth-alert-r').innerHTML='<div class="alert alert-success">Fast! Bitte E-Mail bestätigen.</div>'}
+}
+async function doForgot(){
+  const email=$('a-femail').value.trim()
+  if(!email){$('auth-alert-f').innerHTML='<div class="alert alert-error">Bitte E-Mail eingeben.</div>';return}
+  setLoading('a-forgot-btn',true)
+  const{error}=await sb.auth.resetPasswordForEmail(email,{redirectTo:window.location.href})
+  setLoading('a-forgot-btn',false)
+  if(error){$('auth-alert-f').innerHTML=`<div class="alert alert-error">${error.message}</div>`}
+  else{$('auth-alert-f').innerHTML='<div class="alert alert-success">Reset-Link gesendet!</div>'}
+}
+function doLogout(){sb.auth.signOut()}
+
+/* ══════════════════════════════════════════════════════
+   DATA LOADING
+══════════════════════════════════════════════════════ */
+async function loadInvitations(){
+  const{data,error}=await sb.from('invitations').select('*').order('created_at',{ascending:false})
+  if(error){toast('Ladefehler: '+error.message,'error');return}
+  S.invs=data||[]
+  if(S.invs.length&&!S.curInvId) S.curInvId=S.invs[0].id
+}
+
+async function createInvitation(){
+  const{data,error}=await sb.from('invitations').insert({user_id:S.user.id,title:'Meine Einladung'}).select().single()
+  if(error){toast('Fehler: '+error.message,'error');return null}
+  S.invs.unshift(data);S.curInvId=data.id;return data
+}
+
+async function saveInv(fields){
+  if(!S.curInvId)return false
+  const{error}=await sb.from('invitations').update({...fields,updated_at:new Date().toISOString()}).eq('id',S.curInvId).eq('user_id',S.user.id)
+  if(error){toast('Speicherfehler: '+error.message,'error');return false}
+  const idx=S.invs.findIndex(i=>i.id===S.curInvId)
+  if(idx>=0)S.invs[idx]={...S.invs[idx],...fields}
+  return true
+}
+
+/* ══════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════ */
+function switchTab(tab){
+  S.tab=tab
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('on'))
+  const sbi=$(`sbi-${tab}`);if(sbi)sbi.classList.add('on')
+  renderTab(tab)
+}
+
+function switchInv(id){
+  S.curInvId=id;S.gallery=[];S.tlItems=[]
+  renderTab(S.tab)
+}
+
+async function renderTab(tab){
+  const main=$('main-area');if(!main)return
+  const inv=curInv()
+  switch(tab){
+    case 'overview':  await tabOverview(main,inv);break
+    case 'analytics': await tabAnalytics(main,inv);break
+    case 'editor':    await tabEditor(main,inv);break
+    case 'design':    tabDesign(main,inv);break
+    case 'gallery':   await tabGallery(main,inv);break
+    case 'rsvps':     await tabRSVPs(main,inv);break
+    case 'guests':    await tabGuests(main,inv);break
+    case 'qr':        tabQR(main,inv);break
+  }
+}
+
+function topbar(title,sub='',right=''){
+  return`<div class="topbar"><div><div class="tb-ttl serif">${title}</div>${sub?`<div class="tb-sub">${sub}</div>`:''}</div><div class="tb-right">${right}</div></div>`
+}
+function noInvHTML(){
+  return`<div class="empty"><div class="empty-ico">💌</div><div class="empty-ttl">Noch keine Einladung</div><div class="empty-sub">Erstelle deine erste Einladung um loszulegen.</div><button class="btn btn-gold btn-md" onclick="doCreateInv()">+ Neue Einladung</button></div>`
+}
+async function doCreateInv(){
+  toast('Wird erstellt…','info')
+  const data=await createInvitation();if(!data)return
+  updateInvSelect();toast('Einladung erstellt ✓','success');switchTab('editor')
+}
+function updateInvSelect(){
+  const sel=$('inv-sel');if(!sel)return
+  sel.innerHTML=S.invs.length===0
+    ?'<option>Keine Einladungen</option>'
+    :S.invs.map(i=>`<option value="${i.id}" ${i.id===S.curInvId?'selected':''}>${esc(i.title)}</option>`).join('')
+}
+
+/* ══════════════════════════════════════════════════════
+   OVERVIEW TAB
+══════════════════════════════════════════════════════ */
+async function tabOverview(main,inv){
+  if(!inv){main.innerHTML=topbar('Dashboard')+`<div class="content">${noInvHTML()}</div>`;return}
+  const[rr,ir]=await Promise.all([
+    sb.from('rsvps').select('attending,guest_count,meal_preference').eq('invitation_id',S.curInvId),
+    sb.from('invitations').select('view_count').eq('id',S.curInvId).single()
+  ])
+  const rsvps=rr.data||[]
+  const attending=rsvps.filter(r=>r.attending===true).length
+  const declined=rsvps.filter(r=>r.attending===false).length
+  const views=ir.data?.view_count||0
+  const totalGuests=rsvps.filter(r=>r.attending).reduce((s,r)=>s+(r.guest_count||1),0)
+  const{data:rec}=await sb.from('rsvps').select('*').eq('invitation_id',S.curInvId).order('submitted_at',{ascending:false}).limit(6)
+  const pubUrl=getPublicUrl(inv.slug)
+  const ml={meat:'🥩 Fleisch',fish:'🐟 Fisch',vegetarian:'🥗 Vegetarisch',vegan:'🌱 Vegan',none:'–'}
+
+  // Menu stats
+  const mStats={meat:0,fish:0,vegetarian:0,vegan:0}
+  rsvps.filter(r=>r.attending).forEach(r=>{if(r.meal_preference&&r.meal_preference!=='none')mStats[r.meal_preference]=(mStats[r.meal_preference]||0)+1})
+
+  main.innerHTML=topbar(esc(inv.title),'Dashboard',
+    `<a href="${pubUrl}" target="_blank" class="btn btn-outline btn-sm">Öffnen →</a>
+     <button class="btn btn-gold btn-sm" onclick="switchTab('editor')">Editor →</button>`)+
+  `<div class="content">
+    <div class="stats">
+      ${[['👁️','#EFF6FF',views,'Aufrufe'],['✓','#F0FDF4',attending,'Zusagen'],['✗','#FEF2F2',declined,'Absagen'],['👫','#FDF4FF',totalGuests,'Gäste gesamt']].map(([ico,bg,n,l])=>`<div class="stat-c"><div class="stat-ico" style="background:${bg}">${ico}</div><div class="stat-n serif">${n}</div><div class="stat-l">${l}</div></div>`).join('')}
+    </div>
+    ${totalGuests>0?`
+    <div class="cbox">
+      <div class="cbox-hdr"><div class="cbox-ttl">🍽️ Menü-Übersicht</div></div>
+      <div style="padding:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
+        ${Object.entries(mStats).map(([k,v])=>`<div style="text-align:center;background:var(--ivory);border-radius:10px;padding:12px">
+          <div style="font-size:20px;margin-bottom:4px">${{meat:'🥩',fish:'🐟',vegetarian:'🥗',vegan:'🌱'}[k]}</div>
+          <div class="stat-n serif" style="font-size:24px">${v}</div>
+          <div class="stat-l">${{meat:'Fleisch',fish:'Fisch',vegetarian:'Vegetar.',vegan:'Vegan'}[k]}</div>
+        </div>`).join('')}
+      </div>
+    </div>`:``}
+    <div class="cbox">
+      <div class="cbox-hdr"><div class="cbox-ttl">💌 Aktuelle RSVPs</div><button class="btn btn-ghost btn-sm" onclick="switchTab('rsvps')">Alle →</button></div>
+      <div class="tw"><table><thead><tr><th>Gast</th><th>Status</th><th>Pers.</th><th>Menü</th><th>Datum</th></tr></thead><tbody>
+      ${!(rec||[]).length?`<tr><td colspan="5" style="padding:24px;text-align:center;color:var(--taupe)">Noch keine RSVPs</td></tr>`:(rec||[]).map(r=>`<tr>
+        <td><div style="font-weight:500">${esc(r.guest_name)}</div>${r.guest_email?`<div style="font-size:11px;color:var(--taupe)">${esc(r.guest_email)}</div>`:''}</td>
+        <td>${r.attending?`<span class="pill pgreen">✓ Zusage</span>`:`<span class="pill pred">✗ Absage</span>`}</td>
+        <td>${r.guest_count||1}</td>
+        <td>${ml[r.meal_preference]||'–'}</td>
+        <td style="font-size:11px;color:var(--taupe)">${new Date(r.submitted_at).toLocaleDateString('de-DE')}</td>
+      </tr>`).join('')}
+      </tbody></table></div>
+    </div>
+    <div class="cbox">
+      <div class="cbox-hdr"><div class="cbox-ttl">🔗 Einladungslink</div><button class="btn btn-ghost btn-sm" onclick="copyToClip('${pubUrl}','Link kopiert!')">Kopieren</button></div>
+      <div style="padding:13px 17px"><div class="lnkbox"><div class="lnkurl">${pubUrl||'URL noch nicht konfiguriert'}</div><button class="btn btn-outline btn-sm" onclick="copyToClip('${pubUrl}','Kopiert!')">Kopieren</button><a href="${pubUrl}" target="_blank" class="btn btn-ghost btn-sm">Öffnen →</a></div></div>
+    </div>
+  </div>`
+}
+function copyToClip(txt,msg){navigator.clipboard.writeText(txt).then(()=>toast(msg,'success'))}
+
+/* ══════════════════════════════════════════════════════
+   EDITOR TAB
+══════════════════════════════════════════════════════ */
+async function tabEditor(main,inv){
+  if(!inv){main.innerHTML=topbar('Editor')+`<div class="content">${noInvHTML()}</div>`;return}
+  if(!S.gallery.length){
+    const{data}=await sb.from('gallery_items').select('*').eq('invitation_id',S.curInvId).order('sort_order')
+    S.gallery=data||[]
+  }
+  S.tlItems=[...(inv.timeline_json||[])]
+  const pubUrl=getPublicUrl(inv.slug)
+
+  main.innerHTML=
+    topbar(esc(inv.title),'Einladung bearbeiten',`
+      <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ch40)">
+        <label class="tog" title="Veröffentlichen">
+          <input type="checkbox" id="pub-tog" ${inv.is_published?'checked':''} onchange="handlePublish(this.checked)">
+          <div class="tog-tr"></div><div class="tog-th"></div>
+        </label>
+        <span id="pub-lbl">${inv.is_published?'Veröffentlicht ✓':'Entwurf'}</span>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="downloadInvitation()">⬇ Download</button>
+      <button class="btn btn-gold btn-sm" id="ed-save" onclick="saveAllFields()">Speichern</button>`)+
+    `<div class="editor-shell">
+      <div class="ed-panel" id="ed-panel">
+
+        <!-- HERO IMAGE -->
+        <div class="eds" id="es-hero">
+          <div class="eds-hdr" onclick="toggleSection('es-hero')">
+            <div class="eds-left"><span class="eds-ico">📷</span>Hero & Titelbild</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            ${inv.hero_image_url
+              ?`<div class="img-prev-wrap"><img class="img-prev-img" src="${inv.hero_image_url}" style="object-position:${inv.hero_pos_x||50}% ${inv.hero_pos_y||50}%"></div>
+                <div class="img-edit-btns">
+                  <button class="btn btn-ghost btn-sm" style="flex:1" onclick="openImgPos('hero','${inv.hero_image_url}',${inv.hero_pos_x||50},${inv.hero_pos_y||50},${inv.hero_scale||1})">📐 Positionieren</button>
+                  <button class="btn-danger" onclick="removeHeroImg()">✕</button>
+                </div>`
+              :`<div class="img-upload" onclick="$('hero-input').click()">
+                  <div style="font-size:28px;margin-bottom:7px">🖼️</div>
+                  <div style="font-size:14px;color:var(--ch40);margin-bottom:3px">Hero-Bild hochladen</div>
+                  <div style="font-size:12px;color:var(--taupe)">JPG, PNG, WebP · max. 10 MB</div>
+                </div>`}
+            <input type="file" id="hero-input" style="display:none" accept="image/*" onchange="uploadHero(this)">
+          </div>
+        </div>
+
+        <!-- BASIC INFO -->
+        <div class="eds" id="es-basic">
+          <div class="eds-hdr" onclick="toggleSection('es-basic')">
+            <div class="eds-left"><span class="eds-ico">💍</span>Grundinformationen</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            <div class="fg"><label class="fl">Einladungstitel</label><input id="ed-title" class="fi" value="${esc(inv.title||'')}" oninput="schedulePreview()"></div>
+            <div class="frow">
+              <div class="fg"><label class="fl">Name 1</label><input id="ed-n1" class="fi" value="${esc(inv.host_name_1||'')}" placeholder="Lena" oninput="schedulePreview()"></div>
+              <div class="fg"><label class="fl">Name 2</label><input id="ed-n2" class="fi" value="${esc(inv.host_name_2||'')}" placeholder="Florian" oninput="schedulePreview()"></div>
+            </div>
+            <div class="fg"><label class="fl">Tagline</label><input id="ed-tagline" class="fi" value="${esc(inv.tagline||'')}" oninput="schedulePreview()"></div>
+            <div class="frow">
+              <div class="fg"><label class="fl">Datum</label><input id="ed-date" class="fi" type="date" value="${inv.event_date||''}" onchange="schedulePreview()"></div>
+              <div class="fg"><label class="fl">Uhrzeit</label><input id="ed-time" class="fi" type="time" value="${inv.event_time||''}"></div>
+            </div>
+            <div class="fg"><label class="fl">Art der Veranstaltung</label>
+              <select id="ed-type" class="fsel">
+                ${[['wedding','Hochzeit'],['engagement','Verlobung'],['birthday','Geburtstag'],['reception','Empfang'],['celebration','Feier'],['other','Sonstiges']].map(([v,n])=>`<option value="${v}" ${inv.event_type===v?'selected':''}>${n}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- ZITAT -->
+        <div class="eds collapsed" id="es-quote">
+          <div class="eds-hdr" onclick="toggleSection('es-quote')">
+            <div class="eds-left"><span class="eds-ico">✦</span>Zitat / Vers</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            <div class="fcheck"><label class="tog"><input type="checkbox" id="ed-qon" ${inv.quote_enabled?'checked':''} onchange="schedulePreview()"><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13.5px">Zitat aktivieren</span></div>
+            <div style="margin-top:11px">
+              <div class="fg"><label class="fl">Überschrift</label><input id="ed-qh" class="fi" value="${esc(inv.quote_heading||'')}" oninput="schedulePreview()"></div>
+              <div class="fg"><label class="fl">Zitat / Vers</label><textarea id="ed-qt" class="fta" oninput="schedulePreview()">${esc(inv.quote_text||'')}</textarea></div>
+              <div class="fg"><label class="fl">Quelle</label><input id="ed-qs" class="fi" value="${esc(inv.quote_source||'')}" oninput="schedulePreview()"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ZEREMONIE -->
+        <div class="eds collapsed" id="es-ceremony">
+          <div class="eds-hdr" onclick="toggleSection('es-ceremony')">
+            <div class="eds-left"><span class="eds-ico">⛪</span>Zeremonie & Ort</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            <div class="fg"><label class="fl">Abschnittstitel</label><input id="ed-ctitle" class="fi" value="${esc(inv.ceremony_title||'Zeremonie')}" oninput="schedulePreview()"></div>
+            <div class="fg"><label class="fl">Name des Ortes</label><input id="ed-cvenue" class="fi" value="${esc(inv.ceremony_venue_name||'')}" oninput="schedulePreview()"></div>
+            <div class="frow">
+              <div class="fg"><label class="fl">Uhrzeit</label><input id="ed-ctime" class="fi" value="${esc(inv.ceremony_time_str||'')}" placeholder="14:00" oninput="schedulePreview()"></div>
+              <div class="fg"><label class="fl">Maps-Link</label><input id="ed-cmap" class="fi" type="url" value="${esc(inv.ceremony_map_url||'')}"></div>
+            </div>
+            <div class="fg"><label class="fl">Adresse</label><textarea id="ed-caddr" class="fta" style="min-height:60px" oninput="schedulePreview()">${esc(inv.ceremony_address||'')}</textarea></div>
+          </div>
+        </div>
+
+        <!-- EMPFANG -->
+        <div class="eds collapsed" id="es-reception">
+          <div class="eds-hdr" onclick="toggleSection('es-reception')">
+            <div class="eds-left"><span class="eds-ico">🥂</span>Empfang / Feier</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            <div class="fcheck"><label class="tog"><input type="checkbox" id="ed-rec-on" ${inv.reception_enabled?'checked':''} onchange="schedulePreview()"><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13.5px">Empfang aktivieren</span></div>
+            <div style="margin-top:11px">
+              <div class="fg"><label class="fl">Name des Ortes</label><input id="ed-rvenue" class="fi" value="${esc(inv.reception_venue_name||'')}" oninput="schedulePreview()"></div>
+              <div class="frow">
+                <div class="fg"><label class="fl">Uhrzeit</label><input id="ed-rtime" class="fi" value="${esc(inv.reception_time_str||'')}" placeholder="18:00" oninput="schedulePreview()"></div>
+                <div class="fg"><label class="fl">Maps-Link</label><input id="ed-rmap" class="fi" type="url" value="${esc(inv.reception_map_url||'')}"></div>
+              </div>
+              <div class="fg"><label class="fl">Adresse</label><textarea id="ed-raddr" class="fta" style="min-height:60px" oninput="schedulePreview()">${esc(inv.reception_address||'')}</textarea></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TIMELINE -->
+        <div class="eds collapsed" id="es-timeline">
+          <div class="eds-hdr" onclick="toggleSection('es-timeline')">
+            <div class="eds-left"><span class="eds-ico">⏱️</span>Ablauf / Programm</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            <div id="tl-items">${renderTLItems()}</div>
+            <button class="btn btn-ghost btn-sm" style="width:100%" onclick="addTLItem()">+ Punkt hinzufügen</button>
+          </div>
+        </div>
+
+        <!-- WELCOME NOTE -->
+        <div class="eds collapsed" id="es-welcome">
+          <div class="eds-hdr" onclick="toggleSection('es-welcome')">
+            <div class="eds-left"><span class="eds-ico">💌</span>Willkommenstext</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            <div class="fg"><textarea id="ed-welcome" class="fta" style="min-height:90px" oninput="schedulePreview()">${esc(inv.welcome_note||'')}</textarea></div>
+          </div>
+        </div>
+
+        <!-- RSVP EINSTELLUNGEN -->
+        <div class="eds collapsed" id="es-rsvp">
+          <div class="eds-hdr" onclick="toggleSection('es-rsvp')">
+            <div class="eds-left"><span class="eds-ico">✅</span>RSVP-Einstellungen</div>
+            <span class="eds-arrow">▼</span>
+          </div>
+          <div class="eds-body">
+            <div class="fg"><label class="fl">RSVP-Frist</label><input id="ed-rsvp-deadline" class="fi" type="date" value="${inv.rsvp_deadline||''}"></div>
+            <div class="fg"><label class="fl">Max. Personen pro Antwort</label><input id="ed-rsvp-max" class="fi" type="number" min="1" max="20" value="${inv.rsvp_max_guests||2}"></div>
+            <div class="fg"><label class="fl">Hinweistext (z.B. "Bitte bis 1. Juni antworten")</label><textarea id="ed-rsvp-note" class="fta" style="min-height:60px">${esc(inv.rsvp_note||'')}</textarea></div>
+
+            <!-- MENÜ OPTIONEN -->
+            <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(38,32,25,.07)">
+              <div style="font-size:13px;font-weight:500;color:var(--charcoal);margin-bottom:4px">🍽️ Menü-Auswahl</div>
+              <div style="font-size:12px;color:var(--taupe);margin-bottom:12px">Welche Menü-Optionen sollen deine Gäste wählen können?</div>
+              <div class="fcheck"><label class="tog"><input type="checkbox" id="ed-menu-on" ${inv.menu_enabled!==false?'checked':''} onchange="schedulePreview()"><div class="tog-tr"></div><div class="tog-th"></div></label><span style="font-size:13.5px">Menü-Auswahl aktivieren</span></div>
+              <div class="menu-opt-grid" style="margin-top:10px">
+                <div class="menu-opt-item"><input type="checkbox" id="ed-menu-meat" ${inv.menu_meat_enabled!==false?'checked':''}> <span>🥩 Fleisch</span></div>
+                <div class="menu-opt-item"><input type="checkbox" id="ed-menu-fish" ${inv.menu_fish_enabled!==false?'checked':''}> <span>🐟 Fisch</span></div>
+                <div class="menu-opt-item"><input type="checkbox" id="ed-menu-veg" ${inv.menu_vegetarian_enabled!==false?'checked':''}> <span>🥗 Vegetarisch</span></div>
+                <div class="menu-opt-item"><input type="checkbox" id="ed-menu-vegan" ${inv.menu_vegan_enabled!==false?'checked':''}> <span>🌱 Vegan</span></div>
+              </div>
+              <div class="fg" style="margin-top:10px"><label class="fl">Menü-Hinweis (optional)</label><input id="ed-menu-note" class="fi" value="${esc(inv.menu_note||'')}" placeholder="z.B. Bitte bei Allergien kontaktieren"></div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /ed-panel -->
+
+      <!-- PREVIEW PANE -->
+      <div class="prev-pane">
+        <div class="prev-toolbar">
+          <button class="prev-mode-btn on" onclick="setPrevMode('desktop',this)">Desktop</button>
+          <button class="prev-mode-btn" onclick="setPrevMode('mobile',this)">Mobil</button>
+          <span style="flex:1"></span>
+          <span style="font-size:12px;color:var(--taupe)">Vorschau · ${esc(inv.slug||'–')}</span>
+        </div>
+        <div class="prev-wrap">
+          <iframe id="prev-frame" class="prev-frame" src="${pubUrl||''}"></iframe>
+        </div>
+      </div>
+    </div>`
+
+  // Init preview iframe - if no public URL, use blank
+  if(!pubUrl||!inv.is_published){
+    const f=$('prev-frame')
+    if(f)f.src=''
+  }
+}
+
+function toggleSection(id){$(id)?.classList.toggle('collapsed')}
+function setPrevMode(mode,btn){
+  document.querySelectorAll('.prev-mode-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on')
+  $('prev-frame')?.classList.toggle('mobile',mode==='mobile')
+}
+function schedulePreview(){
+  clearTimeout(S.prevTimer)
+  S.prevTimer=setTimeout(()=>{/* preview update handled by save */},800)
+}
+
+/* ── SAVE ALL FIELDS ── */
+async function saveAllFields(){
+  if(!S.curInvId)return
+  setLoading('ed-save',true)
+  const fields={
+    title:$('ed-title')?.value.trim()||'Meine Einladung',
+    host_name_1:$('ed-n1')?.value.trim()||'',
+    host_name_2:$('ed-n2')?.value.trim()||'',
+    tagline:$('ed-tagline')?.value.trim()||'',
+    event_date:$('ed-date')?.value||null,
+    event_time:$('ed-time')?.value||null,
+    event_type:$('ed-type')?.value||'wedding',
+    quote_enabled:$('ed-qon')?.checked||false,
+    quote_heading:$('ed-qh')?.value.trim()||'',
+    quote_text:$('ed-qt')?.value.trim()||'',
+    quote_source:$('ed-qs')?.value.trim()||'',
+    ceremony_title:$('ed-ctitle')?.value.trim()||'Zeremonie',
+    ceremony_venue_name:$('ed-cvenue')?.value.trim()||'',
+    ceremony_time_str:$('ed-ctime')?.value.trim()||'',
+    ceremony_map_url:$('ed-cmap')?.value.trim()||'',
+    ceremony_address:$('ed-caddr')?.value.trim()||'',
+    reception_enabled:$('ed-rec-on')?.checked||false,
+    reception_venue_name:$('ed-rvenue')?.value.trim()||'',
+    reception_time_str:$('ed-rtime')?.value.trim()||'',
+    reception_map_url:$('ed-rmap')?.value.trim()||'',
+    reception_address:$('ed-raddr')?.value.trim()||'',
+    welcome_note:$('ed-welcome')?.value.trim()||'',
+    rsvp_deadline:$('ed-rsvp-deadline')?.value||null,
+    rsvp_max_guests:parseInt($('ed-rsvp-max')?.value||2),
+    rsvp_note:$('ed-rsvp-note')?.value.trim()||'',
+    menu_enabled:$('ed-menu-on')?.checked!==false,
+    menu_meat_enabled:$('ed-menu-meat')?.checked!==false,
+    menu_fish_enabled:$('ed-menu-fish')?.checked!==false,
+    menu_vegetarian_enabled:$('ed-menu-veg')?.checked!==false,
+    menu_vegan_enabled:$('ed-menu-vegan')?.checked!==false,
+    menu_note:$('ed-menu-note')?.value.trim()||'',
+    timeline_json:S.tlItems,
+  }
+  const ok=await saveInv(fields)
+  setLoading('ed-save',false)
+  if(ok){toast('Gespeichert ✓','success');updateInvSelect()}
+}
+
+async function handlePublish(checked){
+  $('pub-lbl').textContent=checked?'Wird veröffentlicht…':'Wird zurückgezogen…'
+  await saveInv({is_published:checked})
+  $('pub-lbl').textContent=checked?'Veröffentlicht ✓':'Entwurf'
+  toast(checked?'Einladung veröffentlicht ✓':'Einladung zurückgezogen','success')
+}
+
+/* ── TIMELINE ── */
+function renderTLItems(){
+  if(!S.tlItems.length)return'<div style="text-align:center;padding:16px;color:var(--taupe);font-size:13px">Noch keine Ablaufpunkte</div>'
+  return S.tlItems.map((t,i)=>`
+    <div style="display:flex;gap:7px;margin-bottom:8px;align-items:flex-start">
+      <input class="fi" style="width:70px;flex-shrink:0" value="${esc(t.time||'')}" placeholder="14:00" onchange="S.tlItems[${i}].time=this.value">
+      <input class="fi" style="flex:1" value="${esc(t.title||'')}" placeholder="Programmpunkt" onchange="S.tlItems[${i}].title=this.value">
+      <button class="btn-danger" onclick="removeTL(${i})">✕</button>
+    </div>`).join('')
+}
+function addTLItem(){S.tlItems.push({time:'',title:''});$('tl-items').innerHTML=renderTLItems()}
+function removeTL(i){S.tlItems.splice(i,1);$('tl-items').innerHTML=renderTLItems()}
+
+/* ══════════════════════════════════════════════════════
+   GALLERY TAB (mehrere Bilder + Positionierung)
+══════════════════════════════════════════════════════ */
+async function tabGallery(main,inv){
+  if(!inv){main.innerHTML=topbar('Fotos & Galerie')+`<div class="content">${noInvHTML()}</div>`;return}
+  const{data}=await sb.from('gallery_items').select('*').eq('invitation_id',S.curInvId).order('sort_order')
+  S.gallery=data||[]
+  main.innerHTML=topbar(esc(inv.title),'Fotos & Galerie',
+    `<button class="btn btn-gold btn-sm" onclick="$('gal-input').click()">+ Foto hochladen</button>`)+
+  `<div class="content">
+    <input type="file" id="gal-input" style="display:none" accept="image/*" multiple onchange="uploadGallery(this)">
+
+    <!-- HERO BILD -->
+    <div class="sc">
+      <div class="sc-ttl">📷 Hero-Bild (Titelbild)</div>
+      <div id="hero-gal-section">
+        ${inv.hero_image_url
+          ?`<div style="display:flex;gap:12px;align-items:center">
+              <div style="width:120px;height:80px;border-radius:10px;overflow:hidden;background:var(--cream);flex-shrink:0">
+                <img src="${inv.hero_image_url}" style="width:100%;height:100%;object-fit:cover">
+              </div>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:500;margin-bottom:8px">Aktuelles Hero-Bild</div>
+                <div style="display:flex;gap:8px">
+                  <button class="btn btn-ghost btn-sm" onclick="openImgPos('hero','${inv.hero_image_url}',${inv.hero_pos_x||50},${inv.hero_pos_y||50},${inv.hero_scale||1})">📐 Position</button>
+                  <button class="btn-danger" onclick="removeHeroImg()">Entfernen</button>
+                </div>
+              </div>
+            </div>`
+          :`<div class="img-upload" onclick="$('hero-input-gal').click()">
+              <div style="font-size:28px;margin-bottom:7px">🖼️</div>
+              <div style="font-size:14px;color:var(--ch40);margin-bottom:3px">Hero-Bild hochladen</div>
+              <div style="font-size:12px;color:var(--taupe)">Wird ganz oben in der Einladung angezeigt</div>
+            </div>
+            <input type="file" id="hero-input-gal" style="display:none" accept="image/*" onchange="uploadHero(this)">`}
+      </div>
+    </div>
+
+    <!-- GALERIE -->
+    <div class="sc">
+      <div class="sc-ttl">🖼️ Foto-Galerie
+        <span style="font-size:11px;color:var(--taupe);font-weight:300;margin-left:6px">${S.gallery.filter(g=>g.role==='gallery').length} Bilder</span>
+      </div>
+      <div style="font-size:12.5px;color:var(--taupe);margin-bottom:14px">
+        Lade mehrere Fotos hoch. Klicke auf ein Foto um es zu positionieren (zoom, x/y).
+      </div>
+      <div class="gal-ed-grid" id="gal-grid">${renderGalGrid()}</div>
+      <div class="img-upload" onclick="$('gal-input').click()" style="padding:18px">
+        <div style="font-size:20px;margin-bottom:5px">📸</div>
+        <div style="font-size:13px;color:var(--ch40)">Weitere Fotos hochladen (mehrere gleichzeitig)</div>
+        <div style="font-size:11px;color:var(--taupe);margin-top:3px">JPG, PNG, WebP · max. 10 MB pro Bild</div>
+      </div>
+    </div>
+
+    <!-- PAAR-FOTO -->
+    <div class="sc">
+      <div class="sc-ttl">👫 Paar-Foto</div>
+      ${inv.couple_image_url
+        ?`<div style="display:flex;gap:12px;align-items:center">
+            <div style="width:100px;height:100px;border-radius:50%;overflow:hidden;background:var(--cream);flex-shrink:0">
+              <img src="${inv.couple_image_url}" style="width:100%;height:100%;object-fit:cover">
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:500;margin-bottom:8px">Aktuelles Paar-Foto</div>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-ghost btn-sm" onclick="openImgPos('couple','${inv.couple_image_url}',${inv.couple_pos_x||50},${inv.couple_pos_y||50},${inv.couple_scale||1})">📐 Position</button>
+                <button class="btn-danger" onclick="removeCoupleImg()">Entfernen</button>
+              </div>
+            </div>
+          </div>`
+        :`<div class="img-upload" onclick="$('couple-input').click()">
+            <div style="font-size:28px;margin-bottom:7px">👫</div>
+            <div style="font-size:14px;color:var(--ch40);margin-bottom:3px">Paar-Foto hochladen</div>
+            <div style="font-size:12px;color:var(--taupe)">Rundes Profilfoto im Template</div>
+          </div>
+          <input type="file" id="couple-input" style="display:none" accept="image/*" onchange="uploadCouple(this)">`}
+    </div>
+  </div>`
+}
+
+function renderGalGrid(){
+  const gal=S.gallery.filter(g=>g.role==='gallery')
+  if(!gal.length)return'<div style="grid-column:1/-1;text-align:center;padding:20px;color:var(--taupe);font-size:13px">Noch keine Galerie-Fotos</div>'
+  return gal.map(g=>`
+    <div class="gal-ed-item">
+      <img class="gal-ed-img" src="${g.url}">
+      <button class="gal-ed-pos" onclick="openImgPos('gallery','${g.url}',${g.pos_x||50},${g.pos_y||50},${g.scale||1},'${g.id}')">📐</button>
+      <button class="gal-ed-del" onclick="confirmDel('gallery','${g.id}')">✕</button>
+    </div>`).join('')
+}
+
+/* ── IMAGE UPLOADS ── */
+async function uploadHero(input){
+  const file=input.files[0];if(!file)return
+  if(file.size>10*1024*1024){toast('Datei zu groß (max. 10 MB)','error');return}
+  toast('Hero-Bild wird hochgeladen…','info')
+  const path=`${S.user.id}/${S.curInvId}/hero-${Date.now()}.${file.name.split('.').pop()}`
+  const{error:ue}=await sb.storage.from(BUCKET).upload(path,file,{upsert:true,contentType:file.type})
+  if(ue){toast('Upload-Fehler: '+ue.message,'error');return}
+  const{data:{publicUrl}}=sb.storage.from(BUCKET).getPublicUrl(path)
+  await saveInv({hero_image_url:publicUrl,hero_pos_x:50,hero_pos_y:50,hero_scale:1})
+  toast('Hero-Bild gespeichert ✓','success')
+  switchTab(S.tab)
+}
+async function uploadCouple(input){
+  const file=input.files[0];if(!file)return
+  if(file.size>10*1024*1024){toast('Datei zu groß','error');return}
+  toast('Paar-Foto wird hochgeladen…','info')
+  const path=`${S.user.id}/${S.curInvId}/couple-${Date.now()}.${file.name.split('.').pop()}`
+  const{error:ue}=await sb.storage.from(BUCKET).upload(path,file,{upsert:true,contentType:file.type})
+  if(ue){toast('Upload-Fehler: '+ue.message,'error');return}
+  const{data:{publicUrl}}=sb.storage.from(BUCKET).getPublicUrl(path)
+  await saveInv({couple_image_url:publicUrl,couple_pos_x:50,couple_pos_y:50,couple_scale:1})
+  toast('Paar-Foto gespeichert ✓','success')
+  switchTab(S.tab)
+}
+async function uploadGallery(input){
+  const files=Array.from(input.files);if(!files.length)return
+  toast(`${files.length} Foto(s) werden hochgeladen…`,'info')
+  let uploaded=0
+  for(const file of files){
+    if(file.size>10*1024*1024){toast(`${file.name} zu groß (max. 10 MB)`,'error');continue}
+    const path=`${S.user.id}/${S.curInvId}/gal-${Date.now()}-${Math.random().toString(36).slice(2)}.${file.name.split('.').pop()}`
+    const{error:ue}=await sb.storage.from(BUCKET).upload(path,file,{contentType:file.type})
+    if(ue){toast('Fehler: '+ue.message,'error');continue}
+    const{data:{publicUrl}}=sb.storage.from(BUCKET).getPublicUrl(path)
+    const maxOrder=S.gallery.length?Math.max(...S.gallery.map(g=>g.sort_order||0))+1:0
+    const{data:item}=await sb.from('gallery_items').insert({invitation_id:S.curInvId,url:publicUrl,storage_path:path,role:'gallery',pos_x:50,pos_y:50,scale:1,sort_order:maxOrder}).select().single()
+    if(item){S.gallery.push(item);uploaded++}
+  }
+  toast(`${uploaded} Foto(s) hochgeladen ✓`,'success')
+  const grid=$('gal-grid');if(grid)grid.innerHTML=renderGalGrid()
+  input.value=''
+}
+async function removeHeroImg(){
+  if(!confirm('Hero-Bild entfernen?'))return
+  await saveInv({hero_image_url:''})
+  toast('Hero-Bild entfernt','success');switchTab(S.tab)
+}
+async function removeCoupleImg(){
+  if(!confirm('Paar-Foto entfernen?'))return
+  await saveInv({couple_image_url:''})
+  toast('Paar-Foto entfernt','success');switchTab(S.tab)
+}
+
+/* ── IMAGE POSITIONING ── */
+function openImgPos(type,url,x,y,scale,galId=null){
+  S.posTarget={type,url,x:x||50,y:y||50,scale:scale||1,galId}
+  const img=$('pos-preview-img');if(img)img.src=url
+  const scaleEl=$('pos-scale');if(scaleEl){scaleEl.value=scale||1}
+  const sv=$('pos-scale-val');if(sv)sv.textContent=Math.round((scale||1)*100)+'%'
+  updatePosPad(x||50,y||50)
+  openModal('m-pos')
+  initPosPad()
+}
+function updatePosPad(x,y){
+  const h=$('pos-handle');if(!h)return
+  h.style.left=x+'%';h.style.top=y+'%'
+}
+function updatePosPreview(){
+  const s=parseFloat($('pos-scale')?.value||1)
+  S.posTarget.scale=s
+  const sv=$('pos-scale-val');if(sv)sv.textContent=Math.round(s*100)+'%'
+  const img=$('pos-preview-img')
+  if(img){img.style.transform=`scale(${s})`;img.style.objectPosition=`${S.posTarget.x}% ${S.posTarget.y}%`}
+}
+function initPosPad(){
+  const pad=$('pos-pad');if(!pad)return
+  let dragging=false
+  function updateFromEvent(e){
+    const r=pad.getBoundingClientRect()
+    const cx=e.touches?e.touches[0].clientX:e.clientX
+    const cy=e.touches?e.touches[0].clientY:e.clientY
+    const x=Math.max(0,Math.min(100,((cx-r.left)/r.width)*100))
+    const y=Math.max(0,Math.min(100,((cy-r.top)/r.height)*100))
+    S.posTarget.x=Math.round(x);S.posTarget.y=Math.round(y)
+    updatePosPad(S.posTarget.x,S.posTarget.y);updatePosPreview()
+  }
+  pad.onmousedown=pad.ontouchstart=e=>{dragging=true;updateFromEvent(e);e.preventDefault()}
+  document.onmousemove=document.ontouchmove=e=>{if(dragging)updateFromEvent(e)}
+  document.onmouseup=document.ontouchend=()=>{dragging=false}
+}
+async function saveImagePosition(){
+  const t=S.posTarget;if(!t)return
+  setLoading('pos-save-btn',true)
+  if(t.type==='hero'){
+    await saveInv({hero_pos_x:t.x,hero_pos_y:t.y,hero_scale:t.scale})
+  }else if(t.type==='couple'){
+    await saveInv({couple_pos_x:t.x,couple_pos_y:t.y,couple_scale:t.scale})
+  }else if(t.type==='gallery'&&t.galId){
+    await sb.from('gallery_items').update({pos_x:t.x,pos_y:t.y,scale:t.scale}).eq('id',t.galId)
+    const idx=S.gallery.findIndex(g=>g.id===t.galId)
+    if(idx>=0)S.gallery[idx]={...S.gallery[idx],pos_x:t.x,pos_y:t.y,scale:t.scale}
+  }
+  setLoading('pos-save-btn',false)
+  toast('Position gespeichert ✓','success')
+  closeModal('m-pos')
+}
+
+/* ══════════════════════════════════════════════════════
+   DESIGN TAB
+══════════════════════════════════════════════════════ */
+function tabDesign(main,inv){
+  if(!inv){main.innerHTML=topbar('Design & Schrift')+`<div class="content">${noInvHTML()}</div>`;return}
+  S.curTemplate=inv.font_preset||'blossom'
+  S.fontH=inv.font_heading||'Great Vibes'
+  S.fontB=inv.font_body||'Josefin Sans'
+  loadFont(S.fontH);loadFont(S.fontB)
+
+  main.innerHTML=topbar(esc(inv.title),'Design & Schrift',
+    `<button class="btn btn-gold btn-sm" id="design-save" onclick="saveDesign()">Design speichern</button>`)+
+  `<div class="content">
+
+    <!-- TEMPLATE WAHL -->
+    <div class="sc">
+      <div class="sc-ttl">🎨 Vorlage / Template</div>
+      <div class="tpl-grid">
+        ${Object.values(TEMPLATES).map(t=>`
+          <div class="tpl-card ${S.curTemplate===t.id?'on':''}" onclick="selectTemplate('${t.id}')">
+            <div class="tpl-preview" style="background:linear-gradient(135deg,${t.bg},${t.color}22)">
+              <span style="font-size:28px">${t.emoji}</span>
+            </div>
+            <div class="tpl-name">${t.label}</div>
+            <div class="tpl-desc">${t.desc}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- SCHRIFT VORSCHAU -->
+    <div class="sc">
+      <div class="sc-ttl">✍️ Schrift-Vorschau</div>
+      <div class="lprev">
+        <div class="lprev-names" id="lprev-names" style="font-family:'${S.fontH}',cursive,serif">${esc((inv.host_name_1||'Lena')+' & '+(inv.host_name_2||'Florian'))}</div>
+        <div class="lprev-detail" id="lprev-detail" style="font-family:'${S.fontB}',sans-serif">
+          ${inv.event_date?new Date(inv.event_date).toLocaleDateString('de-DE',{day:'numeric',month:'long',year:'numeric'}):'15. August 2026'}
+          ${inv.ceremony_venue_name?' · '+esc(inv.ceremony_venue_name):''}
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;font-size:12px;color:var(--taupe)">
+        <span>Headline: <strong style="color:var(--charcoal)" id="lprev-hname">${S.fontH}</strong></span>
+        <span>·</span>
+        <span>Body: <strong style="color:var(--charcoal)" id="lprev-bname">${S.fontB}</strong></span>
+      </div>
+    </div>
+
+    <!-- SCHRIFT HEADLINE -->
+    <div class="sc">
+      <div class="sc-ttl">📝 Headline-Schrift</div>
+      <div class="font-grid" id="font-h-grid">
+        ${FONTS.filter(f=>f.cat==='script').map(f=>`
+          <div class="font-item ${S.fontH===f.n?'on':''}" id="fh-${f.n.replace(/\s+/g,'-')}" onclick="selectFont('${f.n}','h')">
+            <div class="font-preview" style="font-family:'${f.n}',cursive,serif">${f.n.includes('Script')||f.cat==='script'?'Lena & Florian':'A'}</div>
+            <div class="font-name">${f.n}</div>
+          </div>`).join('')}
+        ${FONTS.filter(f=>f.cat==='serif').map(f=>`
+          <div class="font-item ${S.fontH===f.n?'on':''}" id="fh-${f.n.replace(/\s+/g,'-')}" onclick="selectFont('${f.n}','h')">
+            <div class="font-preview" style="font-family:'${f.n}',serif">Lena & F.</div>
+            <div class="font-name">${f.n}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- SCHRIFT BODY -->
+    <div class="sc">
+      <div class="sc-ttl">📖 Body-Schrift</div>
+      <div class="font-grid" id="font-b-grid">
+        ${FONTS.filter(f=>f.cat==='sans'||f.cat==='serif').map(f=>`
+          <div class="font-item ${S.fontB===f.n?'on':''}" id="fb-${f.n.replace(/\s+/g,'-')}" onclick="selectFont('${f.n}','b')">
+            <div class="font-preview" style="font-family:'${f.n}',sans-serif;font-size:13px">Samstag, 15. August 2026</div>
+            <div class="font-name">${f.n}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- FARBEN -->
+    <div class="sc">
+      <div class="sc-ttl">🎨 Akzentfarben</div>
+      <div class="fg">
+        <label class="fl">Primärfarbe</label>
+        <div class="col-row">
+          <div class="col-swatch"><input type="color" id="col-accent" value="${inv.theme_primary_color||'#9080B0'}" oninput="syncColHex('accent',this.value);schedulePreview()"></div>
+          <input class="fi col-hex" id="col-accent-hex" value="${inv.theme_primary_color||'#9080B0'}" maxlength="7" oninput="syncColPicker('accent',this.value)">
+        </div>
+      </div>
+      <div class="fg">
+        <label class="fl">Hintergrundfarbe</label>
+        <div class="col-row">
+          <div class="col-swatch"><input type="color" id="col-bg" value="${inv.theme_bg_color||'#F4F0F8'}" oninput="syncColHex('bg',this.value)"></div>
+          <input class="fi col-hex" id="col-bg-hex" value="${inv.theme_bg_color||'#F4F0F8'}" maxlength="7" oninput="syncColPicker('bg',this.value)">
+        </div>
+      </div>
+    </div>
+
+  </div>`
+  loadFont(S.fontH);loadFont(S.fontB)
+}
+
+function selectTemplate(id){
+  S.curTemplate=id
+  const tpl=TEMPLATES[id];if(!tpl)return
+  document.querySelectorAll('.tpl-card').forEach(el=>el.classList.remove('on'))
+  document.querySelector(`.tpl-card[onclick="selectTemplate('${id}')"]`)?.classList.add('on')
+  const ca=$('col-accent'),cb=$('col-bg')
+  if(ca){ca.value=tpl.color;$('col-accent-hex').value=tpl.color}
+  if(cb){cb.value=tpl.bg;$('col-bg-hex').value=tpl.bg}
+}
+function selectFont(name,type){
+  loadFont(name);if(type==='h')S.fontH=name;else S.fontB=name
+  const pfx=type==='h'?'fh-':'fb-'
+  document.querySelectorAll(`[id^="${pfx}"]`).forEach(el=>el.classList.toggle('on',el.id===pfx+name.replace(/\s+/g,'-')))
+  const e1=$('lprev-names'),e2=$('lprev-detail'),hn=$('lprev-hname'),bn=$('lprev-bname')
+  if(type==='h'){if(e1)e1.style.fontFamily=`'${name}',cursive,serif`;if(hn)hn.textContent=name}
+  else{if(e2)e2.style.fontFamily=`'${name}',sans-serif`;if(bn)bn.textContent=name}
+}
+function syncColHex(w,val){const e=$(`col-${w}-hex`);if(e)e.value=val}
+function syncColPicker(w,val){if(!/^#[0-9A-Fa-f]{6}$/.test(val))return;const e=$(`col-${w}`);if(e)e.value=val}
+async function saveDesign(){
+  setLoading('design-save',true)
+  const ok=await saveInv({
+    font_preset:S.curTemplate,
+    font_heading:S.fontH,
+    font_body:S.fontB,
+    theme_primary_color:$('col-accent')?.value,
+    theme_bg_color:$('col-bg')?.value,
+  })
+  setLoading('design-save',false)
+  if(ok)toast('Design gespeichert ✓','success')
+}
+
+/* ══════════════════════════════════════════════════════
+   RSVPS TAB
+══════════════════════════════════════════════════════ */
+async function tabRSVPs(main,inv){
+  if(!inv){main.innerHTML=topbar('RSVPs')+`<div class="content">${noInvHTML()}</div>`;return}
+  const{data}=await sb.from('rsvps').select('*').eq('invitation_id',S.curInvId).order('submitted_at',{ascending:false})
+  S.rsvps=data||[]
+  const ml={meat:'🥩 Fleisch',fish:'🐟 Fisch',vegetarian:'🥗 Vegetarisch',vegan:'🌱 Vegan',none:'–'}
+  const attending=S.rsvps.filter(r=>r.attending).length
+  const declined=S.rsvps.filter(r=>!r.attending).length
+  const totalGuests=S.rsvps.filter(r=>r.attending).reduce((s,r)=>s+(r.guest_count||1),0)
+
+  main.innerHTML=topbar(esc(inv.title),'RSVPs',
+    `<button class="btn btn-ghost btn-sm" onclick="exportCSV()">CSV Export</button>`)+
+  `<div class="content">
+    <div class="stats" style="grid-template-columns:repeat(3,1fr)">
+      ${[['✓','#F0FDF4',attending,'Zusagen'],['✗','#FEF2F2',declined,'Absagen'],['👫','#FDF4FF',totalGuests,'Gäste gesamt']].map(([ico,bg,n,l])=>`<div class="stat-c"><div class="stat-ico" style="background:${bg}">${ico}</div><div class="stat-n serif">${n}</div><div class="stat-l">${l}</div></div>`).join('')}
+    </div>
+    <div class="cbox">
+      <div class="cbox-hdr"><div class="cbox-ttl">Alle RSVPs (${S.rsvps.length})</div></div>
+      <div class="tw"><table><thead><tr><th>Gast</th><th>Status</th><th>Pers.</th><th>Menü</th><th>Nachricht</th><th>Datum</th></tr></thead><tbody>
+      ${!S.rsvps.length
+        ?`<tr><td colspan="6" style="padding:32px;text-align:center;color:var(--taupe)">Noch keine RSVPs eingegangen</td></tr>`
+        :S.rsvps.map(r=>`<tr>
+          <td><div style="font-weight:500">${esc(r.guest_name)}</div>${r.guest_email?`<div style="font-size:11px;color:var(--taupe)">${esc(r.guest_email)}</div>`:''}</td>
+          <td>${r.attending?`<span class="pill pgreen">✓ Zusage</span>`:`<span class="pill pred">✗ Absage</span>`}</td>
+          <td>${r.guest_count||1}</td>
+          <td>${ml[r.meal_preference]||'–'}</td>
+          <td style="font-size:12px;color:var(--taupe);max-width:160px">${r.message?esc(r.message.substring(0,80)):''}</td>
+          <td style="font-size:11px;color:var(--taupe);white-space:nowrap">${new Date(r.submitted_at).toLocaleDateString('de-DE')}</td>
+        </tr>`).join('')}
+      </tbody></table></div>
+    </div>
+  </div>`
+}
+
+/* ══════════════════════════════════════════════════════
+   GUESTS TAB
+══════════════════════════════════════════════════════ */
+async function tabGuests(main,inv){
+  if(!inv){main.innerHTML=topbar('Gästeliste')+`<div class="content">${noInvHTML()}</div>`;return}
+  const{data}=await sb.from('guests').select('*').eq('invitation_id',S.curInvId).order('created_at')
+  S.guests=data||[]
+  main.innerHTML=topbar(esc(inv.title),'Gästeliste',
+    `<button class="btn btn-ghost btn-sm" onclick="exportCSV()">CSV</button>
+     <button class="btn btn-gold btn-sm" onclick="openGuestModal()">+ Gast</button>`)+
+  `<div class="content">
+    <div class="cbox"><div class="tw"><table><thead>
+      <tr><th>Name</th><th>E-Mail</th><th>Tisch</th><th>VIP</th><th>Status</th><th>Aktionen</th></tr>
+    </thead><tbody id="g-tbody">${renderGuestRows()}</tbody></table></div></div>
+  </div>`
+}
+function renderGuestRows(){
+  if(!S.guests.length)return`<tr><td colspan="6"><div class="empty"><div class="empty-ico">👥</div><div class="empty-ttl">Noch keine Gäste</div><div class="empty-sub">Füge Gäste hinzu.</div></div></td></tr>`
+  const rMap={};S.rsvps.forEach(r=>{if(r.guest_id)rMap[r.guest_id]=r})
+  return S.guests.map(g=>{
+    const r=rMap[g.id]
+    const status=r?(r.attending?`<span class="pill pgreen">✓</span>`:`<span class="pill pred">✗</span>`):`<span class="pill pgray">?</span>`
+    return`<tr>
+      <td><div style="font-weight:500">${esc(g.name)}</div>${g.notes?`<div style="font-size:11px;color:var(--taupe)">${esc(g.notes)}</div>`:''}</td>
+      <td>${esc(g.email||'–')}</td>
+      <td>${esc(g.table_number||'–')}</td>
+      <td>${g.is_vip?`<span class="pill pamber">VIP</span>`:'–'}</td>
+      <td>${status}</td>
+      <td style="display:flex;gap:6px">
+        <button class="btn btn-ghost btn-sm" onclick="openGuestModal('${g.id}')">Bearb.</button>
+        <button class="btn-danger" onclick="confirmDel('guest','${g.id}')">Löschen</button>
+      </td>
+    </tr>`}).join('')
+}
+
+function openGuestModal(gid=null){
+  const g=gid?S.guests.find(x=>x.id===gid):null
+  $('gm-ttl').textContent=gid?'Gast bearbeiten':'Gast hinzufügen'
+  $('gm-sub').textContent=gid?'Gast-Details bearbeiten.':'Gast zur Einladung hinzufügen.'
+  $('g-id').value=gid||''
+  $('g-name').value=g?.name||''
+  $('g-email').value=g?.email||''
+  $('g-phone').value=g?.phone||''
+  $('g-table').value=g?.table_number||''
+  $('g-notes').value=g?.notes||''
+  if($('g-vip'))$('g-vip').checked=g?.is_vip||false
+  $('gm-alert').innerHTML=''
+  openModal('m-guest')
+}
+async function saveGuest(){
+  const name=$('g-name')?.value.trim()
+  if(!name){$('gm-alert').innerHTML='<div class="alert alert-error">Name ist erforderlich.</div>';return}
+  const data={name,email:$('g-email')?.value.trim()||'',phone:$('g-phone')?.value.trim()||'',table_number:$('g-table')?.value.trim()||'',notes:$('g-notes')?.value.trim()||'',is_vip:$('g-vip')?.checked||false}
+  const gid=$('g-id').value
+  setLoading('gm-save',true)
+  let error
+  if(gid){const r=await sb.from('guests').update(data).eq('id',gid).eq('invitation_id',S.curInvId);error=r.error}
+  else{const r=await sb.from('guests').insert({...data,invitation_id:S.curInvId});error=r.error}
+  setLoading('gm-save',false)
+  if(error){$('gm-alert').innerHTML=`<div class="alert alert-error">${error.message}</div>`;return}
+  toast(gid?'Gast aktualisiert ✓':'Gast hinzugefügt ✓','success')
+  closeModal('m-guest')
+  const{data:guests}=await sb.from('guests').select('*').eq('invitation_id',S.curInvId).order('created_at')
+  S.guests=guests||[]
+  const tbody=$('g-tbody');if(tbody)tbody.innerHTML=renderGuestRows()
+}
+
+function confirmDel(type,id){
+  S.pendingDel={type,id}
+  $('cm-ttl').textContent='Löschen bestätigen'
+  $('cm-msg').textContent='Wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.'
+  $('cm-ok').onclick=execDel
+  openModal('m-confirm')
+}
+async function execDel(){
+  if(!S.pendingDel)return
+  const{type,id}=S.pendingDel;S.pendingDel=null;closeModal('m-confirm')
+  if(type==='guest'){
+    await sb.from('rsvps').delete().eq('guest_id',id)
+    await sb.from('guests').delete().eq('id',id)
+    S.guests=S.guests.filter(g=>g.id!==id)
+    const tbody=$('g-tbody');if(tbody)tbody.innerHTML=renderGuestRows()
+    toast('Gast gelöscht','success')
+  }else if(type==='gallery'){
+    const item=S.gallery.find(g=>g.id===id)
+    if(item?.storage_path){await sb.storage.from(BUCKET).remove([item.storage_path])}
+    await sb.from('gallery_items').delete().eq('id',id)
+    S.gallery=S.gallery.filter(g=>g.id!==id)
+    const grid=$('gal-grid');if(grid)grid.innerHTML=renderGalGrid()
+    toast('Foto gelöscht','success')
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   ANALYTICS TAB
+══════════════════════════════════════════════════════ */
+async function tabAnalytics(main,inv){
+  if(!inv){main.innerHTML=topbar('Statistiken')+`<div class="content">${noInvHTML()}</div>`;return}
+  const[rr,ir]=await Promise.all([
+    sb.from('rsvps').select('attending,guest_count,meal_preference').eq('invitation_id',S.curInvId),
+    sb.from('invitations').select('view_count').eq('id',S.curInvId).single()
+  ])
+  const rsvps=rr.data||[]
+  const attending=rsvps.filter(r=>r.attending===true).length
+  const declined=rsvps.filter(r=>r.attending===false).length
+  const views=ir.data?.view_count||0
+  const totalGuests=rsvps.filter(r=>r.attending).reduce((s,r)=>s+(r.guest_count||1),0)
+  const total=rsvps.length||1
+  const mStats={meat:0,fish:0,vegetarian:0,vegan:0,none:0}
+  rsvps.filter(r=>r.attending).forEach(r=>{mStats[r.meal_preference||'none']=(mStats[r.meal_preference||'none']||0)+1})
+
+  main.innerHTML=topbar(esc(inv.title),'Statistiken')+
+  `<div class="content">
+    <div class="stats">
+      ${[['👁️','#EFF6FF',views,'Aufrufe'],['✓','#F0FDF4',attending,'Zusagen'],['✗','#FEF2F2',declined,'Absagen'],['👫','#FDF4FF',totalGuests,'Gäste gesamt']].map(([ico,bg,n,l])=>`<div class="stat-c"><div class="stat-ico" style="background:${bg}">${ico}</div><div class="stat-n serif">${n}</div><div class="stat-l">${l}</div></div>`).join('')}
+    </div>
+    <div class="sc">
+      <div class="sc-ttl">📊 RSVP-Verteilung</div>
+      <div class="abar">
+        <div style="background:#22C55E;width:${attending/total*100}%"></div>
+        <div style="background:#EF4444;width:${declined/total*100}%"></div>
+      </div>
+      <div style="display:flex;gap:18px;flex-wrap:wrap">
+        ${[['#22C55E','Zusagen',attending],['#EF4444','Absagen',declined]].map(([c,l,n])=>`<div style="display:flex;align-items:center;gap:6px"><div style="width:11px;height:11px;border-radius:50%;background:${c}"></div><span style="font-size:13px;color:var(--ch40)">${l}: ${n}</span></div>`).join('')}
+      </div>
+    </div>
+    <div class="sc">
+      <div class="sc-ttl">🍽️ Menü-Verteilung</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:4px">
+        ${[['meat','🥩','Fleisch'],['fish','🐟','Fisch'],['vegetarian','🥗','Vegetarisch'],['vegan','🌱','Vegan']].map(([k,ico,l])=>`
+          <div style="text-align:center;background:var(--ivory);border-radius:12px;padding:16px">
+            <div style="font-size:22px;margin-bottom:6px">${ico}</div>
+            <div class="stat-n serif" style="font-size:28px">${mStats[k]||0}</div>
+            <div class="stat-l">${l}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>`
+}
+
+/* ══════════════════════════════════════════════════════
+   QR TAB
+══════════════════════════════════════════════════════ */
+function tabQR(main,inv){
+  if(!inv){main.innerHTML=topbar('QR-Code & Link')+`<div class="content">${noInvHTML()}</div>`;return}
+  const pubUrl=getPublicUrl(inv.slug)
+  const stored=localStorage.getItem('festlich_base_url')
+  main.innerHTML=topbar(esc(inv.title),'QR-Code & Link')+
+  `<div class="content">
+    <div class="sc" style="border:2px solid ${stored?'#38A169':'#E53E3E'}">
+      <div class="sc-ttl">${stored?'✅':'⚠️'} GitHub Pages URL</div>
+      <div style="font-size:13px;color:var(--ch40);margin-bottom:12px">
+        ${stored?`Konfiguriert: <code style="color:#276749">${stored}</code>`:'<strong style="color:#E53E3E">Noch nicht konfiguriert! Links und QR-Code funktionieren erst nach Einrichtung.</strong>'}
+      </div>
+      <button class="btn btn-dark btn-sm" onclick="setBaseUrl();setTimeout(()=>switchTab('qr'),400)">
+        ${stored?'✏️ URL ändern':'🔗 URL jetzt einrichten →'}
+      </button>
+    </div>
+
+    <div class="sc" style="max-width:420px;margin:0 auto;text-align:center">
+      <div class="sc-ttl" style="justify-content:center">📱 QR-Code</div>
+      ${stored?`
+      <div id="qr-canvas" style="display:flex;justify-content:center;margin-bottom:12px"></div>
+      <div style="font-size:11.5px;color:var(--ch40);margin-bottom:18px;word-break:break-all">${pubUrl}</div>
+      <button class="btn btn-gold btn-md" onclick="downloadInvitation()" style="width:100%;margin-bottom:10px">⬇ Einladung herunterladen</button>
+      <button class="btn btn-ghost btn-md" onclick="downloadQR()" style="width:100%;margin-bottom:10px">⬇ QR-Code herunterladen</button>
+      <button class="btn btn-outline btn-sm" onclick="copyToClip('${pubUrl}','Link kopiert!')">🔗 Link kopieren</button>`
+      :`<div style="padding:28px;color:var(--taupe);font-size:13.5px">Erst URL einrichten (oben) um QR-Code zu generieren.</div>`}
+    </div>
+  </div>`
+
+  if(stored){
+    setTimeout(()=>{
+      const c=$('qr-canvas');if(!c||typeof QRCode==='undefined')return
+      new QRCode(c,{text:pubUrl,width:200,height:200,colorDark:'#262019',colorLight:'#FEFCF9',correctLevel:QRCode.CorrectLevel.M})
+    },60)
+  }
+}
+function downloadQR(){
+  const canvas=document.querySelector('#qr-canvas canvas')
+  if(!canvas){toast('QR nicht verfügbar','error');return}
+  const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download='festlich-qr.png';a.click()
+  toast('QR-Code heruntergeladen ✓','success')
+}
+
+/* ══════════════════════════════════════════════════════
+   DOWNLOAD INVITATION
+══════════════════════════════════════════════════════ */
+function downloadInvitation(){
+  const inv=curInv();if(!inv){toast('Keine Einladung zum Herunterladen','error');return}
+  const pubUrl=getPublicUrl(inv.slug)
+  if(!pubUrl){toast('Bitte erst URL konfigurieren','error');return}
+  // Open the invitation URL in new tab to download
+  window.open(pubUrl,'_blank')
+  toast('Einladung geöffnet — Speichere die Seite mit Strg+S / Cmd+S','info')
+}
+
+/* ══════════════════════════════════════════════════════
+   CSV EXPORT
+══════════════════════════════════════════════════════ */
+async function exportCSV(){
+  if(!S.curInvId)return
+  const[gRes,rRes]=await Promise.all([
+    sb.from('guests').select('*').eq('invitation_id',S.curInvId),
+    sb.from('rsvps').select('*').eq('invitation_id',S.curInvId)
+  ])
+  const guests=gRes.data||[],rsvps=rRes.data||[]
+  const rMap={};rsvps.forEach(r=>{if(r.guest_id)rMap[r.guest_id]=r})
+  const ml={meat:'Fleisch',fish:'Fisch',vegetarian:'Vegetarisch',vegan:'Vegan',none:'–'}
+  const header=['Name','E-Mail','Telefon','Tisch','VIP','Status','Personen','Menü','Nachricht']
+  const rows=guests.map(g=>{const r=rMap[g.id];return[g.name,g.email,g.phone,g.table_number,g.is_vip?'Ja':'Nein',r?(r.attending?'Zusage':'Absage'):'Ausstehend',r?.guest_count||'–',ml[r?.meal_preference]||'–',r?.message||'']})
+  // Also add RSVPs without guest_id
+  const unknownRsvps=rsvps.filter(r=>!r.guest_id)
+  unknownRsvps.forEach(r=>rows.push([r.guest_name,r.guest_email||'',r.guest_phone||'','','Nein',r.attending?'Zusage':'Absage',r.guest_count||1,ml[r.meal_preference]||'–',r.message||'']))
+  const csv=[header,...rows].map(r=>r.map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(',')).join('\n')
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'})
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='gaesteliste.csv';a.click()
+  toast('CSV exportiert ✓','success')
+}
+
+function updateInvSelect(){
+  const sel=$('inv-sel');if(!sel)return
+  sel.innerHTML=S.invs.length===0
+    ?'<option>Keine Einladungen</option>'
+    :S.invs.map(i=>`<option value="${i.id}" ${i.id===S.curInvId?'selected':''}>${esc(i.title)}</option>`).join('')
+}
+
+/* ══════════════════════════════════════════════════════
+   BOOT
+══════════════════════════════════════════════════════ */
+;(async()=>{
+  const{data:{session}}=await sb.auth.getSession()
+  if(session){
+    S.user=session.user
+    showDashboard()
+    await loadInvitations()
+    updateInvSelect()
+    await renderTab(S.tab)
+  }else{
+    $('auth-page').classList.remove('hidden')
+    $('app').classList.add('hidden')
+  }
+
+  sb.auth.onAuthStateChange(async(event,session)=>{
+    if(event==='SIGNED_IN'&&session){
+      S.user=session.user
+      showDashboard()
+      await loadInvitations()
+      updateInvSelect()
+      await renderTab(S.tab)
+    }else if(event==='SIGNED_OUT'){
+      S.user=null;S.invs=[];S.curInvId=null
+      $('auth-page').classList.remove('hidden')
+      $('app').classList.add('hidden')
+    }
+  })
+})()
+
+function showDashboard(){
+  $('auth-page').classList.add('hidden')
+  $('app').classList.remove('hidden')
+  const name=S.user.user_metadata?.full_name||S.user.email?.split('@')[0]||'Nutzer'
+  const av=$('sb-av'),un=$('sb-uname')
+  if(av)av.textContent=name[0].toUpperCase()
+  if(un)un.textContent=name
+}
+
+// Enter key on auth inputs
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    if(!$('auth-login').classList.contains('hidden'))doLogin()
+    else if(!$('auth-reg').classList.contains('hidden'))doReg()
+    else if(!$('auth-forgot').classList.contains('hidden'))doForgot()
+  }
+})
+</script>
+</body>
+</html>
